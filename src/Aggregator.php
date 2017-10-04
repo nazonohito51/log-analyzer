@@ -44,4 +44,9 @@ class Aggregator
             $this->loaded = true;
         }
     }
+
+    public function count()
+    {
+        return count($this->entries);
+    }
 }
