@@ -1,6 +1,14 @@
 {
+  "autoload": {
+    "psr-4": {
+      "LogAnalyzer\\": "src/"
+    }
+  },
   "require": {
     "kassner/log-parser": "~1.0",
     "clover/text-ltsv": "~1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*"
   }
 }
