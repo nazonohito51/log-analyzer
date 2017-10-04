@@ -48,11 +48,11 @@ class LogFile
 
     public function getEntry()
     {
-        if ($this->file->eof()) {
+        $line = !$this->file->eof() ? $this->file->fgets() : null;
+        if (empty($line)) {
             return null;
         }
 
-        $line = $this->file->fgets();
         if ($this->log_type == 'apache') {
             $iterable = $this->parser->parse($line);
         } elseif ($this->log_type == 'ltsv') {
