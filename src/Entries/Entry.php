@@ -12,6 +12,11 @@ class Entry implements EntryInterface
         }
     }
 
+    public function haveProperty($property_name)
+    {
+        return isset($this->property[$property_name]) ? true : false;
+    }
+
     public function getProperties()
     {
         return array_keys($this->property);
