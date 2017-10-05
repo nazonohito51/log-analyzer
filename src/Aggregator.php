@@ -1,6 +1,8 @@
 <?php
 namespace LogAnalyzer;
 
+use LogAnalyzer\Entries\Entry;
+
 class Aggregator
 {
     private $loaded = false;
