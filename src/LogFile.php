@@ -49,8 +49,7 @@ class LogFile
 
     public function getEntry()
     {
-        $line = !$this->file->eof() ? $this->file->fgets() : null;
-        if (empty($line)) {
+        if (is_null($line = $this->getValidLine())) {
             return null;
         }
 
@@ -63,5 +62,32 @@ class LogFile
         }
 
         return new Entry($iterable);
+    }
+
+    public function getEntries()
+    {
+        $entries = [];
+
+        while (!is_null($entry = $this->getEntry())) {
+            $entries[] = $entry;
+        }
+
+        return $entries;
+    }
+
+    /**
+     * get line. ignore empty line.
+     * @return null|string
+     */
+    private function getValidLine()
+    {
+        while (!$this->file->eof()) {
+            $line = $this->file->getCurrentLine();
+            if (!empty(trim($line))) {
+                return $line;
+            }
+        }
+
+        return null;
     }
 }
