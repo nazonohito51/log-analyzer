@@ -33,7 +33,7 @@ class EntryAggregator
         $entries = [];
         foreach ($this->entries as $entry) {
             if ($callable($entry) === true) {
-                $entries = $entry;
+                $entries[] = $entry;
             }
         }
 
