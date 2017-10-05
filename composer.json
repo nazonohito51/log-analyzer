@@ -4,6 +4,11 @@
       "LogAnalyzer\\": "src/"
     }
   },
+  "autoload-dev": {
+    "classmap": [
+      "tests/TestCase.php"
+    ]
+  },
   "require": {
     "kassner/log-parser": "~1.0",
     "clover/text-ltsv": "~1.0"
