@@ -10,5 +10,10 @@
   },
   "require-dev": {
     "phpunit/phpunit": "*"
+  },
+  "scripts": {
+    "test": [
+      "phpunit"
+    ]
   }
 }
