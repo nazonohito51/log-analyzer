@@ -4,6 +4,7 @@ namespace LogAnalyzer;
 
 use Clover\Text\LTSV;
 use Kassner\LogParser\LogParser;
+use LogAnalyzer\Entries\Entry;
 
 /**
  * ログファイル1個分を抽象化したクラス

@@ -1,5 +1,5 @@
 <?php
-namespace LogAnalyzer;
+namespace LogAnalyzer\Entries;
 
 interface EntryInterface
 {
