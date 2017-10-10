@@ -4,7 +4,7 @@ namespace LogAnalyzer\Aggregates;
 use LogAnalyzer\Entries\EntryInterface;
 use LogAnalyzer\View;
 
-class EntryAggregate implements \Countable
+class EntryAggregate implements \Countable, \IteratorAggregate
 {
     /**
      * @var EntryInterface[]
@@ -69,5 +69,10 @@ class EntryAggregate implements \Countable
         }
 
         return new self($entries);
+    }
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->entries);
     }
 }
