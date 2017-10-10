@@ -31,6 +31,16 @@ class View implements \Countable
         $table->display();
     }
 
+    public function toArray()
+    {
+        $ret = [];
+        foreach ($this->aggregates as $dimension_value => $aggregate) {
+            $ret[$dimension_value] = [];
+        }
+
+        return $ret;
+    }
+
     public function count()
     {
         return count($this->aggregates);
