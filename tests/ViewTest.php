@@ -23,21 +23,21 @@ class ViewTest extends TestCase
         $this->assertEquals([['dimension_name' => ['value1']], ['dimension_name' => ['value2']]], $array);
     }
 
-//    public function testAddColumn()
-//    {
-//        $view = new View('dimension_name', [
-//            'value1' => new EntryAggregate([
-//                new Entry(['dimension_name' => 'value1', 'other_property' => '1']),
-//                new Entry(['dimension_name' => 'value1', 'other_property' => '2']),
-//            ]),
-//            'value2' => new EntryAggregate([
-//                new Entry(['dimension_name' => 'value2', 'other_property' => '3'])
-//            ])
-//        ]);
-//
-//        $array = $view->addColumn('other_property')->toArray();
-//
-//        $this->assertEquals(['1', '2'], $array[0]['other_property']);
-//        $this->assertEquals('3', $array[0]['other_property']);
-//    }
+    public function testAddColumn()
+    {
+        $view = new View('dimension_name', [
+            'value1' => new EntryAggregate([
+                new Entry(['dimension_name' => 'value1', 'other_property' => '1']),
+                new Entry(['dimension_name' => 'value1', 'other_property' => '2']),
+            ]),
+            'value2' => new EntryAggregate([
+                new Entry(['dimension_name' => 'value2', 'other_property' => '3'])
+            ])
+        ]);
+
+        $array = $view->addColumn('other_property')->toArray();
+
+        $this->assertEquals(['1', '2'], $array[0]['other_property']);
+        $this->assertEquals(['3'], $array[1]['other_property']);
+    }
 }

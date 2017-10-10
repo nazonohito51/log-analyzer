@@ -22,6 +22,8 @@ class View implements \Countable
     public function addColumn($column_name)
     {
         $this->columns[$column_name] = $column_name;
+
+        return $this;
     }
 
     public function display()
