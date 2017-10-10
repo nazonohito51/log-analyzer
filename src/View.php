@@ -19,9 +19,9 @@ class View implements \Countable
         $this->aggregates = $aggregates;
     }
 
-    public function addColumn($column_name)
+    public function addColumn($column_name, callable $calc_column = null)
     {
-        $this->columns[$column_name] = $column_name;
+        $this->columns[$column_name] = !is_null($calc_column) ? $calc_column : $column_name;
 
         return $this;
     }
@@ -44,7 +44,11 @@ class View implements \Countable
         foreach ($this->aggregates as $dimension_value => $aggregate) {
             $row = [];
             foreach ($this->columns as $column_name => $calc_column) {
-                $row[$column_name] = array_unique($aggregate->sum($calc_column));
+                if (is_callable($calc_column)) {
+                    $row[$column_name] = $aggregate->sum($calc_column);
+                } else {
+                    $row[$column_name] = array_unique($aggregate->sum($calc_column));
+                }
             }
             $ret[] = $row;
         }

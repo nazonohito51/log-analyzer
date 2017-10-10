@@ -62,7 +62,7 @@ class EntryAggregateTest extends TestCase
             new Entry(['column' => '3']),
         ]);
 
-        $implode = $aggregate->sum(function ($carry, $entry) {
+        $implode = $aggregate->sum(function ($carry, EntryInterface $entry) {
             $carry += $entry->column;
             return $carry;
         });
