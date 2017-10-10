@@ -1,10 +1,10 @@
 <?php
-namespace LogAnalyzer\Aggregators;
+namespace LogAnalyzer\Aggregates;
 
 use LogAnalyzer\Entries\EntryInterface;
 use LucidFrame\Console\ConsoleTable;
 
-class EntryAggregator
+class EntryAggregate
 {
     /**
      * @var EntryInterface[]
@@ -57,7 +57,7 @@ class EntryAggregator
     /**
      * Build new aggregator on entries satisfied with callable
      * @param callable $callable
-     * @return EntryAggregator
+     * @return EntryAggregate
      */
     public function extract(callable $callable)
     {

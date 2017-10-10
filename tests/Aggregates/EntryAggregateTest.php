@@ -1,15 +1,15 @@
 <?php
-namespace LogAnalyzer\Aggregators;
+namespace LogAnalyzer\Aggregates;
 
 use LogAnalyzer\Entries\Entry;
 use LogAnalyzer\Entries\EntryInterface;
 use LogAnalyzer\TestCase;
 
-class EntryAggregatorTest extends TestCase
+class EntryAggregateTest extends TestCase
 {
     public function testExtract()
     {
-        $aggregator = new EntryAggregator([
+        $aggregator = new EntryAggregate([
             new Entry(['key' => 'value1', 'should_extract_key' => 1]),
             new Entry(['key' => 'value2']),
             new Entry(['key' => 'value3', 'should_extract_key' => 1]),

@@ -1,9 +1,9 @@
 <?php
 namespace LogAnalyzer;
 
-use LogAnalyzer\Aggregators\EntryAggregator;
+use LogAnalyzer\Aggregates\EntryAggregate;
 
-class AggregatorBuilder
+class AggregateBuilder
 {
     /**
      * @var LogFile[]
@@ -33,6 +33,6 @@ class AggregatorBuilder
             }
         }
 
-        return new EntryAggregator($entries);
+        return new EntryAggregate($entries);
     }
 }

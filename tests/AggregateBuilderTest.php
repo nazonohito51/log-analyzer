@@ -1,11 +1,11 @@
 <?php
 namespace LogAnalyzer;
 
-class AggregatorTest extends TestCase
+class AggregateBuilderTest extends TestCase
 {
     public function testCount()
     {
-        $builder = new AggregatorBuilder();
+        $builder = new AggregateBuilder();
         $builder->add($this->getFixturePath('ltsv.log'), ['log_type' => 'ltsv']);
         $aggregator = $builder->build();
 
