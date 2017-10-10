@@ -35,7 +35,7 @@ class View implements \Countable
     {
         $ret = [];
         foreach ($this->aggregates as $dimension_value => $aggregate) {
-            $ret[$dimension_value] = [];
+            $ret[$dimension_value] = [$this->dimension => $dimension_value];
         }
 
         return $ret;
