@@ -7,8 +7,6 @@ use Kassner\LogParser\LogParser;
 use LogAnalyzer\Entries\Entry;
 
 /**
- * ログファイル1個分を抽象化したクラス
- * ログの保存形式はapache logでもltsvでもなんでも良い
  * @package LogAnalyzer
  */
 class LogFile
@@ -22,6 +20,11 @@ class LogFile
     private $log_type;
     private $options;
 
+    /**
+     * acceptable file: [apache log / ltsv]
+     * @param $path
+     * @param array $options
+     */
     public function __construct($path, array $options = [])
     {
         $this->file = new \SplFileObject($path);
