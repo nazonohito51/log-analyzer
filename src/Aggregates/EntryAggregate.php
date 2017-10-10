@@ -24,11 +24,21 @@ class EntryAggregate implements \Countable
         return count($this->entries);
     }
 
-    public function dimension($key)
+    /**
+     * @param string $key
+     * @param callable $calc_dimension
+     * @return View
+     */
+    public function dimension($key, callable $calc_dimension = null)
     {
         $dimension_entries = [];
         foreach ($this->entries as $entry) {
-            if ($entry->haveProperty($key)) {
+
+            if (!is_null($calc_dimension)) {
+                $dimension_value = $calc_dimension($entry);
+                $dimension_value = is_null($dimension_value) ? 'null' : $dimension_value;
+                $dimension_entries[$dimension_value][] = $entry;
+            } elseif ($entry->haveProperty($key)) {
                 $dimension_value = $entry->{$key};
                 $dimension_entries[$dimension_value][] = $entry;
             } else {
