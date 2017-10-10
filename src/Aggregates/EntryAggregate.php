@@ -56,11 +56,17 @@ class EntryAggregate implements \Countable, \IteratorAggregate
 
     public function sum($calc)
     {
-        $ret = [];
-        foreach ($this->entries as $entry) {
-            if ($entry->haveProperty($calc)) {
-                $ret[] = $entry->{$calc};
+        if (is_callable($calc)) {
+            $ret = array_reduce($this->entries, $calc);
+        } elseif (is_string($calc)) {
+            $ret = [];
+            foreach ($this->entries as $entry) {
+                if ($entry->haveProperty($calc)) {
+                    $ret[] = $entry->{$calc};
+                }
             }
+        } else {
+            throw new \InvalidArgumentException('$calc is not callable or string.');
         }
 
         return $ret;

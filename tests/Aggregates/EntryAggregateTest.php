@@ -54,6 +54,22 @@ class EntryAggregateTest extends TestCase
         $this->assertEquals(['value1', 'value1', 'value2'], $implode);
     }
 
+    public function testImplodeByClosure()
+    {
+        $aggregate = new EntryAggregate([
+            new Entry(['column' => '1']),
+            new Entry(['column' => '2']),
+            new Entry(['column' => '3']),
+        ]);
+
+        $implode = $aggregate->sum(function ($carry, $entry) {
+            $carry += $entry->column;
+            return $carry;
+        });
+
+        $this->assertEquals(6, $implode);
+    }
+
     public function testExtract()
     {
         $aggregate = new EntryAggregate([
