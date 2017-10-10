@@ -9,6 +9,6 @@ class TestCase extends \PHPUnit\Framework\TestCase
             $fixture_file :
             '/' . $fixture_file;
 
-        return __DIR__ . '/fixture' . $fixture_file;
+        return __DIR__ . '/fixtures' . $fixture_file;
     }
 }
