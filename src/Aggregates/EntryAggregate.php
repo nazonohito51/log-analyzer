@@ -59,7 +59,7 @@ class EntryAggregate implements \Countable, \IteratorAggregate
      * @param callable $callable
      * @return EntryAggregate
      */
-    public function extract(callable $callable)
+    public function filter(callable $callable)
     {
         $entries = [];
         foreach ($this->entries as $entry) {

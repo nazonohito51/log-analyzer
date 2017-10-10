@@ -49,7 +49,7 @@ class EntryAggregateTest extends TestCase
             new Entry(['column' => 'value3', 'should_extract_key' => 1]),
         ]);
 
-        $new_aggregate = $aggregate->extract(function (EntryInterface $entry) {
+        $new_aggregate = $aggregate->filter(function (EntryInterface $entry) {
             return $entry->haveProperty('should_extract_key');
         });
         $this->assertEquals(2, $new_aggregate->count());
