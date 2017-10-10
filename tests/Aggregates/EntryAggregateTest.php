@@ -15,7 +15,10 @@ class EntryAggregateTest extends TestCase
             new Entry(['column' => 'value2']),
         ]);
 
-        $this->assertEquals(2, $aggregate->dimension('column')->count());
+        $view = $aggregate->dimension('column');
+        $this->assertEquals(2, $view->count());
+        $this->assertEquals(2, $view->getAggregate('value1')->count());
+        $this->assertEquals(1, $view->getAggregate('value2')->count());
     }
 
     public function testExtract()

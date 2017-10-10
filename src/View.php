@@ -35,4 +35,9 @@ class View implements \Countable
     {
         return count($this->aggregates);
     }
+
+    public function getAggregate($dimension_value)
+    {
+        return isset($this->aggregates[$dimension_value]) ? $this->aggregates[$dimension_value] : null;
+    }
 }
