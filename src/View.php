@@ -42,14 +42,7 @@ class View implements \Countable
         foreach ($this->aggregates as $dimension_value => $aggregate) {
             $row = [];
             foreach ($this->columns as $column_name => $calc_column) {
-                $column_values = [];
-                foreach ($aggregate as $entry) {
-                    if ($entry->haveProperty($calc_column)) {
-                        $column_values[] = $entry->{$calc_column};
-                    }
-                }
-                $row[$column_name] = array_unique($column_values);
-                $row[$column_name] = (count($row[$column_name]) === 1) ? $row[$column_name][0] : $row[$column_name];
+                $row[$column_name] = array_unique($aggregate->sum($calc_column));
             }
             $ret[] = $row;
         }

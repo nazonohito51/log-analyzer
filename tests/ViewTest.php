@@ -20,7 +20,7 @@ class ViewTest extends TestCase
 
         $array = $view->toArray();
 
-        $this->assertEquals([['dimension_name' => 'value1'], ['dimension_name' => 'value2']], $array);
+        $this->assertEquals([['dimension_name' => ['value1']], ['dimension_name' => ['value2']]], $array);
     }
 
 //    public function testAddColumn()
