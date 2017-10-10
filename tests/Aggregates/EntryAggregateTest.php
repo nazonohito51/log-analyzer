@@ -41,6 +41,19 @@ class EntryAggregateTest extends TestCase
         $this->assertEquals(1, $view->getAggregate('getAdView')->count());
     }
 
+    public function testImplode()
+    {
+        $aggregate = new EntryAggregate([
+            new Entry(['column' => 'value1']),
+            new Entry(['column' => 'value1']),
+            new Entry(['column' => 'value2']),
+        ]);
+
+        $implode = $aggregate->sum('column');
+
+        $this->assertEquals(['value1', 'value1', 'value2'], $implode);
+    }
+
     public function testExtract()
     {
         $aggregate = new EntryAggregate([

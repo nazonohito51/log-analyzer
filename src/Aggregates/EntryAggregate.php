@@ -54,6 +54,18 @@ class EntryAggregate implements \Countable, \IteratorAggregate
         return new View($key, $aggregates);
     }
 
+    public function sum($calc)
+    {
+        $ret = [];
+        foreach ($this->entries as $entry) {
+            if ($entry->haveProperty($calc)) {
+                $ret[] = $entry->{$calc};
+            }
+        }
+
+        return $ret;
+    }
+
     /**
      * Build new aggregator on entries satisfied with callable
      * @param callable $callable
