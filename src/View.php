@@ -30,9 +30,14 @@ class View implements \Countable
     {
         $table = new ConsoleTable();
 
-        $table->addHeader($this->columns);
-        foreach ($this->aggregates as $dimension_value => $aggregate) {
-            $table->addRow()->addColumn($dimension_value);
+        foreach ($this->columns as $column) {
+            $table->addHeader($column);
+        }
+        foreach ($this->toArray() as $row) {
+            $table->addRow();
+            foreach ($this->columns as $column) {
+                $table->addColumn($row[$column]);
+            }
         }
 
         $table->display();
