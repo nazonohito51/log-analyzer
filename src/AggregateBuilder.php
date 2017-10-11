@@ -24,6 +24,23 @@ class AggregateBuilder
         return $this;
     }
 
+    public function addLtsv($log_file_path, array $options = [])
+    {
+        $options['type'] = 'ltsv';
+        $this->log_files[] = new LogFile($log_file_path, $options);
+
+        return $this;
+    }
+
+    public function addApacheLog($log_file_path, array $options = [], $format = null)
+    {
+        $options['type'] = 'apache';
+        $options['format'] = isset($format) ? $format : null;
+        $this->log_files[] = new LogFile($log_file_path, $options);
+
+        return $this;
+    }
+
     public function build()
     {
         $entries = [];
