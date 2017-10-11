@@ -30,7 +30,7 @@ class EntryAggregateTest extends TestCase
         ]);
 
         $view = $aggregate->dimension('methodName', function (EntryInterface $entry) {
-            if (($xml = simplexml_load_string($entry->column)) !== false) {
+            if (($xml = simplexml_load_string($entry->get('column'))) !== false) {
                 return (string)$xml->methodName;
             }
 
@@ -63,7 +63,7 @@ class EntryAggregateTest extends TestCase
         ]);
 
         $implode = $aggregate->sum(function ($carry, EntryInterface $entry) {
-            $carry += $entry->column;
+            $carry += $entry->get('column');
             return $carry;
         });
 
@@ -79,7 +79,7 @@ class EntryAggregateTest extends TestCase
         ]);
 
         $new_aggregate = $aggregate->filter(function (EntryInterface $entry) {
-            return $entry->haveProperty('should_extract_key');
+            return $entry->have('should_extract_key');
         });
         $this->assertEquals(2, $new_aggregate->count());
     }

@@ -5,6 +5,7 @@ namespace LogAnalyzer;
 use Clover\Text\LTSV;
 use Kassner\LogParser\LogParser;
 use LogAnalyzer\Entries\Entry;
+use LogAnalyzer\Entries\EntryInterface;
 
 /**
  * @package LogAnalyzer
@@ -67,6 +68,9 @@ class LogFile
         return new Entry($iterable);
     }
 
+    /**
+     * @return EntryInterface[]
+     */
     public function getEntries()
     {
         $entries = [];

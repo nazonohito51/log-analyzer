@@ -12,8 +12,8 @@ class EntryTest extends TestCase
             'key2' => 'value2',
         ]);
 
-        $this->assertEquals('value1', $entry->key1);
-        $this->assertEquals('value2', $entry->key2);
-        $this->assertNull($entry->key3);
+        $this->assertEquals('value1', $entry->get('key1'));
+        $this->assertEquals('value2', $entry->get('key2'));
+        $this->assertNull($entry->get('key3'));
     }
 }

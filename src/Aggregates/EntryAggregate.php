@@ -33,13 +33,12 @@ class EntryAggregate implements \Countable, \IteratorAggregate
     {
         $dimension_entries = [];
         foreach ($this->entries as $entry) {
-
             if (!is_null($calc_dimension)) {
                 $dimension_value = $calc_dimension($entry);
                 $dimension_value = is_null($dimension_value) ? 'null' : $dimension_value;
                 $dimension_entries[$dimension_value][] = $entry;
-            } elseif ($entry->haveProperty($key)) {
-                $dimension_value = $entry->{$key};
+            } elseif ($entry->have($key)) {
+                $dimension_value = $entry->get($key);
                 $dimension_entries[$dimension_value][] = $entry;
             } else {
                 $dimension_entries['null'][] = $entry;
@@ -61,8 +60,8 @@ class EntryAggregate implements \Countable, \IteratorAggregate
         } elseif (is_string($calc)) {
             $ret = [];
             foreach ($this->entries as $entry) {
-                if ($entry->haveProperty($calc)) {
-                    $ret[] = $entry->{$calc};
+                if ($entry->have($calc)) {
+                    $ret[] = $entry->get($calc);
                 }
             }
         } else {

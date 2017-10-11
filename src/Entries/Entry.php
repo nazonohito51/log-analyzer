@@ -3,29 +3,29 @@ namespace LogAnalyzer\Entries;
 
 class Entry implements EntryInterface
 {
-    private $property = [];
+    private $data = [];
 
     public function __construct($iterable)
     {
         foreach ($iterable as $key => $value) {
-            $this->property[$key] = $value;
+            $this->data[$key] = $value;
         }
     }
 
-    public function haveProperty($property_name)
+    public function have($key)
     {
-        return isset($this->property[$property_name]) ? true : false;
+        return isset($this->data[$key]) ? true : false;
     }
 
-    public function getProperties()
+    public function keys()
     {
-        return array_keys($this->property);
+        return array_keys($this->data);
     }
 
-    public function __get($name)
+    public function get($key)
     {
-        if (isset($this->property[$name])) {
-            return $this->property[$name];
+        if (isset($this->data[$key])) {
+            return $this->data[$key];
         }
 
         return null;

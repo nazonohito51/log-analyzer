@@ -3,6 +3,23 @@ namespace LogAnalyzer\Entries;
 
 interface EntryInterface
 {
-    public function haveProperty($property_name);
-    public function getProperties();
+    /**
+     * check exist of key.
+     * @param $key
+     * @return bool
+     */
+    public function have($key);
+
+    /**
+     * get all keys.
+     * @return array
+     */
+    public function keys();
+
+    /**
+     * get data.
+     * @param $key
+     * @return mixed
+     */
+    public function get($key);
 }
