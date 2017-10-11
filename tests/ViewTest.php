@@ -59,6 +59,33 @@ class ViewTest extends TestCase
         ], $array);
     }
 
+    public function testToArrayUsingWhere()
+    {
+        $view = new View('dimension_name', [
+            'have_one' => new EntryAggregate([
+                new Entry(['dimension_name' => 'have_one'])
+            ]),
+            'have_two' => new EntryAggregate([
+                new Entry(['dimension_name' => 'have_two']),
+                new Entry(['dimension_name' => 'have_two']),
+            ]),
+            'have_three' => new EntryAggregate([
+                new Entry(['dimension_name' => 'have_three']),
+                new Entry(['dimension_name' => 'have_three']),
+                new Entry(['dimension_name' => 'have_three']),
+            ]),
+        ]);
+
+        $array = $view->toArray(null, function ($row) {
+            return ($row['Count'] >= 2);
+        });
+
+        $this->assertEquals([
+            ['dimension_name' => 'have_two', 'Count' => 2],
+            ['dimension_name' => 'have_three', 'Count' => 3],
+        ], $array);
+    }
+
     public function testAddColumn()
     {
         $view = new View('dimension_name', [
