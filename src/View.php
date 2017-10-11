@@ -8,6 +8,7 @@ class View implements \Countable
 {
     const COUNT_COLUMN = '_count';
 
+    private $dimension;
     private $columns;
 
     /**
@@ -17,6 +18,7 @@ class View implements \Countable
 
     public function __construct($dimension, array $aggregates)
     {
+        $this->dimension = $dimension;
         $this->columns[$dimension] = $dimension;
         $this->columns['Count'] = self::COUNT_COLUMN;
         $this->aggregates = $aggregates;
@@ -39,7 +41,11 @@ class View implements \Countable
         foreach ($this->toArray() as $row) {
             $table->addRow();
             foreach ($this->columns as $column_name => $calc_column) {
-                $table->addColumn($row[$column_name]);
+                if (is_array($row[$column_name])) {
+                    $table->addColumn(implode(', ', $row[$column_name]));
+                } else {
+                    $table->addColumn($row[$column_name]);
+                }
             }
         }
 
@@ -52,7 +58,9 @@ class View implements \Countable
         foreach ($this->aggregates as $dimension_value => $aggregate) {
             $row = [];
             foreach ($this->columns as $column_name => $calc_column) {
-                if ($calc_column == self::COUNT_COLUMN) {
+                if ($column_name == $this->dimension) {
+                    $row[$column_name] = $dimension_value;
+                } elseif ($calc_column == self::COUNT_COLUMN) {
                     $row[$column_name] = count($aggregate);
                 } elseif (is_callable($calc_column)) {
                     $row[$column_name] = $aggregate->sum($calc_column);
