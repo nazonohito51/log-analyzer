@@ -38,8 +38,8 @@ class View implements \Countable
         $sort = isset($options['sort']) ? $options['sort'] : null;
         $where = isset($options['where']) ? $options['where'] : null;
 
-        foreach ($this->columns as $column) {
-            $table->addHeader($column);
+        foreach ($this->columns as $column_name => $calc_column) {
+            $table->addHeader($column_name);
         }
         foreach ($this->toArray($sort, $where) as $row) {
             $table->addRow();
