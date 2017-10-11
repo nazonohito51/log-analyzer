@@ -38,8 +38,8 @@ class View implements \Countable
         }
         foreach ($this->toArray() as $row) {
             $table->addRow();
-            foreach ($this->columns as $column) {
-                $table->addColumn($row[$column]);
+            foreach ($this->columns as $column_name => $calc_column) {
+                $table->addColumn($row[$column_name]);
             }
         }
 
