@@ -1,6 +1,8 @@
 <?php
 namespace LogAnalyzer;
 
+use LogAnalyzer\Entries\Entry;
+
 class LogFileTest extends TestCase
 {
     public function testApacheLog()
@@ -35,5 +37,27 @@ class LogFileTest extends TestCase
         $this->assertEquals('2016-10-12 15:35:13', $entries[5]->get('date'));
         $this->assertEquals('2016-10-12 15:35:40', $entries[6]->get('date'));
         $this->assertEquals('2016-10-12 15:37:08', $entries[7]->get('date'));
+    }
+
+    public function testEntryClass()
+    {
+        $log_file = new LogFile($this->getFixturePath('log.ltsv'), [
+            'type' => 'ltsv',
+            'entry' => EntryMock::class
+        ]);
+        $entries = $log_file->getEntries();
+
+        $included_files = $entries[0]->getIncludedFiles();
+        $this->assertEquals('bootstrap/logging_included_files.php', $included_files[0]);
+        $this->assertEquals('public/index.php', $included_files[1]);
+        $this->assertEquals('public/conf/config.php', $included_files[2]);
+    }
+}
+
+class EntryMock extends Entry
+{
+    public function getIncludedFiles()
+    {
+        return explode(',', $this->get('included_files'));
     }
 }

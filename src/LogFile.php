@@ -38,7 +38,8 @@ class LogFile
             $this->type = $options['type'];
         }
         $this->options = [
-            'format' => isset($options['format']) ? $options['format'] : null
+            'entry' => isset($options['entry']) ? $options['entry'] : Entry::class,
+            'format' => isset($options['format']) ? $options['format'] : null,
         ];
 
         if ($this->type == 'apache') {
@@ -65,7 +66,7 @@ class LogFile
             throw new \LogicException('type is invalid.');
         }
 
-        return new Entry($iterable);
+        return new $this->options['entry']($iterable);
     }
 
     /**
