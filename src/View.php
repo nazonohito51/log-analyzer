@@ -6,6 +6,8 @@ use LucidFrame\Console\ConsoleTable;
 
 class View implements \Countable
 {
+    const COUNT_COLUMN = '_count';
+
     private $columns;
 
     /**
@@ -16,6 +18,7 @@ class View implements \Countable
     public function __construct($dimension, array $aggregates)
     {
         $this->columns[$dimension] = $dimension;
+        $this->columns['Count'] = self::COUNT_COLUMN;
         $this->aggregates = $aggregates;
     }
 
@@ -49,7 +52,9 @@ class View implements \Countable
         foreach ($this->aggregates as $dimension_value => $aggregate) {
             $row = [];
             foreach ($this->columns as $column_name => $calc_column) {
-                if (is_callable($calc_column)) {
+                if ($calc_column == self::COUNT_COLUMN) {
+                    $row[$column_name] = count($aggregate);
+                } elseif (is_callable($calc_column)) {
                     $row[$column_name] = $aggregate->sum($calc_column);
                 } else {
                     $row[$column_name] = array_unique($aggregate->sum($calc_column));
