@@ -18,7 +18,7 @@ class LogFile
     private $parser;
 
     private $file;
-    private $log_type;
+    private $type;
     private $options;
 
     /**
@@ -33,21 +33,21 @@ class LogFile
             throw new \InvalidArgumentException();
         }
 
-        $this->log_type = $this->file->getExtension() == 'ltsv' ? 'ltsv' : 'apache';
-        if (isset($options['log_type'])) {
-            $this->log_type = $options['log_type'];
+        $this->type = $this->file->getExtension() == 'ltsv' ? 'ltsv' : 'apache';
+        if (isset($options['type'])) {
+            $this->type = $options['type'];
         }
         $this->options = [
             'format' => isset($options['format']) ? $options['format'] : null
         ];
 
-        if ($this->log_type == 'apache') {
+        if ($this->type == 'apache') {
             $this->parser = new LogParser($this->options['format']);
             // $parser->setFormat('%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"');
-        } elseif ($this->log_type == 'ltsv') {
+        } elseif ($this->type == 'ltsv') {
             $this->parser = new LTSV();
         } else {
-            throw new \InvalidArgumentException('log_type is invalid.');
+            throw new \InvalidArgumentException('type is invalid.');
         }
     }
 
@@ -57,12 +57,12 @@ class LogFile
             return null;
         }
 
-        if ($this->log_type == 'apache') {
+        if ($this->type == 'apache') {
             $iterable = $this->parser->parse($line);
-        } elseif ($this->log_type == 'ltsv') {
+        } elseif ($this->type == 'ltsv') {
             $iterable = $this->parser->parseLine($line);
         } else {
-            throw new \LogicException('log_type is invalid.');
+            throw new \LogicException('type is invalid.');
         }
 
         return new Entry($iterable);

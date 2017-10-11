@@ -23,7 +23,7 @@ class LogFileTest extends TestCase
     public function testLtsvLog()
     {
         $log_file = new LogFile($this->getFixturePath('log.ltsv'), [
-            'log_type' => 'ltsv'
+            'type' => 'ltsv'
         ]);
         $entries = $log_file->getEntries();
 
