@@ -31,9 +31,10 @@ class View implements \Countable
         return $this;
     }
 
-    public function display()
+    public function display(array $options = [])
     {
         $table = new ConsoleTable();
+        $str_length = isset($options['length']) ? $options['length'] : null;
 
         foreach ($this->columns as $column) {
             $table->addHeader($column);
@@ -42,10 +43,14 @@ class View implements \Countable
             $table->addRow();
             foreach ($this->columns as $column_name => $calc_column) {
                 if (is_array($row[$column_name])) {
-                    $table->addColumn(implode(', ', $row[$column_name]));
+                    $column_value = implode(', ', $row[$column_name]);
                 } else {
-                    $table->addColumn($row[$column_name]);
+                    $column_value = $row[$column_name];
                 }
+
+                $trimmed_value = substr($column_value, 0 , $str_length);
+                $trimmed_value .= ($column_value != $trimmed_value) ? '...' : '';
+                $table->addColumn($trimmed_value);
             }
         }
 
