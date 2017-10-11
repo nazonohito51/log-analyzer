@@ -21,7 +21,42 @@ class ViewTest extends TestCase
 
         $array = $view->toArray();
 
-        $this->assertEquals([['dimension_name' => ['value1'], 'Count' => 2], ['dimension_name' => ['value2'], 'Count' => 1]], $array);
+        $this->assertEquals([
+            ['dimension_name' => 'value1', 'Count' => 2],
+            ['dimension_name' => 'value2', 'Count' => 1]
+        ], $array);
+    }
+
+    public function testToArrayUsingSort()
+    {
+        $view = new View('dimension_name', [
+            'have_one' => new EntryAggregate([
+                new Entry(['dimension_name' => 'have_one'])
+            ]),
+            'have_three' => new EntryAggregate([
+                new Entry(['dimension_name' => 'have_three']),
+                new Entry(['dimension_name' => 'have_three']),
+                new Entry(['dimension_name' => 'have_three']),
+            ]),
+            'have_two' => new EntryAggregate([
+                new Entry(['dimension_name' => 'have_two']),
+                new Entry(['dimension_name' => 'have_two']),
+            ]),
+        ]);
+
+        $array = $view->toArray(function ($a, $b) {
+            if ($a['Count'] == $b['Count']) {
+                return 0;
+            }
+
+            return ($a['Count'] < $b['Count']) ? 1 : -1;
+        });
+
+        $this->assertEquals([
+            ['dimension_name' => 'have_three', 'Count' => 3],
+            ['dimension_name' => 'have_two', 'Count' => 2],
+            ['dimension_name' => 'have_one', 'Count' => 1]
+        ], $array);
     }
 
     public function testAddColumn()

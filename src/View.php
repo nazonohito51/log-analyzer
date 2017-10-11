@@ -35,11 +35,12 @@ class View implements \Countable
     {
         $table = new ConsoleTable();
         $str_length = isset($options['length']) ? $options['length'] : null;
+        $sort = isset($options['sort']) ? $options['sort'] : null;
 
         foreach ($this->columns as $column) {
             $table->addHeader($column);
         }
-        foreach ($this->toArray() as $row) {
+        foreach ($this->toArray($sort) as $row) {
             $table->addRow();
             foreach ($this->columns as $column_name => $calc_column) {
                 if (is_array($row[$column_name])) {
@@ -57,7 +58,7 @@ class View implements \Countable
         $table->display();
     }
 
-    public function toArray()
+    public function toArray(callable $sort = null)
     {
         $ret = [];
         foreach ($this->aggregates as $dimension_value => $aggregate) {
@@ -74,6 +75,10 @@ class View implements \Countable
                 }
             }
             $ret[] = $row;
+        }
+
+        if ($sort) {
+            usort($ret, $sort);
         }
 
         return $ret;
