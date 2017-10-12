@@ -44,14 +44,7 @@ class View implements \Countable
         foreach ($this->toArray($sort, $where) as $row) {
             $table->addRow();
             foreach ($this->columns as $column_name => $calc_column) {
-                if (is_array($row[$column_name])) {
-                    $column_value = implode(', ', $row[$column_name]);
-                } else {
-                    $column_value = $row[$column_name];
-                }
-
-                $trimmed_value = substr($column_value, 0 , $str_length);
-                $trimmed_value .= ($column_value != $trimmed_value) ? '...' : '';
+                $trimmed_value = $this->formatColumnValue($row[$column_name], $str_length);
                 $table->addColumn($trimmed_value);
             }
         }
@@ -97,5 +90,23 @@ class View implements \Countable
     public function getAggregate($dimension_value)
     {
         return isset($this->aggregates[$dimension_value]) ? $this->aggregates[$dimension_value] : null;
+    }
+
+    /**
+     * @param string|array $column_value
+     * @param int $str_length
+     * @return bool|string
+     */
+    private function formatColumnValue($column_value, $str_length = null)
+    {
+        if (is_array($column_value)) {
+            $column_value = implode(', ', $column_value);
+        }
+
+        if ($str_length && strlen($column_value) > $str_length) {
+            $column_value = substr($column_value, 0, $str_length) . '...';
+        }
+
+        return $column_value;
     }
 }
