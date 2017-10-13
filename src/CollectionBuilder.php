@@ -3,7 +3,7 @@ namespace LogAnalyzer;
 
 use LogAnalyzer\Aggregates\Collection;
 
-class AggregateBuilder
+class CollectionBuilder
 {
     /**
      * @var LogFile[]

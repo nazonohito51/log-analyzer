@@ -5,7 +5,7 @@ class AggregateBuilderTest extends TestCase
 {
     public function testCount()
     {
-        $builder = new AggregateBuilder();
+        $builder = new CollectionBuilder();
         $builder->addLtsv($this->getFixturePath('log.ltsv'));
         $aggregator = $builder->build();
 
