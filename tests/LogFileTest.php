@@ -18,7 +18,7 @@ class LogFileTest extends TestCase
         $this->assertEquals('93.158.152.5', $items[3]->get('host'));
         $this->assertEquals('133.130.35.34', $items[4]->get('host'));
         $this->assertEquals('133.130.35.35', $items[5]->get('host'));
-        $this->assertEquals('66.249.79.82', $items[6]->get('host'));
+        $this->assertEquals('93.158.152.5', $items[6]->get('host'));
         $this->assertEquals('66.249.79.82', $items[7]->get('host'));
     }
 
@@ -48,9 +48,9 @@ class LogFileTest extends TestCase
         $items = $log_file->getItems();
 
         $included_files = $items[0]->getIncludedFiles();
-        $this->assertEquals('bootstrap/logging_included_files.php', $included_files[0]);
+        $this->assertEquals('bootstrap/autoload.php', $included_files[0]);
         $this->assertEquals('public/index.php', $included_files[1]);
-        $this->assertEquals('public/conf/config.php', $included_files[2]);
+        $this->assertEquals('app/Http/routes.php', $included_files[2]);
     }
 }
 
