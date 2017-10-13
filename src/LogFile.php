@@ -4,7 +4,7 @@ namespace LogAnalyzer;
 
 use Clover\Text\LTSV;
 use Kassner\LogParser\LogParser;
-use LogAnalyzer\Entries\Entry;
+use LogAnalyzer\Entries\Item;
 use LogAnalyzer\Entries\EntryInterface;
 
 /**
@@ -38,7 +38,7 @@ class LogFile
             $this->type = $options['type'];
         }
         $this->options = [
-            'entry' => isset($options['entry']) ? $options['entry'] : Entry::class,
+            'entry' => isset($options['entry']) ? $options['entry'] : Item::class,
             'format' => isset($options['format']) ? $options['format'] : null,
         ];
 

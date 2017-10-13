@@ -2,7 +2,7 @@
 namespace LogAnalyzer;
 
 use LogAnalyzer\Aggregates\Collection;
-use LogAnalyzer\Entries\Entry;
+use LogAnalyzer\Entries\Item;
 use LogAnalyzer\Entries\EntryInterface;
 
 class ViewTest extends TestCase
@@ -11,11 +11,11 @@ class ViewTest extends TestCase
     {
         $view = new View('dimension_name', [
             'value1' => new Collection([
-                new Entry(['dimension_name' => 'value1']),
-                new Entry(['dimension_name' => 'value1']),
+                new Item(['dimension_name' => 'value1']),
+                new Item(['dimension_name' => 'value1']),
             ]),
             'value2' => new Collection([
-                new Entry(['dimension_name' => 'value2'])
+                new Item(['dimension_name' => 'value2'])
             ])
         ]);
 
@@ -31,16 +31,16 @@ class ViewTest extends TestCase
     {
         $view = new View('dimension_name', [
             'have_one' => new Collection([
-                new Entry(['dimension_name' => 'have_one'])
+                new Item(['dimension_name' => 'have_one'])
             ]),
             'have_three' => new Collection([
-                new Entry(['dimension_name' => 'have_three']),
-                new Entry(['dimension_name' => 'have_three']),
-                new Entry(['dimension_name' => 'have_three']),
+                new Item(['dimension_name' => 'have_three']),
+                new Item(['dimension_name' => 'have_three']),
+                new Item(['dimension_name' => 'have_three']),
             ]),
             'have_two' => new Collection([
-                new Entry(['dimension_name' => 'have_two']),
-                new Entry(['dimension_name' => 'have_two']),
+                new Item(['dimension_name' => 'have_two']),
+                new Item(['dimension_name' => 'have_two']),
             ]),
         ]);
 
@@ -63,16 +63,16 @@ class ViewTest extends TestCase
     {
         $view = new View('dimension_name', [
             'have_one' => new Collection([
-                new Entry(['dimension_name' => 'have_one'])
+                new Item(['dimension_name' => 'have_one'])
             ]),
             'have_two' => new Collection([
-                new Entry(['dimension_name' => 'have_two']),
-                new Entry(['dimension_name' => 'have_two']),
+                new Item(['dimension_name' => 'have_two']),
+                new Item(['dimension_name' => 'have_two']),
             ]),
             'have_three' => new Collection([
-                new Entry(['dimension_name' => 'have_three']),
-                new Entry(['dimension_name' => 'have_three']),
-                new Entry(['dimension_name' => 'have_three']),
+                new Item(['dimension_name' => 'have_three']),
+                new Item(['dimension_name' => 'have_three']),
+                new Item(['dimension_name' => 'have_three']),
             ]),
         ]);
 
@@ -90,11 +90,11 @@ class ViewTest extends TestCase
     {
         $view = new View('dimension_name', [
             'value1' => new Collection([
-                new Entry(['dimension_name' => 'value1', 'other_property' => '1']),
-                new Entry(['dimension_name' => 'value1', 'other_property' => '2']),
+                new Item(['dimension_name' => 'value1', 'other_property' => '1']),
+                new Item(['dimension_name' => 'value1', 'other_property' => '2']),
             ]),
             'value2' => new Collection([
-                new Entry(['dimension_name' => 'value2', 'other_property' => '3'])
+                new Item(['dimension_name' => 'value2', 'other_property' => '3'])
             ])
         ]);
 
@@ -108,11 +108,11 @@ class ViewTest extends TestCase
     {
         $view = new View('dimension_name', [
             'value1' => new Collection([
-                new Entry(['dimension_name' => 'value1', 'other_property' => '1']),
-                new Entry(['dimension_name' => 'value1', 'other_property' => '2']),
+                new Item(['dimension_name' => 'value1', 'other_property' => '1']),
+                new Item(['dimension_name' => 'value1', 'other_property' => '2']),
             ]),
             'value2' => new Collection([
-                new Entry(['dimension_name' => 'value2', 'other_property' => '6'])
+                new Item(['dimension_name' => 'value2', 'other_property' => '6'])
             ])
         ]);
 

@@ -7,7 +7,7 @@ class EntryTest extends TestCase
 {
     public function testAttributeAccess()
     {
-        $entry = new Entry([
+        $entry = new Item([
             'key1' => 'value1',
             'key2' => 'value2',
         ]);

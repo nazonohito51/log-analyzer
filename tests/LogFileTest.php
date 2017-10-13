@@ -1,7 +1,7 @@
 <?php
 namespace LogAnalyzer;
 
-use LogAnalyzer\Entries\Entry;
+use LogAnalyzer\Entries\Item;
 
 class LogFileTest extends TestCase
 {
@@ -43,7 +43,7 @@ class LogFileTest extends TestCase
     {
         $log_file = new LogFile($this->getFixturePath('log.ltsv'), [
             'type' => 'ltsv',
-            'entry' => EntryMock::class
+            'entry' => ItemMock::class
         ]);
         $entries = $log_file->getEntries();
 
@@ -54,7 +54,7 @@ class LogFileTest extends TestCase
     }
 }
 
-class EntryMock extends Entry
+class ItemMock extends Item
 {
     public function getIncludedFiles()
     {
