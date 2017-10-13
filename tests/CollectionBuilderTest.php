@@ -1,7 +1,7 @@
 <?php
 namespace LogAnalyzer;
 
-class AggregateBuilderTest extends TestCase
+class CollectionBuilderTest extends TestCase
 {
     public function testCount()
     {

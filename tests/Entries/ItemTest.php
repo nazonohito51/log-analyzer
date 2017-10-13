@@ -3,7 +3,7 @@ namespace LogAnalyzer\Entries;
 
 use PHPUnit\Framework\TestCase;
 
-class EntryTest extends TestCase
+class ItemTest extends TestCase
 {
     public function testAttributeAccess()
     {
