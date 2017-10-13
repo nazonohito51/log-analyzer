@@ -1,7 +1,7 @@
 <?php
 namespace LogAnalyzer;
 
-use LogAnalyzer\Aggregates\EntryAggregate;
+use LogAnalyzer\Aggregates\Collection;
 use LogAnalyzer\Entries\Entry;
 use LogAnalyzer\Entries\EntryInterface;
 
@@ -10,11 +10,11 @@ class ViewTest extends TestCase
     public function testToArray()
     {
         $view = new View('dimension_name', [
-            'value1' => new EntryAggregate([
+            'value1' => new Collection([
                 new Entry(['dimension_name' => 'value1']),
                 new Entry(['dimension_name' => 'value1']),
             ]),
-            'value2' => new EntryAggregate([
+            'value2' => new Collection([
                 new Entry(['dimension_name' => 'value2'])
             ])
         ]);
@@ -30,15 +30,15 @@ class ViewTest extends TestCase
     public function testToArrayUsingSort()
     {
         $view = new View('dimension_name', [
-            'have_one' => new EntryAggregate([
+            'have_one' => new Collection([
                 new Entry(['dimension_name' => 'have_one'])
             ]),
-            'have_three' => new EntryAggregate([
+            'have_three' => new Collection([
                 new Entry(['dimension_name' => 'have_three']),
                 new Entry(['dimension_name' => 'have_three']),
                 new Entry(['dimension_name' => 'have_three']),
             ]),
-            'have_two' => new EntryAggregate([
+            'have_two' => new Collection([
                 new Entry(['dimension_name' => 'have_two']),
                 new Entry(['dimension_name' => 'have_two']),
             ]),
@@ -62,14 +62,14 @@ class ViewTest extends TestCase
     public function testToArrayUsingWhere()
     {
         $view = new View('dimension_name', [
-            'have_one' => new EntryAggregate([
+            'have_one' => new Collection([
                 new Entry(['dimension_name' => 'have_one'])
             ]),
-            'have_two' => new EntryAggregate([
+            'have_two' => new Collection([
                 new Entry(['dimension_name' => 'have_two']),
                 new Entry(['dimension_name' => 'have_two']),
             ]),
-            'have_three' => new EntryAggregate([
+            'have_three' => new Collection([
                 new Entry(['dimension_name' => 'have_three']),
                 new Entry(['dimension_name' => 'have_three']),
                 new Entry(['dimension_name' => 'have_three']),
@@ -89,11 +89,11 @@ class ViewTest extends TestCase
     public function testAddColumn()
     {
         $view = new View('dimension_name', [
-            'value1' => new EntryAggregate([
+            'value1' => new Collection([
                 new Entry(['dimension_name' => 'value1', 'other_property' => '1']),
                 new Entry(['dimension_name' => 'value1', 'other_property' => '2']),
             ]),
-            'value2' => new EntryAggregate([
+            'value2' => new Collection([
                 new Entry(['dimension_name' => 'value2', 'other_property' => '3'])
             ])
         ]);
@@ -107,11 +107,11 @@ class ViewTest extends TestCase
     public function testAddColumnByClosure()
     {
         $view = new View('dimension_name', [
-            'value1' => new EntryAggregate([
+            'value1' => new Collection([
                 new Entry(['dimension_name' => 'value1', 'other_property' => '1']),
                 new Entry(['dimension_name' => 'value1', 'other_property' => '2']),
             ]),
-            'value2' => new EntryAggregate([
+            'value2' => new Collection([
                 new Entry(['dimension_name' => 'value2', 'other_property' => '6'])
             ])
         ]);

@@ -5,17 +5,17 @@ use LogAnalyzer\Entries\Entry;
 use LogAnalyzer\Entries\EntryInterface;
 use LogAnalyzer\TestCase;
 
-class EntryAggregateTest extends TestCase
+class CollectionTest extends TestCase
 {
     public function testDimension()
     {
-        $aggregate = new EntryAggregate([
+        $collection = new Collection([
             new Entry(['column' => 'value1']),
             new Entry(['column' => 'value1']),
             new Entry(['column' => 'value2']),
         ]);
 
-        $view = $aggregate->dimension('column');
+        $view = $collection->dimension('column');
         $this->assertEquals(2, $view->count());
         $this->assertEquals(2, $view->getAggregate('value1')->count());
         $this->assertEquals(1, $view->getAggregate('value2')->count());
@@ -23,13 +23,13 @@ class EntryAggregateTest extends TestCase
 
     public function testDimensionByClosure()
     {
-        $aggregate = new EntryAggregate([
+        $collection = new Collection([
             new Entry(['column' => '<methodCall><methodName>getBlogInfo</methodName><params><param>111</param></params></methodCall>']),
             new Entry(['column' => '<methodCall><methodName>getAdView</methodName><params><param>account</param></params></methodCall>']),
             new Entry(['column' => '<methodCall><methodName>getBlogInfo</methodName><params><param>222</param></params></methodCall>']),
         ]);
 
-        $view = $aggregate->dimension('methodName', function (EntryInterface $entry) {
+        $view = $collection->dimension('methodName', function (EntryInterface $entry) {
             if (($xml = simplexml_load_string($entry->get('column'))) !== false) {
                 return (string)$xml->methodName;
             }
@@ -43,26 +43,26 @@ class EntryAggregateTest extends TestCase
 
     public function testImplode()
     {
-        $aggregate = new EntryAggregate([
+        $collection = new Collection([
             new Entry(['column' => 'value1']),
             new Entry(['column' => 'value1']),
             new Entry(['column' => 'value2']),
         ]);
 
-        $implode = $aggregate->sum('column');
+        $implode = $collection->sum('column');
 
         $this->assertEquals(['value1', 'value1', 'value2'], $implode);
     }
 
     public function testImplodeByClosure()
     {
-        $aggregate = new EntryAggregate([
+        $collection = new Collection([
             new Entry(['column' => '1']),
             new Entry(['column' => '2']),
             new Entry(['column' => '3']),
         ]);
 
-        $implode = $aggregate->sum(function ($carry, EntryInterface $entry) {
+        $implode = $collection->sum(function ($carry, EntryInterface $entry) {
             $carry += $entry->get('column');
             return $carry;
         });
@@ -72,13 +72,13 @@ class EntryAggregateTest extends TestCase
 
     public function testExtract()
     {
-        $aggregate = new EntryAggregate([
+        $collection = new Collection([
             new Entry(['column' => 'value1', 'should_extract_key' => 1]),
             new Entry(['column' => 'value2']),
             new Entry(['column' => 'value3', 'should_extract_key' => 1]),
         ]);
 
-        $new_aggregate = $aggregate->filter(function (EntryInterface $entry) {
+        $new_aggregate = $collection->filter(function (EntryInterface $entry) {
             return $entry->have('should_extract_key');
         });
         $this->assertEquals(2, $new_aggregate->count());

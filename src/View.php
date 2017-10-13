@@ -1,7 +1,7 @@
 <?php
 namespace LogAnalyzer;
 
-use LogAnalyzer\Aggregates\EntryAggregate;
+use LogAnalyzer\Aggregates\Collection;
 use LucidFrame\Console\ConsoleTable;
 
 class View implements \Countable
@@ -12,7 +12,7 @@ class View implements \Countable
     private $columns;
 
     /**
-     * @var EntryAggregate[]
+     * @var Collection[]
      */
     private $aggregates;
 

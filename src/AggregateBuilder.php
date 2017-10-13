@@ -1,7 +1,7 @@
 <?php
 namespace LogAnalyzer;
 
-use LogAnalyzer\Aggregates\EntryAggregate;
+use LogAnalyzer\Aggregates\Collection;
 
 class AggregateBuilder
 {
@@ -50,6 +50,6 @@ class AggregateBuilder
             }
         }
 
-        return new EntryAggregate($entries);
+        return new Collection($entries);
     }
 }

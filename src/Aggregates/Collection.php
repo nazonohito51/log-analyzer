@@ -4,7 +4,7 @@ namespace LogAnalyzer\Aggregates;
 use LogAnalyzer\Entries\EntryInterface;
 use LogAnalyzer\View;
 
-class EntryAggregate implements \Countable, \IteratorAggregate
+class Collection implements \Countable, \IteratorAggregate
 {
     /**
      * @var EntryInterface[]
@@ -45,12 +45,12 @@ class EntryAggregate implements \Countable, \IteratorAggregate
             }
         }
 
-        $aggregates = [];
+        $collection = [];
         foreach ($dimension_entries as $dimension_value => $entries) {
-            $aggregates[$dimension_value] = new self($entries);
+            $collection[$dimension_value] = new self($entries);
         }
 
-        return new View($key, $aggregates);
+        return new View($key, $collection);
     }
 
     public function sum($calc)
@@ -72,9 +72,9 @@ class EntryAggregate implements \Countable, \IteratorAggregate
     }
 
     /**
-     * Build new aggregator on entries satisfied with callable
+     * Build new collection on entries satisfied with callable
      * @param callable $callable
-     * @return EntryAggregate
+     * @return Collection
      */
     public function filter(callable $callable)
     {
