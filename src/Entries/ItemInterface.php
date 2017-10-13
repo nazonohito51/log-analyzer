@@ -1,7 +1,7 @@
 <?php
 namespace LogAnalyzer\Entries;
 
-interface EntryInterface
+interface ItemInterface
 {
     /**
      * check exist of key.

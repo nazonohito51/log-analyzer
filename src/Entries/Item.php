@@ -1,7 +1,7 @@
 <?php
 namespace LogAnalyzer\Entries;
 
-class Item implements EntryInterface
+class Item implements ItemInterface
 {
     private $data = [];
 

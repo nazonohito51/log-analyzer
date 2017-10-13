@@ -5,7 +5,7 @@ namespace LogAnalyzer;
 use Clover\Text\LTSV;
 use Kassner\LogParser\LogParser;
 use LogAnalyzer\Entries\Item;
-use LogAnalyzer\Entries\EntryInterface;
+use LogAnalyzer\Entries\ItemInterface;
 
 /**
  * @package LogAnalyzer
@@ -70,7 +70,7 @@ class LogFile
     }
 
     /**
-     * @return EntryInterface[]
+     * @return ItemInterface[]
      */
     public function getEntries()
     {

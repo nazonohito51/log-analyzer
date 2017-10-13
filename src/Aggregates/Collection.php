@@ -1,18 +1,18 @@
 <?php
 namespace LogAnalyzer\Aggregates;
 
-use LogAnalyzer\Entries\EntryInterface;
+use LogAnalyzer\Entries\ItemInterface;
 use LogAnalyzer\View;
 
 class Collection implements \Countable, \IteratorAggregate
 {
     /**
-     * @var EntryInterface[]
+     * @var ItemInterface[]
      */
     private $entries;
 
     /**
-     * @param EntryInterface[] $entries
+     * @param ItemInterface[] $entries
      */
     public function __construct(array $entries)
     {

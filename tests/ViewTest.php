@@ -3,7 +3,7 @@ namespace LogAnalyzer;
 
 use LogAnalyzer\Aggregates\Collection;
 use LogAnalyzer\Entries\Item;
-use LogAnalyzer\Entries\EntryInterface;
+use LogAnalyzer\Entries\ItemInterface;
 
 class ViewTest extends TestCase
 {
@@ -116,7 +116,7 @@ class ViewTest extends TestCase
             ])
         ]);
 
-        $array = $view->addColumn('other_property', function ($carry, EntryInterface $entry) {
+        $array = $view->addColumn('other_property', function ($carry, ItemInterface $entry) {
             $carry += $entry->get('other_property');
             return $carry;
         })->toArray();
