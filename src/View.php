@@ -100,7 +100,11 @@ class View implements \Countable
     private function formatColumnValue($column_value, $str_length = null)
     {
         if (is_array($column_value)) {
-            $column_value = implode(', ', $column_value);
+            if (count($column_value) > 1) {
+                $column_value = '[' . implode(', ', $column_value) . ']';
+            } else {
+                $column_value = $column_value[0];
+            }
         }
 
         if ($str_length && strlen($column_value) > $str_length) {
