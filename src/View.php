@@ -14,14 +14,14 @@ class View implements \Countable
     /**
      * @var Collection[]
      */
-    private $aggregates;
+    private $collections;
 
-    public function __construct($dimension, array $aggregates)
+    public function __construct($dimension, array $collections)
     {
         $this->dimension = $dimension;
         $this->columns[$dimension] = $dimension;
         $this->columns['Count'] = self::COUNT_COLUMN;
-        $this->aggregates = $aggregates;
+        $this->collections = $collections;
     }
 
     public function addColumn($column_name, callable $calc_column = null)
@@ -55,17 +55,17 @@ class View implements \Countable
     public function toArray(callable $sort = null, callable $where = null)
     {
         $ret = [];
-        foreach ($this->aggregates as $dimension_value => $aggregate) {
+        foreach ($this->collections as $dimension_value => $collection) {
             $row = [];
             foreach ($this->columns as $column_name => $calc_column) {
                 if ($column_name == $this->dimension) {
                     $row[$column_name] = $dimension_value;
                 } elseif ($calc_column == self::COUNT_COLUMN) {
-                    $row[$column_name] = count($aggregate);
+                    $row[$column_name] = count($collection);
                 } elseif (is_callable($calc_column)) {
-                    $row[$column_name] = $aggregate->sum($calc_column);
+                    $row[$column_name] = $collection->sum($calc_column);
                 } else {
-                    $row[$column_name] = array_unique($aggregate->sum($calc_column));
+                    $row[$column_name] = array_unique($collection->sum($calc_column));
                 }
             }
             $ret[] = $row;
@@ -84,12 +84,12 @@ class View implements \Countable
 
     public function count()
     {
-        return count($this->aggregates);
+        return count($this->collections);
     }
 
-    public function getAggregate($dimension_value)
+    public function getCollection($dimension_value)
     {
-        return isset($this->aggregates[$dimension_value]) ? $this->aggregates[$dimension_value] : null;
+        return isset($this->collections[$dimension_value]) ? $this->collections[$dimension_value] : null;
     }
 
     /**

@@ -15,8 +15,8 @@ class CollectionTest extends TestCase
 
         $view = $collection->dimension('column');
         $this->assertEquals(2, $view->count());
-        $this->assertEquals(2, $view->getAggregate('value1')->count());
-        $this->assertEquals(1, $view->getAggregate('value2')->count());
+        $this->assertEquals(2, $view->getCollection('value1')->count());
+        $this->assertEquals(1, $view->getCollection('value2')->count());
     }
 
     public function testDimensionByClosure()
@@ -35,8 +35,8 @@ class CollectionTest extends TestCase
             return null;
         });
         $this->assertEquals(2, $view->count());
-        $this->assertEquals(2, $view->getAggregate('getBlogInfo')->count());
-        $this->assertEquals(1, $view->getAggregate('getAdView')->count());
+        $this->assertEquals(2, $view->getCollection('getBlogInfo')->count());
+        $this->assertEquals(1, $view->getCollection('getAdView')->count());
     }
 
     public function testImplode()
@@ -76,9 +76,9 @@ class CollectionTest extends TestCase
             new Item(['column' => 'value3', 'should_extract_key' => 1]),
         ]);
 
-        $new_aggregate = $collection->filter(function (ItemInterface $item) {
+        $new_collection = $collection->filter(function (ItemInterface $item) {
             return $item->have('should_extract_key');
         });
-        $this->assertEquals(2, $new_aggregate->count());
+        $this->assertEquals(2, $new_collection->count());
     }
 }
