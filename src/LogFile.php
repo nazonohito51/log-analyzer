@@ -38,7 +38,7 @@ class LogFile
             $this->type = $options['type'];
         }
         $this->options = [
-            'entry' => isset($options['entry']) ? $options['entry'] : Item::class,
+            'item' => isset($options['item']) ? $options['item'] : Item::class,
             'format' => isset($options['format']) ? $options['format'] : null,
         ];
 
@@ -52,7 +52,7 @@ class LogFile
         }
     }
 
-    public function getEntry()
+    public function getItem()
     {
         if (is_null($line = $this->getValidLine())) {
             return null;
@@ -66,21 +66,21 @@ class LogFile
             throw new \LogicException('type is invalid.');
         }
 
-        return new $this->options['entry']($iterable);
+        return new $this->options['item']($iterable);
     }
 
     /**
      * @return ItemInterface[]
      */
-    public function getEntries()
+    public function getItems()
     {
-        $entries = [];
+        $items = [];
 
-        while (!is_null($entry = $this->getEntry())) {
-            $entries[] = $entry;
+        while (!is_null($item = $this->getItem())) {
+            $items[] = $item;
         }
 
-        return $entries;
+        return $items;
     }
 
     /**

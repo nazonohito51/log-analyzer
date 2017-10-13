@@ -9,19 +9,19 @@ class Collection implements \Countable, \IteratorAggregate
     /**
      * @var ItemInterface[]
      */
-    private $entries;
+    private $items;
 
     /**
-     * @param ItemInterface[] $entries
+     * @param ItemInterface[] $items
      */
-    public function __construct(array $entries)
+    public function __construct(array $items)
     {
-        $this->entries = $entries;
+        $this->items = $items;
     }
 
     public function count()
     {
-        return count($this->entries);
+        return count($this->items);
     }
 
     /**
@@ -31,23 +31,23 @@ class Collection implements \Countable, \IteratorAggregate
      */
     public function dimension($key, callable $calc_dimension = null)
     {
-        $dimension_entries = [];
-        foreach ($this->entries as $entry) {
+        $dimension_items = [];
+        foreach ($this->items as $item) {
             if (!is_null($calc_dimension)) {
-                $dimension_value = $calc_dimension($entry);
+                $dimension_value = $calc_dimension($item);
                 $dimension_value = is_null($dimension_value) ? 'null' : $dimension_value;
-                $dimension_entries[$dimension_value][] = $entry;
-            } elseif ($entry->have($key)) {
-                $dimension_value = $entry->get($key);
-                $dimension_entries[$dimension_value][] = $entry;
+                $dimension_items[$dimension_value][] = $item;
+            } elseif ($item->have($key)) {
+                $dimension_value = $item->get($key);
+                $dimension_items[$dimension_value][] = $item;
             } else {
-                $dimension_entries['null'][] = $entry;
+                $dimension_items['null'][] = $item;
             }
         }
 
         $collection = [];
-        foreach ($dimension_entries as $dimension_value => $entries) {
-            $collection[$dimension_value] = new self($entries);
+        foreach ($dimension_items as $dimension_value => $items) {
+            $collection[$dimension_value] = new self($items);
         }
 
         return new View($key, $collection);
@@ -56,12 +56,12 @@ class Collection implements \Countable, \IteratorAggregate
     public function sum($calc)
     {
         if (is_callable($calc)) {
-            $ret = array_reduce($this->entries, $calc);
+            $ret = array_reduce($this->items, $calc);
         } elseif (is_string($calc)) {
             $ret = [];
-            foreach ($this->entries as $entry) {
-                if ($entry->have($calc)) {
-                    $ret[] = $entry->get($calc);
+            foreach ($this->items as $item) {
+                if ($item->have($calc)) {
+                    $ret[] = $item->get($calc);
                 }
             }
         } else {
@@ -72,24 +72,24 @@ class Collection implements \Countable, \IteratorAggregate
     }
 
     /**
-     * Build new collection on entries satisfied with callable
+     * Build new collection on items satisfied with callable
      * @param callable $callable
      * @return Collection
      */
     public function filter(callable $callable)
     {
-        $entries = [];
-        foreach ($this->entries as $entry) {
-            if ($callable($entry) === true) {
-                $entries[] = $entry;
+        $items = [];
+        foreach ($this->items as $item) {
+            if ($callable($item) === true) {
+                $items[] = $item;
             }
         }
 
-        return new self($entries);
+        return new self($items);
     }
 
     public function getIterator()
     {
-        return new \ArrayIterator($this->entries);
+        return new \ArrayIterator($this->items);
     }
 }

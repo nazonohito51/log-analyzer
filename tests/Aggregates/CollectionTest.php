@@ -29,8 +29,8 @@ class CollectionTest extends TestCase
             new Item(['column' => '<methodCall><methodName>getBlogInfo</methodName><params><param>222</param></params></methodCall>']),
         ]);
 
-        $view = $collection->dimension('methodName', function (ItemInterface $entry) {
-            if (($xml = simplexml_load_string($entry->get('column'))) !== false) {
+        $view = $collection->dimension('methodName', function (ItemInterface $item) {
+            if (($xml = simplexml_load_string($item->get('column'))) !== false) {
                 return (string)$xml->methodName;
             }
 
@@ -62,8 +62,8 @@ class CollectionTest extends TestCase
             new Item(['column' => '3']),
         ]);
 
-        $implode = $collection->sum(function ($carry, ItemInterface $entry) {
-            $carry += $entry->get('column');
+        $implode = $collection->sum(function ($carry, ItemInterface $item) {
+            $carry += $item->get('column');
             return $carry;
         });
 
@@ -78,8 +78,8 @@ class CollectionTest extends TestCase
             new Item(['column' => 'value3', 'should_extract_key' => 1]),
         ]);
 
-        $new_aggregate = $collection->filter(function (ItemInterface $entry) {
-            return $entry->have('should_extract_key');
+        $new_aggregate = $collection->filter(function (ItemInterface $item) {
+            return $item->have('should_extract_key');
         });
         $this->assertEquals(2, $new_aggregate->count());
     }

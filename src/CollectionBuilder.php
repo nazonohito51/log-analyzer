@@ -43,13 +43,13 @@ class CollectionBuilder
 
     public function build()
     {
-        $entries = [];
+        $items = [];
         foreach ($this->log_files as $log_file) {
-            while ($entry = $log_file->getEntry()) {
-                $entries[] = $entry;
+            while ($item = $log_file->getItem()) {
+                $items[] = $item;
             }
         }
 
-        return new Collection($entries);
+        return new Collection($items);
     }
 }

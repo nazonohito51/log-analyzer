@@ -116,8 +116,8 @@ class ViewTest extends TestCase
             ])
         ]);
 
-        $array = $view->addColumn('other_property', function ($carry, ItemInterface $entry) {
-            $carry += $entry->get('other_property');
+        $array = $view->addColumn('other_property', function ($carry, ItemInterface $item) {
+            $carry += $item->get('other_property');
             return $carry;
         })->toArray();
 
