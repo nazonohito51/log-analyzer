@@ -1,7 +1,7 @@
 <?php
 namespace LogAnalyzer;
 
-use LogAnalyzer\Entries\Item;
+use LogAnalyzer\Items\Item;
 
 class LogFileTest extends TestCase
 {

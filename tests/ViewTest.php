@@ -1,9 +1,9 @@
 <?php
 namespace LogAnalyzer;
 
-use LogAnalyzer\Aggregates\Collection;
-use LogAnalyzer\Entries\Item;
-use LogAnalyzer\Entries\ItemInterface;
+use LogAnalyzer\Items\Collection;
+use LogAnalyzer\Items\Item;
+use LogAnalyzer\Items\ItemInterface;
 
 class ViewTest extends TestCase
 {

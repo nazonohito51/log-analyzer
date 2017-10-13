@@ -1,8 +1,6 @@
 <?php
-namespace LogAnalyzer\Aggregates;
+namespace LogAnalyzer\Items;
 
-use LogAnalyzer\Entries\Item;
-use LogAnalyzer\Entries\ItemInterface;
 use LogAnalyzer\TestCase;
 
 class CollectionTest extends TestCase

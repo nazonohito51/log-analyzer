@@ -1,7 +1,7 @@
 <?php
 namespace LogAnalyzer;
 
-use LogAnalyzer\Aggregates\Collection;
+use LogAnalyzer\Items\Collection;
 use LucidFrame\Console\ConsoleTable;
 
 class View implements \Countable

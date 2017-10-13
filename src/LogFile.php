@@ -4,8 +4,8 @@ namespace LogAnalyzer;
 
 use Clover\Text\LTSV;
 use Kassner\LogParser\LogParser;
-use LogAnalyzer\Entries\Item;
-use LogAnalyzer\Entries\ItemInterface;
+use LogAnalyzer\Items\Item;
+use LogAnalyzer\Items\ItemInterface;
 
 /**
  * @package LogAnalyzer

@@ -1,7 +1,7 @@
 <?php
-namespace LogAnalyzer\Aggregates;
+namespace LogAnalyzer\Items;
 
-use LogAnalyzer\Entries\ItemInterface;
+use LogAnalyzer\Items\ItemInterface;
 use LogAnalyzer\View;
 
 class Collection implements \Countable, \IteratorAggregate
@@ -12,7 +12,7 @@ class Collection implements \Countable, \IteratorAggregate
     private $items;
 
     /**
-     * @param ItemInterface[] $items
+     * @param \LogAnalyzer\Items\ItemInterface[] $items
      */
     public function __construct(array $items)
     {
