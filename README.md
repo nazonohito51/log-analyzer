@@ -5,7 +5,6 @@ You can specify dimensions as log data keys or calculate programmable.
 If you want more detailed analysis, you can analyze recursively.
 
 ## Usage
-
 Simple usage.
 
 ```php
