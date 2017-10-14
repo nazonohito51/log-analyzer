@@ -1,4 +1,14 @@
 {
+  "name": "nazonohito51/LogAnalyzer",
+  "description": "Analyze log files.(apache access log/ltsv)",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "kawashima",
+      "email": "nazonohito51@gmail.com"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "LogAnalyzer\\": "src/"
