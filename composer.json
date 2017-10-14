@@ -1,5 +1,5 @@
 {
-  "name": "nazonohito51/LogAnalyzer",
+  "name": "nazonohito51/log-analyzer",
   "description": "Analyze log files.(apache access log/ltsv)",
   "type": "library",
   "license": "MIT",
