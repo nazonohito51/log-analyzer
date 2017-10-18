@@ -17,26 +17,48 @@ class CollectionBuilder
         }
     }
 
-    public function add($log_file_path, array $options = [])
+    /**
+     * @param string|array $log_file_paths
+     * @param array $options
+     * @return $this
+     */
+    public function add($log_file_paths, array $options = [])
     {
-        $this->log_files[] = new LogFile($log_file_path, $options);
+        if (!is_array($log_file_paths)) {
+            $log_file_paths = [$log_file_paths];
+        }
+
+        foreach ($log_file_paths as $log_file_path) {
+            $this->log_files[] = new LogFile($log_file_path, $options);
+        }
 
         return $this;
     }
 
-    public function addLtsv($log_file_path, array $options = [])
+    /**
+     * @param string|array $log_file_paths
+     * @param array $options
+     * @return $this
+     */
+    public function addLtsv($log_file_paths, array $options = [])
     {
         $options['type'] = 'ltsv';
-        $this->log_files[] = new LogFile($log_file_path, $options);
+        $this->add($log_file_paths, $options);
 
         return $this;
     }
 
-    public function addApacheLog($log_file_path, array $options = [], $format = null)
+    /**
+     * @param string|array $log_file_paths
+     * @param array $options
+     * @param string $format
+     * @return $this
+     */
+    public function addApacheLog($log_file_paths, array $options = [], $format = null)
     {
         $options['type'] = 'apache';
         $options['format'] = isset($format) ? $format : null;
-        $this->log_files[] = new LogFile($log_file_path, $options);
+        $this->add($log_file_paths, $options);
 
         return $this;
     }
