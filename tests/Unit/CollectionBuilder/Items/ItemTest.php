@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Unit\LogAnalyzer\Items;
+namespace Tests\Unit\LogAnalyzer\CollectionBuilder\Items;
 
 use LogAnalyzer\CollectionBuilder\Items\Item;
 use PHPUnit\Framework\TestCase;

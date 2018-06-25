@@ -1,9 +1,16 @@
 <?php
-namespace Tests\Unit\LogAnalyzer;
+/**
+ * Created by PhpStorm.
+ * User: s.kawashima
+ * Date: 2018/06/25
+ * Time: 17:42
+ */
 
-use LogAnalyzer\CollectionBuilder\Items\Item;
+namespace Tests\Unit\LogAnalyzer\CollectionBuilder\LogFiles;
+
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
 use Tests\LogAnalyzer\TestCase;
+use Tests\Unit\LogAnalyzer\ItemMock;
 
 class LogFileTest extends TestCase
 {
@@ -53,13 +60,5 @@ class LogFileTest extends TestCase
         $this->assertEquals('bootstrap/autoload.php', $included_files[0]);
         $this->assertEquals('public/index.php', $included_files[1]);
         $this->assertEquals('app/Http/routes.php', $included_files[2]);
-    }
-}
-
-class ItemMock extends Item
-{
-    public function getIncludedFiles()
-    {
-        return explode(',', $this->get('included_files'));
     }
 }

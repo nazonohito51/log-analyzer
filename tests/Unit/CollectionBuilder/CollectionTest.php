@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Unit\LogAnalyzer\Items;
+namespace Tests\Unit\LogAnalyzer\CollectionBuilder;
 
 use LogAnalyzer\CollectionBuilder\Collection;
 use LogAnalyzer\CollectionBuilder\Items\Item;
