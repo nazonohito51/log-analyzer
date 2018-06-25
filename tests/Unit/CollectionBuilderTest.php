@@ -1,5 +1,8 @@
 <?php
-namespace LogAnalyzer;
+namespace Tests\Unit\LogAnalyzer;
+
+use LogAnalyzer\CollectionBuilder;
+use Tests\LogAnalyzer\TestCase;
 
 class CollectionBuilderTest extends TestCase
 {

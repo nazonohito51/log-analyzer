@@ -1,7 +1,8 @@
 <?php
-namespace LogAnalyzer\CollectionBuilder\Parser;
+namespace Tests\Unit\LogAnalyzer\CollectionBuilder\Parser;
 
-use LogAnalyzer\TestCase;
+use LogAnalyzer\CollectionBuilder\Parser\ApacheLogParser;
+use Tests\LogAnalyzer\TestCase;
 
 class ApacheLogParserTest extends TestCase
 {

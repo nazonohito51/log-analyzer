@@ -1,5 +1,5 @@
 <?php
-namespace LogAnalyzer;
+namespace Tests\LogAnalyzer;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {

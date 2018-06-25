@@ -1,7 +1,10 @@
 <?php
-namespace LogAnalyzer\Items;
+namespace Tests\Unit\LogAnalyzer\Items;
 
-use LogAnalyzer\TestCase;
+use LogAnalyzer\Items\Collection;
+use LogAnalyzer\Items\Item;
+use LogAnalyzer\Items\ItemInterface;
+use Tests\LogAnalyzer\TestCase;
 
 class CollectionTest extends TestCase
 {

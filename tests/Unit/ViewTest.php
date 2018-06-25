@@ -1,9 +1,11 @@
 <?php
-namespace LogAnalyzer;
+namespace Tests\Unit\LogAnalyzer;
 
 use LogAnalyzer\Items\Collection;
 use LogAnalyzer\Items\Item;
 use LogAnalyzer\Items\ItemInterface;
+use LogAnalyzer\View;
+use Tests\LogAnalyzer\TestCase;
 
 class ViewTest extends TestCase
 {
