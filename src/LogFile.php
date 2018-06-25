@@ -4,6 +4,8 @@ namespace LogAnalyzer;
 
 use Clover\Text\LTSV;
 use Kassner\LogParser\LogParser;
+use LogAnalyzer\CollectionBuilder\Parser\ApacheLogParser;
+use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use LogAnalyzer\Items\Item;
 use LogAnalyzer\Items\ItemInterface;
 
@@ -12,9 +14,6 @@ use LogAnalyzer\Items\ItemInterface;
  */
 class LogFile
 {
-    /**
-     * @var LogParser|LTSV
-     */
     private $parser;
 
     private $file;
@@ -43,10 +42,10 @@ class LogFile
         ];
 
         if ($this->type == 'apache') {
-            $this->parser = new LogParser($this->options['format']);
+            $this->parser = new ApacheLogParser($this->options['format']);
             // $parser->setFormat('%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"');
         } elseif ($this->type == 'ltsv') {
-            $this->parser = new LTSV();
+            $this->parser = new LtsvParser();
         } else {
             throw new \InvalidArgumentException('type is invalid.');
         }
@@ -58,13 +57,7 @@ class LogFile
             return null;
         }
 
-        if ($this->type == 'apache') {
-            $iterable = $this->parser->parse($line);
-        } elseif ($this->type == 'ltsv') {
-            $iterable = $this->parser->parseLine($line);
-        } else {
-            throw new \LogicException('type is invalid.');
-        }
+        $iterable = $this->parser->parse($line);
 
         return new $this->options['item']($iterable);
     }
