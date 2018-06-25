@@ -1,8 +1,8 @@
 <?php
 namespace Tests\Unit\LogAnalyzer;
 
-use LogAnalyzer\Items\Item;
-use LogAnalyzer\LogFile;
+use LogAnalyzer\CollectionBuilder\Items\Item;
+use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
 use Tests\LogAnalyzer\TestCase;
 
 class LogFileTest extends TestCase

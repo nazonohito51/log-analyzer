@@ -1,7 +1,8 @@
 <?php
 namespace LogAnalyzer;
 
-use LogAnalyzer\Items\Collection;
+use LogAnalyzer\CollectionBuilder\Collection;
+use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
 
 class CollectionBuilder
 {

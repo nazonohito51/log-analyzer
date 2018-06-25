@@ -1,9 +1,9 @@
 <?php
 namespace Tests\Unit\LogAnalyzer\Items;
 
-use LogAnalyzer\Items\Collection;
-use LogAnalyzer\Items\Item;
-use LogAnalyzer\Items\ItemInterface;
+use LogAnalyzer\CollectionBuilder\Collection;
+use LogAnalyzer\CollectionBuilder\Items\Item;
+use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
 use Tests\LogAnalyzer\TestCase;
 
 class CollectionTest extends TestCase

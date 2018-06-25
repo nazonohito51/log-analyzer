@@ -1,5 +1,7 @@
 <?php
-namespace LogAnalyzer\Items;
+namespace LogAnalyzer\CollectionBuilder\Items;
+
+use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
 
 class Item implements ItemInterface
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace LogAnalyzer;
+namespace LogAnalyzer\CollectionBuilder\LogFiles;
 
 use Clover\Text\LTSV;
 use Kassner\LogParser\LogParser;
 use LogAnalyzer\CollectionBuilder\Parser\ApacheLogParser;
 use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
-use LogAnalyzer\Items\Item;
-use LogAnalyzer\Items\ItemInterface;
+use LogAnalyzer\CollectionBuilder\Items\Item;
+use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
 
 /**
  * @package LogAnalyzer

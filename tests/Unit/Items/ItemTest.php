@@ -1,7 +1,7 @@
 <?php
 namespace Tests\Unit\LogAnalyzer\Items;
 
-use LogAnalyzer\Items\Item;
+use LogAnalyzer\CollectionBuilder\Items\Item;
 use PHPUnit\Framework\TestCase;
 
 class ItemTest extends TestCase
