@@ -44,9 +44,7 @@ class LogFileTest extends TestCase
 
     public function testItemClass()
     {
-        $log_file = new LogFile($this->getFixturePath('log.ltsv'), new LtsvParser(), [
-            'item' => ItemMock::class
-        ]);
+        $log_file = new LogFile($this->getFixturePath('log.ltsv'), new LtsvParser(), ItemMock::class);
         $items = $log_file->getItems();
 
         $included_files = $items[0]->getIncludedFiles();

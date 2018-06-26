@@ -4,34 +4,29 @@ namespace LogAnalyzer\CollectionBuilder\LogFiles;
 use LogAnalyzer\CollectionBuilder\Items\Item;
 use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
+use LogAnalyzer\Exception\InvalidArgumentException;
 
-/**
- * @package LogAnalyzer
- */
 class LogFile
 {
     private $parser;
-
     private $file;
-    private $options;
+    private $itemClass;
 
     /**
-     * acceptable file: [apache log / ltsv]
      * @param $path
      * @param ParserInterface $parser
-     * @param array $options
+     * @param string $itemClass
      */
-    public function __construct($path, ParserInterface $parser, array $options = [])
+    public function __construct($path, ParserInterface $parser, $itemClass = null)
     {
-        $this->file = new \SplFileObject($path);
-        if (!$this->file->isFile()) {
-            throw new \InvalidArgumentException();
+        if (!file_exists($path)) {
+            throw new InvalidArgumentException('file not found.');
+        } elseif  (!is_null($itemClass) && !class_exists($itemClass)) {
+            throw new InvalidArgumentException('item class is not found.');
         }
-
+        $this->file = new \SplFileObject($path);
         $this->parser = $parser;
-        $this->options = [
-            'item' => isset($options['item']) ? $options['item'] : Item::class,
-        ];
+        $this->itemClass = !is_null($itemClass) ? $itemClass : Item::class;
     }
 
     public function getItem()
@@ -42,7 +37,7 @@ class LogFile
 
         $iterable = $this->parser->parse($line);
 
-        return new $this->options['item']($iterable);
+        return new $this->itemClass($iterable);
     }
 
     /**
