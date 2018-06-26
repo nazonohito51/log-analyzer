@@ -3,6 +3,9 @@ namespace LogAnalyzer;
 
 use LogAnalyzer\CollectionBuilder\Collection;
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
+use LogAnalyzer\CollectionBuilder\Parser\ApacheLogParser;
+use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
+use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
 
 class CollectionBuilder
 {
@@ -11,26 +14,20 @@ class CollectionBuilder
      */
     private $log_files = [];
 
-    public function __construct(array $log_file_paths = [])
-    {
-        foreach ($log_file_paths as $path) {
-            $this->log_files[] = new LogFile($path);
-        }
-    }
-
     /**
      * @param string|array $log_file_paths
+     * @param ParserInterface $parser
      * @param array $options
      * @return $this
      */
-    public function add($log_file_paths, array $options = [])
+    public function add($log_file_paths, ParserInterface $parser, array $options = [])
     {
         if (!is_array($log_file_paths)) {
             $log_file_paths = [$log_file_paths];
         }
 
         foreach ($log_file_paths as $log_file_path) {
-            $this->log_files[] = new LogFile($log_file_path, $options);
+            $this->log_files[] = new LogFile($log_file_path, $parser, $options);
         }
 
         return $this;
@@ -43,8 +40,7 @@ class CollectionBuilder
      */
     public function addLtsv($log_file_paths, array $options = [])
     {
-        $options['type'] = 'ltsv';
-        $this->add($log_file_paths, $options);
+        $this->add($log_file_paths, new LtsvParser(), $options);
 
         return $this;
     }
@@ -57,9 +53,7 @@ class CollectionBuilder
      */
     public function addApacheLog($log_file_paths, array $options = [], $format = null)
     {
-        $options['type'] = 'apache';
-        $options['format'] = isset($format) ? $format : null;
-        $this->add($log_file_paths, $options);
+        $this->add($log_file_paths, new ApacheLogParser($format), $options);
 
         return $this;
     }

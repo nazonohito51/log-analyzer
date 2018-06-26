@@ -1,24 +1,20 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: s.kawashima
- * Date: 2018/06/25
- * Time: 17:42
- */
-
 namespace Tests\Unit\LogAnalyzer\CollectionBuilder\LogFiles;
 
 use LogAnalyzer\CollectionBuilder\Items\Item;
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
+use LogAnalyzer\CollectionBuilder\Parser\ApacheLogParser;
+use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use Tests\LogAnalyzer\TestCase;
 
 class LogFileTest extends TestCase
 {
     public function testApacheLog()
     {
-        $log_file = new LogFile($this->getFixturePath('/apache.log'), [
-            'format' => '%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"'
-        ]);
+        $log_file = new LogFile(
+            $this->getFixturePath('/apache.log'),
+            new ApacheLogParser('%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"')
+        );
         $items = $log_file->getItems();
 
         $this->assertEquals('133.130.35.34', $items[0]->get('host'));
@@ -33,9 +29,7 @@ class LogFileTest extends TestCase
 
     public function testLtsvLog()
     {
-        $log_file = new LogFile($this->getFixturePath('log.ltsv'), [
-            'type' => 'ltsv'
-        ]);
+        $log_file = new LogFile($this->getFixturePath('log.ltsv'), new LtsvParser());
         $items = $log_file->getItems();
 
         $this->assertEquals('2016-10-12 15:31:18', $items[0]->get('date'));
@@ -50,8 +44,7 @@ class LogFileTest extends TestCase
 
     public function testItemClass()
     {
-        $log_file = new LogFile($this->getFixturePath('log.ltsv'), [
-            'type' => 'ltsv',
+        $log_file = new LogFile($this->getFixturePath('log.ltsv'), new LtsvParser(), [
             'item' => ItemMock::class
         ]);
         $items = $log_file->getItems();
