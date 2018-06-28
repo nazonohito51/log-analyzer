@@ -28,7 +28,7 @@ class ApacheLogParser implements ParserInterface
 
             return (array)$ret;
         } catch (FormatException $e) {
-            throw new ReadException();
+            throw new ReadException($line);
         }
     }
 }
