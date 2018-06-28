@@ -4,6 +4,7 @@ namespace Tests\LogAnalyzer;
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
 use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use phpDocumentor\Reflection\File;
+use Tests\LogAnalyzer\Helpers\FileStreamWrapper;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
