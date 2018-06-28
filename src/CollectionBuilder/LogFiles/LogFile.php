@@ -28,4 +28,10 @@ class LogFile extends \SplFileObject
     {
         return $this->parser->parse(parent::current());
     }
+
+    public function getLineCount()
+    {
+        $count = exec('wc -l ' . $this->getRealPath());
+        return trim(str_replace($this->getRealPath(), '', $count));
+    }
 }

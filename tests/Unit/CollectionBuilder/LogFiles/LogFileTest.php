@@ -28,6 +28,7 @@ class LogFileTest extends TestCase
         $this->assertEquals('133.130.35.35', $items[5]['host']);
         $this->assertEquals('93.158.152.5', $items[6]['host']);
         $this->assertEquals('66.249.79.82', $items[7]['host']);
+        $this->assertEquals(8, $file->getLineCount());
     }
 
     public function testLtsvLog()
@@ -46,5 +47,6 @@ class LogFileTest extends TestCase
         $this->assertEquals('2016-10-12 15:35:13', $items[5]['date']);
         $this->assertEquals('2016-10-12 15:35:40', $items[6]['date']);
         $this->assertEquals('2016-10-12 15:37:08', $items[7]['date']);
+        $this->assertEquals(8, $file->getLineCount());
     }
 }
