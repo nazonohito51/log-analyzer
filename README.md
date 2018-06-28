@@ -96,3 +96,9 @@ $collection->dimension('host')->addColumn('HeaderUserAgent')->display();
 +---------------+-------+---------------------------------------------------------------------------------------------+
 */
 ```
+
+## TODO
+* sum
+* filter
+* Config parser
+* Inject ItemInterface
