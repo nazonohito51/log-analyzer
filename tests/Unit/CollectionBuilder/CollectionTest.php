@@ -108,10 +108,10 @@ class CollectionTest extends TestCase
             new Item($file, 2),
         ]);
 
-        $new_collection = $collection->filter(function (ItemInterface $item) {
+        $newCollection = $collection->filter(function (ItemInterface $item) {
             return $item->have('should_extract_key');
         });
 
-        $this->assertEquals(2, $new_collection->count());
+        $this->assertEquals(2, $newCollection->count());
     }
 }

@@ -22,13 +22,13 @@ class TestCase extends \PHPUnit\Framework\TestCase
         $this->tearDownFuncs = [];
     }
 
-    protected function getFixturePath($fixture_file)
+    protected function getFixturePath($fileName)
     {
-        $fixture_file = preg_match('<^/.*$>', $fixture_file) ?
-            $fixture_file :
-            '/' . $fixture_file;
+        $fileName = preg_match('<^/.*$>', $fileName) ?
+            $fileName :
+            '/' . $fileName;
 
-        return __DIR__ . '/Fixtures' . $fixture_file;
+        return __DIR__ . '/Fixtures' . $fileName;
     }
 
     protected function getLogFileMock(array $body)

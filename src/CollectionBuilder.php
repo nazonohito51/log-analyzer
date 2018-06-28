@@ -3,7 +3,6 @@ namespace LogAnalyzer;
 
 use LogAnalyzer\CollectionBuilder\Collection;
 use LogAnalyzer\CollectionBuilder\Items\Item;
-use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
 use LogAnalyzer\CollectionBuilder\Parser\ApacheLogParser;
 use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
@@ -15,7 +14,7 @@ class CollectionBuilder
     /**
      * @var LogFile[]
      */
-    private $log_files = [];
+    private $logFiles = [];
     private $itemClass;
 
     /**
@@ -36,42 +35,42 @@ class CollectionBuilder
     }
 
     /**
-     * @param string|array $log_file_paths
+     * @param string|array $files
      * @param ParserInterface $parser
      * @return $this
      */
-    public function add($log_file_paths, ParserInterface $parser)
+    public function add($files, ParserInterface $parser)
     {
-        if (!is_array($log_file_paths)) {
-            $log_file_paths = [$log_file_paths];
+        if (!is_array($files)) {
+            $files = [$files];
         }
 
-        foreach ($log_file_paths as $log_file_path) {
-            $this->log_files[] = new LogFile($log_file_path, $parser, $this->itemClass);
+        foreach ($files as $file) {
+            $this->logFiles[] = new LogFile($file, $parser);
         }
 
         return $this;
     }
 
     /**
-     * @param string|array $log_file_paths
+     * @param string|array $files
      * @return $this
      */
-    public function addLtsv($log_file_paths)
+    public function addLtsv($files)
     {
-        $this->add($log_file_paths, new LtsvParser());
+        $this->add($files, new LtsvParser());
 
         return $this;
     }
 
     /**
-     * @param string|array $log_file_paths
+     * @param string|array $files
      * @param string $format kassner/log-parser format string. see https://github.com/kassner/log-parser
      * @return $this
      */
-    public function addApacheLog($log_file_paths, $format = null)
+    public function addApacheLog($files, $format = null)
     {
-        $this->add($log_file_paths, new ApacheLogParser($format));
+        $this->add($files, new ApacheLogParser($format));
 
         return $this;
     }
@@ -79,10 +78,10 @@ class CollectionBuilder
     public function build()
     {
         $items = [];
-        foreach ($this->log_files as $log_file) {
-            foreach ($log_file as $linePos => $line) {
+        foreach ($this->logFiles as $logFile) {
+            foreach ($logFile as $linePos => $line) {
 //                $items[] = $item;
-                $items[] = new $this->itemClass($log_file, $linePos);
+                $items[] = new $this->itemClass($logFile, $linePos);
             }
         }
 

@@ -24,9 +24,9 @@ class View implements \Countable
         $this->collections = $collections;
     }
 
-    public function addColumn($column_name, callable $calc_column = null)
+    public function addColumn($name, callable $procedure = null)
     {
-        $this->columns[$column_name] = !is_null($calc_column) ? $calc_column : $column_name;
+        $this->columns[$name] = !is_null($procedure) ? $procedure : $name;
 
         return $this;
     }
@@ -38,14 +38,14 @@ class View implements \Countable
         $sort = isset($options['sort']) ? $options['sort'] : null;
         $where = isset($options['where']) ? $options['where'] : null;
 
-        foreach ($this->columns as $column_name => $calc_column) {
-            $table->addHeader($column_name);
+        foreach ($this->columns as $name => $procedure) {
+            $table->addHeader($name);
         }
         foreach ($this->toArray($sort, $where) as $row) {
             $table->addRow();
-            foreach ($this->columns as $column_name => $calc_column) {
-                $trimmed_value = $this->formatColumnValue($row[$column_name], $str_length);
-                $table->addColumn($trimmed_value);
+            foreach ($this->columns as $name => $procedure) {
+                $value = $this->formatColumnValue($row[$name], $str_length);
+                $table->addColumn($value);
             }
         }
 
@@ -55,17 +55,17 @@ class View implements \Countable
     public function toArray(callable $sort = null, callable $where = null)
     {
         $ret = [];
-        foreach ($this->collections as $dimension_value => $collection) {
+        foreach ($this->collections as $dimensionValue => $collection) {
             $row = [];
-            foreach ($this->columns as $column_name => $calc_column) {
-                if ($column_name == $this->dimension) {
-                    $row[$column_name] = $dimension_value;
-                } elseif ($calc_column == self::COUNT_COLUMN) {
-                    $row[$column_name] = count($collection);
-                } elseif (is_callable($calc_column)) {
-                    $row[$column_name] = $collection->sum($calc_column);
+            foreach ($this->columns as $columnName => $procedure) {
+                if ($columnName == $this->dimension) {
+                    $row[$columnName] = $dimensionValue;
+                } elseif ($procedure == self::COUNT_COLUMN) {
+                    $row[$columnName] = count($collection);
+                } elseif (is_callable($procedure)) {
+                    $row[$columnName] = $collection->sum($procedure);
                 } else {
-                    $row[$column_name] = array_unique($collection->sum($calc_column));
+                    $row[$columnName] = array_unique($collection->sum($procedure));
                 }
             }
             $ret[] = $row;
@@ -87,30 +87,30 @@ class View implements \Countable
         return count($this->collections);
     }
 
-    public function getCollection($dimension_value)
+    public function getCollection($dimensionValue)
     {
-        return isset($this->collections[$dimension_value]) ? $this->collections[$dimension_value] : null;
+        return isset($this->collections[$dimensionValue]) ? $this->collections[$dimensionValue] : null;
     }
 
     /**
-     * @param string|array $column_value
-     * @param int $str_length
-     * @return bool|string
+     * @param string|array $value
+     * @param int $maxLength
+     * @return string
      */
-    private function formatColumnValue($column_value, $str_length = null)
+    private function formatColumnValue($value, $maxLength = null)
     {
-        if (is_array($column_value)) {
-            if (count($column_value) > 1) {
-                $column_value = '[' . implode(', ', $column_value) . ']';
+        if (is_array($value)) {
+            if (count($value) > 1) {
+                $value = '[' . implode(', ', $value) . ']';
             } else {
-                $column_value = $column_value[0];
+                $value = $value[0];
             }
         }
 
-        if ($str_length && strlen($column_value) > $str_length) {
-            $column_value = substr($column_value, 0, $str_length) . '...';
+        if ($maxLength && strlen($value) > $maxLength) {
+            $value = substr($value, 0, $maxLength) . '...';
         }
 
-        return $column_value;
+        return $value;
     }
 }

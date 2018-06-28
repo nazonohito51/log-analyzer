@@ -11,12 +11,12 @@ class LogFileTest extends TestCase
 {
     public function testApacheLog()
     {
-        $log_file = new LogFile(
+        $file = new LogFile(
             $this->getFixturePath('/apache.log'),
             new ApacheLogParser('%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"')
         );
         $items = [];
-        foreach ($log_file as $linePos => $line) {
+        foreach ($file as $linePos => $line) {
             $items[] = $line;
         }
 
@@ -32,9 +32,9 @@ class LogFileTest extends TestCase
 
     public function testLtsvLog()
     {
-        $log_file = new LogFile($this->getFixturePath('log.ltsv'), new LtsvParser());
+        $file = new LogFile($this->getFixturePath('log.ltsv'), new LtsvParser());
         $items = [];
-        foreach ($log_file as $linePos => $line) {
+        foreach ($file as $linePos => $line) {
             $items[] = $line;
         }
 
@@ -61,12 +61,4 @@ class LogFileTest extends TestCase
 //        $this->assertEquals('public/index.php', $included_files[1]);
 //        $this->assertEquals('app/Http/routes.php', $included_files[2]);
 //    }
-}
-
-class ItemMock extends Item
-{
-    public function getIncludedFiles()
-    {
-        return explode(',', $this->get('included_files'));
-    }
 }

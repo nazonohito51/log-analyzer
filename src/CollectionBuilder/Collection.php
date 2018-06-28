@@ -26,42 +26,46 @@ class Collection implements \Countable, \IteratorAggregate
 
     /**
      * @param string $key
-     * @param callable $calc_dimension
+     * @param callable $procedure
      * @return View
      */
-    public function dimension($key, callable $calc_dimension = null)
+    public function dimension($key, callable $procedure = null)
     {
-        $dimension_items = [];
+        $dimensionItems = [];
         foreach ($this->items as $item) {
-            if (!is_null($calc_dimension)) {
-                $dimension_value = $calc_dimension($item);
-                $dimension_value = is_null($dimension_value) ? 'null' : $dimension_value;
-                $dimension_items[$dimension_value][] = $item;
+            if (!is_null($procedure)) {
+                $dimensionValue = $procedure($item);
+                $dimensionValue = is_null($dimensionValue) ? 'null' : $dimensionValue;
+                $dimensionItems[$dimensionValue][] = $item;
             } elseif ($item->have($key)) {
-                $dimension_value = $item->get($key);
-                $dimension_items[$dimension_value][] = $item;
+                $dimensionValue = $item->get($key);
+                $dimensionItems[$dimensionValue][] = $item;
             } else {
-                $dimension_items['null'][] = $item;
+                $dimensionItems['null'][] = $item;
             }
         }
 
         $collection = [];
-        foreach ($dimension_items as $dimension_value => $items) {
-            $collection[$dimension_value] = new self($items);
+        foreach ($dimensionItems as $dimensionValue => $items) {
+            $collection[$dimensionValue] = new self($items);
         }
 
         return new View($key, $collection);
     }
 
-    public function sum($calc)
+    /**
+     * @param string|callable $procedure
+     * @return array|mixed
+     */
+    public function sum($procedure)
     {
-        if (is_callable($calc)) {
-            $ret = array_reduce($this->items, $calc);
-        } elseif (is_string($calc)) {
+        if (is_callable($procedure)) {
+            $ret = array_reduce($this->items, $procedure);
+        } elseif (is_string($procedure)) {
             $ret = [];
             foreach ($this->items as $item) {
-                if ($item->have($calc)) {
-                    $ret[] = $item->get($calc);
+                if ($item->have($procedure)) {
+                    $ret[] = $item->get($procedure);
                 }
             }
         } else {
@@ -73,14 +77,14 @@ class Collection implements \Countable, \IteratorAggregate
 
     /**
      * Build new collection on items satisfied with callable
-     * @param callable $callable
+     * @param callable $procedure
      * @return Collection
      */
-    public function filter(callable $callable)
+    public function filter(callable $procedure)
     {
         $items = [];
         foreach ($this->items as $item) {
-            if ($callable($item) === true) {
+            if ($procedure($item) === true) {
                 $items[] = $item;
             }
         }
