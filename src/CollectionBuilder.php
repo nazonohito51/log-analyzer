@@ -80,7 +80,6 @@ class CollectionBuilder
         $items = [];
         foreach ($this->logFiles as $logFile) {
             foreach ($logFile as $linePos => $line) {
-//                $items[] = $item;
                 $items[] = new $this->itemClass($logFile, $linePos);
             }
         }

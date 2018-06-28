@@ -1,8 +1,6 @@
 <?php
 namespace LogAnalyzer\CollectionBuilder\LogFiles;
 
-use LogAnalyzer\CollectionBuilder\Items\Item;
-use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
 use LogAnalyzer\Exception\InvalidArgumentException;
 use SplFileObject;
@@ -10,7 +8,6 @@ use SplFileObject;
 class LogFile extends \SplFileObject
 {
     private $parser;
-    private $itemClass;
 
     /**
      * @param $path
