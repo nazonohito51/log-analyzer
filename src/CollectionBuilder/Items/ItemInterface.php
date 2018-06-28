@@ -1,8 +1,16 @@
 <?php
 namespace LogAnalyzer\CollectionBuilder\Items;
 
+use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
+
 interface ItemInterface
 {
+    /**
+     * @param LogFile $file
+     * @param string $linePos
+     */
+    public function __construct(LogFile $file, $linePos);
+
     /**
      * get line pos in file.
      * @return integer
