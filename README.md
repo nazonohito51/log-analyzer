@@ -1,11 +1,11 @@
 # LogAnalyzer
-LogAnalyzer is PHP library that analyze log files.(ex: apache access log or ltsv)
+LogAnalyzer is PHP library that analyze log files.(ex: apache access log, ltsv)
 This library displays log data in a table format organized by dimensions.
 You can specify dimensions as log data keys or calculate programmable.
 If you want more detailed analysis, you can analyze recursively.
 
 ## Usage
-Simple usage.
+### Simple usage.
 
 ```php
 use LogAnalyzer\CollectionBuilder;
@@ -28,6 +28,7 @@ $collection->dimension('request')->addColumn('host')->addColumn('HeaderUserAgent
 */
 ```
 
+### Calculate dimension value
 You can calculate dimension value by closure. In closure, you can get log value through ItemInterface.
 
 ```php
@@ -58,6 +59,7 @@ $collection->dimension('request', function (ItemInterface $item) {
 */
 ```
 
+### Analyze recursively
 If you want to analyze more detail, you can get Collection object recursively from the View object.
 
 ```php
