@@ -47,18 +47,4 @@ class LogFileTest extends TestCase
         $this->assertEquals('2016-10-12 15:35:40', $items[6]['date']);
         $this->assertEquals('2016-10-12 15:37:08', $items[7]['date']);
     }
-
-//    public function testItemClass()
-//    {
-//        $log_file = new LogFile($this->getFixturePath('log.ltsv'), new LtsvParser());
-//        $items = [];
-//        foreach ($log_file as $linePos => $line) {
-//            $items[] = $line;
-//        }
-//
-//        $included_files = $items[0]->getIncludedFiles();
-//        $this->assertEquals('bootstrap/autoload.php', $included_files[0]);
-//        $this->assertEquals('public/index.php', $included_files[1]);
-//        $this->assertEquals('app/Http/routes.php', $included_files[2]);
-//    }
 }

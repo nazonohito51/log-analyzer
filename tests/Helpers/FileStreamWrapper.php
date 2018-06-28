@@ -1,5 +1,5 @@
 <?php
-namespace Tests\LogAnalyzer;
+namespace Tests\LogAnalyzer\Helpers;
 
 class FileStreamWrapper
 {
