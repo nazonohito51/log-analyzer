@@ -11,13 +11,18 @@ class ViewTest extends TestCase
 {
     public function testToArray()
     {
+        $file = $this->getLogFileMock([
+            'dimension_name:value2',
+            'dimension_name:value1',
+            'dimension_name:value1',
+        ]);
         $view = new View('dimension_name', [
             'value1' => new Collection([
-                new Item(['dimension_name' => 'value1']),
-                new Item(['dimension_name' => 'value1']),
+                new Item($file, 1),
+                new Item($file, 2),
             ]),
             'value2' => new Collection([
-                new Item(['dimension_name' => 'value2'])
+                new Item($file, 0)
             ])
         ]);
 
@@ -31,18 +36,26 @@ class ViewTest extends TestCase
 
     public function testToArrayUsingSort()
     {
+        $file = $this->getLogFileMock([
+            'dimension_name:have_one',
+            'dimension_name:have_three',
+            'dimension_name:have_two',
+            'dimension_name:have_three',
+            'dimension_name:have_two',
+            'dimension_name:have_three',
+        ]);
         $view = new View('dimension_name', [
             'have_one' => new Collection([
-                new Item(['dimension_name' => 'have_one'])
+                new Item($file, 0)
             ]),
             'have_three' => new Collection([
-                new Item(['dimension_name' => 'have_three']),
-                new Item(['dimension_name' => 'have_three']),
-                new Item(['dimension_name' => 'have_three']),
+                new Item($file, 1),
+                new Item($file, 3),
+                new Item($file, 5),
             ]),
             'have_two' => new Collection([
-                new Item(['dimension_name' => 'have_two']),
-                new Item(['dimension_name' => 'have_two']),
+                new Item($file, 2),
+                new Item($file, 4),
             ]),
         ]);
 
@@ -63,18 +76,26 @@ class ViewTest extends TestCase
 
     public function testToArrayUsingWhere()
     {
+        $file = $this->getLogFileMock([
+            'dimension_name:have_one',
+            'dimension_name:have_three',
+            'dimension_name:have_two',
+            'dimension_name:have_three',
+            'dimension_name:have_two',
+            'dimension_name:have_three',
+        ]);
         $view = new View('dimension_name', [
             'have_one' => new Collection([
-                new Item(['dimension_name' => 'have_one'])
+                new Item($file, 0)
             ]),
             'have_two' => new Collection([
-                new Item(['dimension_name' => 'have_two']),
-                new Item(['dimension_name' => 'have_two']),
+                new Item($file, 2),
+                new Item($file, 4),
             ]),
             'have_three' => new Collection([
-                new Item(['dimension_name' => 'have_three']),
-                new Item(['dimension_name' => 'have_three']),
-                new Item(['dimension_name' => 'have_three']),
+                new Item($file, 1),
+                new Item($file, 3),
+                new Item($file, 5),
             ]),
         ]);
 
@@ -90,13 +111,18 @@ class ViewTest extends TestCase
 
     public function testAddColumn()
     {
+        $file = $this->getLogFileMock([
+            "dimension_name:value1\tother_property:1",
+            "dimension_name:value1\tother_property:2",
+            "dimension_name:value2\tother_property:3",
+        ]);
         $view = new View('dimension_name', [
             'value1' => new Collection([
-                new Item(['dimension_name' => 'value1', 'other_property' => '1']),
-                new Item(['dimension_name' => 'value1', 'other_property' => '2']),
+                new Item($file, 0),
+                new Item($file, 1),
             ]),
             'value2' => new Collection([
-                new Item(['dimension_name' => 'value2', 'other_property' => '3'])
+                new Item($file, 2)
             ])
         ]);
 
@@ -108,13 +134,18 @@ class ViewTest extends TestCase
 
     public function testAddColumnByClosure()
     {
+        $file = $this->getLogFileMock([
+            "dimension_name:value1\tother_property:1",
+            "dimension_name:value1\tother_property:2",
+            "dimension_name:value2\tother_property:6",
+        ]);
         $view = new View('dimension_name', [
             'value1' => new Collection([
-                new Item(['dimension_name' => 'value1', 'other_property' => '1']),
-                new Item(['dimension_name' => 'value1', 'other_property' => '2']),
+                new Item($file, 0),
+                new Item($file, 1),
             ]),
             'value2' => new Collection([
-                new Item(['dimension_name' => 'value2', 'other_property' => '6'])
+                new Item($file, 2)
             ])
         ]);
 

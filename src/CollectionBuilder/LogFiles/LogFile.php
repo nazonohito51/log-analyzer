@@ -5,68 +5,30 @@ use LogAnalyzer\CollectionBuilder\Items\Item;
 use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
 use LogAnalyzer\Exception\InvalidArgumentException;
+use SplFileObject;
 
-class LogFile
+class LogFile extends \SplFileObject
 {
     private $parser;
-    private $file;
     private $itemClass;
 
     /**
      * @param $path
      * @param ParserInterface $parser
-     * @param string $itemClass
      */
-    public function __construct($path, ParserInterface $parser, $itemClass = null)
+    public function __construct($path, ParserInterface $parser)
     {
         if (!file_exists($path)) {
             throw new InvalidArgumentException('file not found.');
-        } elseif  (!is_null($itemClass) && !class_exists($itemClass)) {
-            throw new InvalidArgumentException('item class is not found.');
         }
-        $this->file = new \SplFileObject($path);
+
+        parent::__construct($path);
+        $this->setFlags(SplFileObject::READ_AHEAD | SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE);
         $this->parser = $parser;
-        $this->itemClass = !is_null($itemClass) ? $itemClass : Item::class;
     }
 
-    public function getItem()
+    public function current()
     {
-        if (is_null($line = $this->getValidLine())) {
-            return null;
-        }
-
-        $iterable = $this->parser->parse($line);
-
-        return new $this->itemClass($iterable);
-    }
-
-    /**
-     * @return ItemInterface[]
-     */
-    public function getItems()
-    {
-        $items = [];
-
-        while (!is_null($item = $this->getItem())) {
-            $items[] = $item;
-        }
-
-        return $items;
-    }
-
-    /**
-     * get line. ignore empty line.
-     * @return null|string
-     */
-    private function getValidLine()
-    {
-        while (!$this->file->eof()) {
-            $line = $this->file->getCurrentLine();
-            if (!empty(trim($line))) {
-                return $line;
-            }
-        }
-
-        return null;
+        return $this->parser->parse(parent::current());
     }
 }

@@ -4,6 +4,12 @@ namespace LogAnalyzer\CollectionBuilder\Items;
 interface ItemInterface
 {
     /**
+     * get line pos in file.
+     * @return integer
+     */
+    public function getLinePos();
+
+    /**
      * check exist of key.
      * @param $key
      * @return bool

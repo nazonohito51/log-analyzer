@@ -66,7 +66,7 @@ class CollectionBuilder
 
     /**
      * @param string|array $log_file_paths
-     * @param string $format
+     * @param string $format kassner/log-parser format string. see https://github.com/kassner/log-parser
      * @return $this
      */
     public function addApacheLog($log_file_paths, $format = null)
@@ -80,8 +80,9 @@ class CollectionBuilder
     {
         $items = [];
         foreach ($this->log_files as $log_file) {
-            while ($item = $log_file->getItem()) {
-                $items[] = $item;
+            foreach ($log_file as $linePos => $line) {
+//                $items[] = $item;
+                $items[] = new $this->itemClass($log_file, $linePos);
             }
         }
 

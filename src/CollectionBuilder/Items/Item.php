@@ -1,49 +1,45 @@
 <?php
 namespace LogAnalyzer\CollectionBuilder\Items;
 
-use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
+use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
 
 class Item implements ItemInterface
 {
-    private $data = [];
-    protected $keys = [];
+    private $file;
+    private $linePos;
 
-    public function __construct($iterable)
+    public function __construct(LogFile $file, $linePos)
     {
-        foreach ($iterable as $key => $value) {
-            $this->addData($key, $value);
-        }
-
-        if (empty($this->keys)) {
-            $this->keys = array_keys($this->data);
-        }
+        $this->file = $file;
+        $this->linePos = $linePos;
     }
 
-    private function addData($key, $value)
+    public function getLinePos()
     {
-        if (!empty($this->keys) && !in_array($key, $this->keys)) {
-            return;
-        }
-
-        $this->data[$key] = $value;
+        return $this->linePos;
     }
 
     public function have($key)
     {
-        return isset($this->data[$key]) ? true : false;
+        $content = $this->getContent();
+        return isset($content[$key]);
     }
 
     public function keys()
     {
-        return $this->keys;
+        $content = $this->getContent();
+        return array_keys($content);
     }
 
     public function get($key)
     {
-        if (isset($this->data[$key])) {
-            return $this->data[$key];
-        }
+        $content = $this->getContent();
+        return isset($content[$key]) ? $content[$key] : null;
+    }
 
-        return null;
+    private function getContent()
+    {
+        $this->file->seek($this->linePos);
+        return $this->file->current();
     }
 }

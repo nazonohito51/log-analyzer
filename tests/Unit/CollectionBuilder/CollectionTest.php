@@ -4,19 +4,27 @@ namespace Tests\Unit\LogAnalyzer\CollectionBuilder;
 use LogAnalyzer\CollectionBuilder\Collection;
 use LogAnalyzer\CollectionBuilder\Items\Item;
 use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
+use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
+use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use Tests\LogAnalyzer\TestCase;
 
 class CollectionTest extends TestCase
 {
     public function testDimension()
     {
+        $file = $this->getLogFileMock([
+            'column:value1',
+            'column:value1',
+            'column:value2']
+        );
         $collection = new Collection([
-            new Item(['column' => 'value1']),
-            new Item(['column' => 'value1']),
-            new Item(['column' => 'value2']),
+            new Item($file, 0),
+            new Item($file, 1),
+            new Item($file, 2),
         ]);
 
         $view = $collection->dimension('column');
+
         $this->assertEquals(2, $view->count());
         $this->assertEquals(2, $view->getCollection('value1')->count());
         $this->assertEquals(1, $view->getCollection('value2')->count());
@@ -24,10 +32,15 @@ class CollectionTest extends TestCase
 
     public function testDimensionByClosure()
     {
+        $file = $this->getLogFileMock([
+            'column:<methodCall><methodName>getBlogInfo</methodName><params><param>111</param></params></methodCall>',
+            'column:<methodCall><methodName>getAdView</methodName><params><param>account</param></params></methodCall>',
+            'column:<methodCall><methodName>getBlogInfo</methodName><params><param>222</param></params></methodCall>'
+        ]);
         $collection = new Collection([
-            new Item(['column' => '<methodCall><methodName>getBlogInfo</methodName><params><param>111</param></params></methodCall>']),
-            new Item(['column' => '<methodCall><methodName>getAdView</methodName><params><param>account</param></params></methodCall>']),
-            new Item(['column' => '<methodCall><methodName>getBlogInfo</methodName><params><param>222</param></params></methodCall>']),
+            new Item($file, 0),
+            new Item($file, 1),
+            new Item($file, 2),
         ]);
 
         $view = $collection->dimension('methodName', function (ItemInterface $item) {
@@ -37,6 +50,7 @@ class CollectionTest extends TestCase
 
             return null;
         });
+
         $this->assertEquals(2, $view->count());
         $this->assertEquals(2, $view->getCollection('getBlogInfo')->count());
         $this->assertEquals(1, $view->getCollection('getAdView')->count());
@@ -44,10 +58,15 @@ class CollectionTest extends TestCase
 
     public function testImplode()
     {
+        $file = $this->getLogFileMock([
+            'column:value1',
+            'column:value1',
+            'column:value2'
+        ]);
         $collection = new Collection([
-            new Item(['column' => 'value1']),
-            new Item(['column' => 'value1']),
-            new Item(['column' => 'value2']),
+            new Item($file, 0),
+            new Item($file, 1),
+            new Item($file, 2),
         ]);
 
         $implode = $collection->sum('column');
@@ -57,10 +76,15 @@ class CollectionTest extends TestCase
 
     public function testImplodeByClosure()
     {
+        $file = $this->getLogFileMock([
+            'column:1',
+            'column:2',
+            'column:3'
+        ]);
         $collection = new Collection([
-            new Item(['column' => '1']),
-            new Item(['column' => '2']),
-            new Item(['column' => '3']),
+            new Item($file, 0),
+            new Item($file, 1),
+            new Item($file, 2),
         ]);
 
         $implode = $collection->sum(function ($carry, ItemInterface $item) {
@@ -73,15 +97,21 @@ class CollectionTest extends TestCase
 
     public function testExtract()
     {
+        $file = $this->getLogFileMock([
+            "column:value1\tshould_extract_key:1",
+            'column:value2',
+            "column:value3\tshould_extract_key:1"
+        ]);
         $collection = new Collection([
-            new Item(['column' => 'value1', 'should_extract_key' => 1]),
-            new Item(['column' => 'value2']),
-            new Item(['column' => 'value3', 'should_extract_key' => 1]),
+            new Item($file, 0),
+            new Item($file, 1),
+            new Item($file, 2),
         ]);
 
         $new_collection = $collection->filter(function (ItemInterface $item) {
             return $item->have('should_extract_key');
         });
+
         $this->assertEquals(2, $new_collection->count());
     }
 }
