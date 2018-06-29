@@ -23,7 +23,9 @@
   "require": {
     "kassner/log-parser": "~1.0",
     "clover/text-ltsv": "~1.0",
-    "phplucidframe/console-table": "~1.0"
+    "phplucidframe/console-table": "~1.0",
+    "symfony/finder": "^4.1",
+    "guiguiboy/php-cli-progress-bar": "^0.0.4"
   },
   "require-dev": {
     "phpunit/phpunit": "*"

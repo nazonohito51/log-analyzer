@@ -8,6 +8,8 @@ use LogAnalyzer\CollectionBuilder\Parser\ApacheLogParser;
 use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
 use LogAnalyzer\Exception\InvalidArgumentException;
+use ProgressBar\Manager;
+use ProgressBar\Registry;
 
 class CollectionBuilder
 {
@@ -77,10 +79,34 @@ class CollectionBuilder
 
     public function build()
     {
+        $itemCount = 0;
+        foreach ($this->logFiles as $logFile) {
+            $itemCount += $logFile->getLineCount();
+        }
+        $progressBar = new Manager(0, $itemCount, 160);
+        $progressBar->setFormat("%current%/%max% [%bar%] %percent%% %eta%   Loading: %file%(%line%/%lineMax%)");
+        $progressBar->addReplacementRule('%file%', 5, function ($buffer, $registry) {
+            /** @var Registry $registry */
+            return $registry->getValue('file');
+        });
+        $progressBar->addReplacementRule('%line%', 5, function ($buffer, $registry) {
+            /** @var Registry $registry */
+            return $registry->getValue('line');
+        });
+        $progressBar->addReplacementRule('%lineMax%', 5, function ($buffer, $registry) {
+            /** @var Registry $registry */
+            return $registry->getValue('lineMax');
+        });
+
         $items = [];
         foreach ($this->logFiles as $logFile) {
+            $progressBar->getRegistry()->setValue('file', $logFile->getFilename());
+            $progressBar->getRegistry()->setValue('line', 0);
+            $progressBar->getRegistry()->setValue('lineMax', $logFile->getLineCount());
             foreach ($logFile as $linePos => $line) {
                 $items[] = new $this->itemClass($logFile, $linePos);
+                $progressBar->getRegistry()->setValue('line', $linePos);
+                $progressBar->advance();
             }
         }
 
