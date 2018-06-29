@@ -40,6 +40,6 @@ class Item implements ItemInterface
     private function getContent()
     {
         $this->file->seek($this->linePos);
-        return $this->file->current();
+        return $this->file->getCurrentParsedLine();
     }
 }

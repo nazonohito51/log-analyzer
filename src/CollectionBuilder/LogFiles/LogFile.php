@@ -3,11 +3,13 @@ namespace LogAnalyzer\CollectionBuilder\LogFiles;
 
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
 use LogAnalyzer\Exception\InvalidArgumentException;
+use LogAnalyzer\Exception\ReadException;
 use SplFileObject;
 
 class LogFile extends \SplFileObject
 {
     private $parser;
+    private $ignoreParseError = false;
 
     /**
      * @param $path
@@ -24,9 +26,20 @@ class LogFile extends \SplFileObject
         $this->parser = $parser;
     }
 
-    public function current()
+    public function ignoreParsedError($ignore)
     {
-        return $this->parser->parse(parent::current());
+        $this->ignoreParseError = $ignore;
+    }
+
+    public function getCurrentParsedLine()
+    {
+        try {
+            return $this->parser->parse($this->current());
+        } catch (ReadException $e) {
+            if (!$this->ignoreParseError) {
+                throw $e;
+            }
+        }
     }
 
     public function getLineCount()

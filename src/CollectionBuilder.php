@@ -77,10 +77,11 @@ class CollectionBuilder
         return $this;
     }
 
-    public function build()
+    public function build($ignoreParseError = false)
     {
         $itemCount = 0;
         foreach ($this->logFiles as $logFile) {
+            $logFile->ignoreParsedError($ignoreParseError);
             $itemCount += $logFile->getLineCount();
         }
         $progressBar = new Manager(0, $itemCount, 120);
