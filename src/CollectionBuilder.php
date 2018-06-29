@@ -83,7 +83,7 @@ class CollectionBuilder
         foreach ($this->logFiles as $logFile) {
             $itemCount += $logFile->getLineCount();
         }
-        $progressBar = new Manager(0, $itemCount, 160);
+        $progressBar = new Manager(0, $itemCount, 120);
         $progressBar->setFormat("%current%/%max% [%bar%] %percent%% %eta%   Loading: %file%(%line%/%lineMax%)");
         $progressBar->addReplacementRule('%file%', 5, function ($buffer, $registry) {
             /** @var Registry $registry */
