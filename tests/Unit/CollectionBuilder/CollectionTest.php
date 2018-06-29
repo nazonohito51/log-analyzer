@@ -15,8 +15,8 @@ class CollectionTest extends TestCase
         $file = $this->getLogFileMock([
             'column:value1',
             'column:value1',
-            'column:value2']
-        );
+            'column:value2'
+        ]);
         $collection = new Collection([
             new Item($file, 0),
             new Item($file, 1),
