@@ -40,6 +40,8 @@ class LogFile extends \SplFileObject
                 throw $e;
             }
         }
+
+        return null;
     }
 
     public function getLineCount()
