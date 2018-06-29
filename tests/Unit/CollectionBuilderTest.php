@@ -13,7 +13,7 @@ class CollectionBuilderTest extends TestCase
         $builder->addLtsv($this->getFixturePath('log.ltsv'));
         $aggregator = $builder->build();
 
-        $this->assertEquals(8, $aggregator->count());
+        $this->assertEquals(9, $aggregator->count());
     }
 
     public function testItemInterface()
@@ -26,7 +26,7 @@ class CollectionBuilderTest extends TestCase
             return '[' . implode(',', $item->getIncludedFiles()) . ']';
         })->toArray();
 
-        $this->assertCount(2, $view);
+        $this->assertCount(3, $view);
         $this->assertEquals('[bootstrap/autoload.php,public/index.php,app/Http/routes.php]', $view[0]['included_files']);
         $this->assertEquals(1, $view[0]['Count']);
         $this->assertEquals('[test.php]', $view[1]['included_files']);

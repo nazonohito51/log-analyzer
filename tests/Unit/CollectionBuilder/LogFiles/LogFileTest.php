@@ -17,7 +17,7 @@ class LogFileTest extends TestCase
         );
         $items = [];
         foreach ($file as $linePos => $line) {
-            $items[] = $line;
+            $items[] = $file->getCurrentParsedLine();
         }
 
         $this->assertEquals('133.130.35.34', $items[0]['host']);
@@ -36,7 +36,7 @@ class LogFileTest extends TestCase
         $file = new LogFile($this->getFixturePath('log.ltsv'), new LtsvParser());
         $items = [];
         foreach ($file as $linePos => $line) {
-            $items[] = $line;
+            $items[] = $file->getCurrentParsedLine();
         }
 
         $this->assertEquals('2016-10-12 15:31:18', $items[0]['date']);
