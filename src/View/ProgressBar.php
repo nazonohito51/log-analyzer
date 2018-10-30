@@ -38,7 +38,7 @@ class ProgressBar
         $this->counter++;
         if (microtime(true) - $this->beforeTimestamp > self::INTERVAL_SEC) {
             $this->manager->getRegistry()->setValue('file', $file->getFilename());
-            $this->manager->getRegistry()->setValue('lineMax', $file->getLineCount());
+            $this->manager->getRegistry()->setValue('lineMax', $file->count());
             $this->manager->getRegistry()->setValue('line', $linePos);
             $this->manager->update($this->manager->getRegistry()->getValue('current') + $this->counter);
 

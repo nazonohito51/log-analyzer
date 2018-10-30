@@ -44,7 +44,7 @@ class LogFile extends \SplFileObject
         return null;
     }
 
-    public function getLineCount()
+    public function count()
     {
         $count = exec('wc -l ' . $this->getRealPath());
         return trim(str_replace($this->getRealPath(), '', $count));

@@ -9,8 +9,6 @@ use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
 use LogAnalyzer\Exception\InvalidArgumentException;
 use LogAnalyzer\View\ProgressBar;
-use ProgressBar\Manager;
-use ProgressBar\Registry;
 
 class CollectionBuilder
 {
@@ -80,22 +78,31 @@ class CollectionBuilder
 
     public function build($ignoreParseError = false)
     {
-        $itemCount = 0;
-        foreach ($this->logFiles as $logFile) {
-            $logFile->ignoreParsedError($ignoreParseError);
-            $itemCount += $logFile->getLineCount();
-        }
-
-        $progressBar = new ProgressBar($itemCount);
+        $progressBar = new ProgressBar($this->getAllCount());
 
         $items = [];
         foreach ($this->logFiles as $logFile) {
-            foreach (range(0, $logFile->getLineCount()) as $linePos) {
+            $logFile->ignoreParsedError($ignoreParseError);
+
+            foreach (range(0, $logFile->count()) as $linePos) {
                 $items[] = new $this->itemClass($logFile, $linePos);
                 $progressBar->update($logFile, $linePos);
             }
         }
 
         return new Collection($items);
+    }
+
+    /**
+     * @return int
+     */
+    public function getAllCount()
+    {
+        $count = 0;
+        foreach ($this->logFiles as $logFile) {
+            $count += $logFile->count();
+        }
+
+        return $count;
     }
 }

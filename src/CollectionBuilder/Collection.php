@@ -31,6 +31,8 @@ class Collection implements \Countable, \IteratorAggregate
      */
     public function dimension($key, callable $procedure = null)
     {
+        $progressBar = new View\ProgressBar($this->count());
+
         $dimensionItems = [];
         foreach ($this->items as $item) {
             if (!is_null($procedure)) {
