@@ -45,6 +45,8 @@ class Collection implements \Countable, \IteratorAggregate
             } else {
                 $dimensionItems['null'][] = $item;
             }
+
+            $progressBar->update($item->getLogFile(), $item->getLinePos());
         }
 
         $collection = [];

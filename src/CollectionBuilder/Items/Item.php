@@ -14,6 +14,11 @@ class Item implements ItemInterface
         $this->linePos = $linePos;
     }
 
+    public function getLogFile()
+    {
+        return $this->file;
+    }
+
     public function getLinePos()
     {
         return $this->linePos;

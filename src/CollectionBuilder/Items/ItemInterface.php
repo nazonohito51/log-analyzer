@@ -12,6 +12,11 @@ interface ItemInterface
     public function __construct(LogFile $file, $linePos);
 
     /**
+     * @return LogFile
+     */
+    public function getLogFile();
+
+    /**
      * get line pos in file.
      * @return integer
      */
