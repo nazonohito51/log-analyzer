@@ -13,6 +13,8 @@ class InMemoryColumn implements ColumnInterface
     public function add($value, $itemId)
     {
         isset($this->data[$value]) ? $this->data[$value][] = $itemId : $this->data[$value] = [$itemId];
+
+        return $this;
     }
 
     public function getItems($value)
