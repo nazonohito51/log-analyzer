@@ -1,0 +1,73 @@
+@startuml
+class InMemoryDatabase {
+  - array scheme
+
+}
+
+class DatabaseInterface {
+  + Column getColumn(key)
+  + array getScheme()
+}
+
+class Column {
+  - array values
+  - array dictionary
+}
+
+class ColumnInterface {
+}
+
+class ItemCollection {
+  - array[int] itemIds
+  - DatabaseInterface db
+
+  + View dimension(key, callable = null)
+  + int count()
+  + array showScheme()
+}
+
+class View {
+  - array[ItemCollection] collections
+
+  + void addColumn(key, callable = null)
+  + ItemCollection getCollection(dimensionValue)
+  + array showScheme()
+}
+
+class LogFile {
+  - string path
+  - ParserInterface parser
+}
+
+class ParserInterface {
+}
+
+class ApacheLogParser {
+  - string format
+}
+
+class LtsvParser {
+}
+
+class CollectionBuilder {
+  - array[LogFile] files
+
+  # void addFile(path, parser)
+  + void addApacheLog(path)
+  + void addLtsvLog(path)
+  + ItemCollection build()
+}
+
+InMemoryDatabase o-- Column
+LogFile "0..n" -- "1" ParserInterface
+View o-- ItemCollection
+CollectionBuilder ..> ItemCollection : create
+CollectionBuilder ..> InMemoryDatabase : create
+CollectionBuilder o-- LogFile
+ItemCollection "1..n" *-- "1" DatabaseInterface
+ApacheLogParser <|-- ParserInterface
+LtsvParser <|-- ParserInterface
+InMemoryDatabase <|-- DatabaseInterface
+Column <|-- ColumnInterface
+DatabaseInterface o-- ColumnInterface
+@enduml
