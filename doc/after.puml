@@ -1,10 +1,9 @@
 @startuml
 class InMemoryDatabase {
-  - array scheme
-
 }
 
 class DatabaseInterface {
+  - array scheme
   + Column getColumn(key)
   + array getScheme()
 }
@@ -52,7 +51,7 @@ class LtsvParser {
 class CollectionBuilder {
   - array[LogFile] files
 
-  # void addFile(path, parser)
+  # void addLog(path, parser)
   + void addApacheLog(path)
   + void addLtsvLog(path)
   + ItemCollection build()
