@@ -1,0 +1,15 @@
+version: '3'
+services:
+  php-cli:
+    build: ./docker/web
+    volumes:
+      - ./:/var/www/html
+      - ./docker/web/php.ini:/usr/local/etc/php/php.ini
+    working_dir: /var/www/html
+  composer:
+    image: composer
+    volumes:
+      - ./:/app
+      - ./docker/web/php.ini:/usr/local/etc/php/php.ini
+    working_dir: /app
+
