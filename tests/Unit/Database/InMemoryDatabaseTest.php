@@ -29,4 +29,14 @@ class InMemoryDatabaseTest extends TestCase
 
         $this->assertEquals([1], $database->get('key1', 'value1'));
     }
+
+    public function testGetValues()
+    {
+        $column = $this->createMock(ColumnInterface::class);
+        $column->expects($this->once())->method('getValues')->willReturn(['value1', 'value2']);
+        $factory = $this->createMock(ColumnFactory::class);
+        $database = new InMemoryDatabase($factory, ['key1' => $column]);
+
+        $this->assertEquals(['value1', 'value2'], $database->getValues('key1'));
+    }
 }

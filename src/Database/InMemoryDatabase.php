@@ -34,4 +34,9 @@ class InMemoryDatabase implements DatabaseInterface
     {
         return $this->isExistColumn($key) ? $this->columns[$key]->getItems($value) : null;
     }
+
+    public function getValues($key)
+    {
+        return $this->isExistColumn($key) ? $this->columns[$key]->getValues() : null;
+    }
 }
