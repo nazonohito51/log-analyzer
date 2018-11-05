@@ -48,4 +48,11 @@ class InMemoryColumnTest extends TestCase
         $this->assertEquals('value2', $column->getValue(3));
         $this->assertNull($column->getValue(4));
     }
+
+    public function testGetValues()
+    {
+        $column = new InMemoryColumn(['value1' => [1, 2], 'value2' => [3]]);
+
+        $this->assertEquals(['value1', 'value2'], $column->getValues());
+    }
 }

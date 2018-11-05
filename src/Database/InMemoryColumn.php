@@ -32,4 +32,9 @@ class InMemoryColumn implements ColumnInterface
 
         return null;
     }
+
+    public function getValues()
+    {
+        return array_keys($this->data);
+    }
 }
