@@ -11,6 +11,8 @@ class InMemoryDatabaseTest extends TestCase
     public function testAddColumn()
     {
         $stub = $this->createMock(ColumnInterface::class);
+        $stub->expects($this->once())->method('add')->with('value1', 1)->willReturnSelf();
+        $stub->expects($this->once())->method('getItems')->with('value1')->willReturn([1]);
         $database = new InMemoryDatabase(new class ($stub) extends ColumnFactory {
             private $stub;
             public function __construct(ColumnInterface $stub)
@@ -25,15 +27,6 @@ class InMemoryDatabaseTest extends TestCase
 
         $database->addColumn('key1', 'value1', 1);
 
-        $this->assertEquals();
-    }
-
-    public function testGetColumn()
-    {
-        $database = new InMemoryDatabase();
-
-        $column = $database->getColumn('key');
-
-        $this->assertInstanceOf(ColumnInterface::class, $column);
+        $this->assertEquals([1], $database->get('key1', 'value1'));
     }
 }

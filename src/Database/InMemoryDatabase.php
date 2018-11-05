@@ -30,18 +30,8 @@ class InMemoryDatabase implements DatabaseInterface
         return isset($this->columns[$key]);
     }
 
-    protected function defaultColumn()
+    public function get($key, $value)
     {
-        return new InMemoryColumn();
-    }
-
-    public function getColumn($key)
-    {
-        return isset($this->columns[$key]) ?? null;
-    }
-
-    public function getScheme()
-    {
-
+        return $this->isExistColumn($key) ? $this->columns[$key]->getItems($value) : null;
     }
 }
