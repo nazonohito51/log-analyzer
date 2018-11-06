@@ -7,6 +7,8 @@ use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
 use LogAnalyzer\CollectionBuilder\Parser\ApacheLogParser;
 use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
+use LogAnalyzer\Database\ColumnFactory;
+use LogAnalyzer\Database\InMemoryDatabase;
 use LogAnalyzer\Exception\InvalidArgumentException;
 use LogAnalyzer\View\ProgressBar;
 
@@ -81,16 +83,31 @@ class CollectionBuilder
         $progressBar = new ProgressBar($this->getAllCount());
 
         $items = [];
+        $itemId = 1;
+        $database = new InMemoryDatabase(new ColumnFactory());
         foreach ($this->logFiles as $logFile) {
-            $logFile->ignoreParsedError($ignoreParseError);
+//            $logFile->ignoreParsedError($ignoreParseError);
+//
+//            foreach (range(0, $logFile->count()) as $linePos) {
+//                /*
+//                 * @var ItemInterface $item
+//                 */
+//                $item = new $this->itemClass($logFile, $linePos);
+//                $items[] = $item;
+//                $progressBar->update($logFile, $linePos);
+//            }
 
-            foreach (range(0, $logFile->count()) as $linePos) {
-                $items[] = new $this->itemClass($logFile, $linePos);
-                $progressBar->update($logFile, $linePos);
+            foreach ($logFile as $line) {
+                $items[] = $itemId;
+                $parsedLine = $logFile->getCurrentParsedLine();
+                foreach ($parsedLine as $key => $value) {
+                    $database->addColumnValue($key, $value, $itemId);
+                }
+                $itemId++;
             }
         }
 
-        return new Collection($items);
+        return new Collection($items, $database);
     }
 
     /**

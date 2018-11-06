@@ -61,7 +61,7 @@ class View implements \Countable
                 if ($columnName == $this->dimension) {
                     $row[$columnName] = $dimensionValue;
                 } elseif ($procedure == self::COUNT_COLUMN) {
-                    $row[$columnName] = count($collection);
+                    $row[$columnName] = $collection->count();
                 } elseif (is_callable($procedure)) {
                     $row[$columnName] = $collection->sum($procedure);
                 } else {

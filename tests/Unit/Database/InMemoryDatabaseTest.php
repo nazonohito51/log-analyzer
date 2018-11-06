@@ -25,9 +25,9 @@ class InMemoryDatabaseTest extends TestCase
             }
         });
 
-        $database->addColumn('key1', 'value1', 1);
+        $database->addColumnValue('key1', 'value1', 1);
 
-        $this->assertEquals([1], $database->get('key1', 'value1'));
+        $this->assertEquals([1], $database->getItemIds('key1', 'value1'));
     }
 
     public function testGetValues()
@@ -37,6 +37,6 @@ class InMemoryDatabaseTest extends TestCase
         $factory = $this->createMock(ColumnFactory::class);
         $database = new InMemoryDatabase($factory, ['key1' => $column]);
 
-        $this->assertEquals(['value1', 'value2'], $database->getValues('key1'));
+        $this->assertEquals(['value1', 'value2'], $database->getColumnValues('key1'));
     }
 }

@@ -18,25 +18,39 @@ class InMemoryDatabase implements DatabaseInterface
         $this->factory = $factory;
     }
 
-    public function addColumn($key, $value, $itemId)
+    public function addColumnValue($columnName, $value, $itemId)
     {
-        $this->isExistColumn($key) ?
-            $this->columns[$key]->add($value, $itemId) :
-            $this->columns[$key] = $this->factory->build()->add($value, $itemId);
+        $this->isExistColumn($columnName) ?
+            $this->getColumn($columnName)->add($value, $itemId) :
+            $this->columns[$columnName] = $this->factory->build()->add($value, $itemId);
     }
 
-    protected function isExistColumn($key)
+    protected function isExistColumn($columnName)
     {
-        return isset($this->columns[$key]);
+        return isset($this->columns[$columnName]);
     }
 
-    public function get($key, $value)
+    protected function getColumn($columnName)
     {
-        return $this->isExistColumn($key) ? $this->columns[$key]->getItems($value) : null;
+        return $this->columns[$columnName];
     }
 
-    public function getValues($key)
+    public function getItemIds($columnName, $value)
     {
-        return $this->isExistColumn($key) ? $this->columns[$key]->getValues() : null;
+        if (!$this->isExistColumn($columnName)) {
+            return [];
+        }
+
+        return $this->getColumn($columnName)->getItems($value);
+    }
+
+    public function getValue($columnName, $itemId)
+    {
+        return $this->isExistColumn($columnName) ? $this->getColumn($columnName)->getValue($itemId) : null;
+    }
+
+    public function getColumnValues($columnName)
+    {
+        return $this->isExistColumn($columnName) ? $this->getColumn($columnName)->getValues() : [];
     }
 }
