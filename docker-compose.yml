@@ -12,4 +12,3 @@ services:
       - ./:/app
       - ./docker/web/php.ini:/usr/local/etc/php/php.ini
     working_dir: /app
-

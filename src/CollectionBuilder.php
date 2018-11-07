@@ -8,9 +8,8 @@ use LogAnalyzer\CollectionBuilder\Parser\ApacheLogParser;
 use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
 use LogAnalyzer\Database\ColumnFactory;
+use LogAnalyzer\Database\DatabaseInterface;
 use LogAnalyzer\Database\InMemoryDatabase;
-use LogAnalyzer\Exception\InvalidArgumentException;
-use LogAnalyzer\View\ProgressBar;
 
 class CollectionBuilder
 {
@@ -18,18 +17,27 @@ class CollectionBuilder
      * @var LogFile[]
      */
     private $logFiles = [];
-    private $itemClass;
+    /**
+     * @var DatabaseInterface
+     */
+    private $database;
 
     /**
-     * @param string|null $itemClass
+     * @param DatabaseInterface $database
      */
-    public function __construct($itemClass = null)
+    public function __construct(DatabaseInterface $database = null)
     {
-        if (!is_null($itemClass) && !class_exists($itemClass)) {
-            throw new InvalidArgumentException('item class is not found.');
-        }
+//        if (!is_null($itemClass) && !class_exists($itemClass)) {
+//            throw new InvalidArgumentException('item class is not found.');
+//        }
+//
+//        $this->itemClass = !is_null($itemClass) ? $itemClass : $this->getDefaultItemClass();
+        $this->database = !is_null($database) ? $database : $this->getDefaultDatabase();
+    }
 
-        $this->itemClass = !is_null($itemClass) ? $itemClass : $this->getDefaultItemClass();
+    protected function getDefaultDatabase()
+    {
+        return new InMemoryDatabase(new ColumnFactory());
     }
 
     protected function getDefaultItemClass()
@@ -80,14 +88,13 @@ class CollectionBuilder
 
     public function build($ignoreParseError = false)
     {
-        $progressBar = new ProgressBar($this->getAllCount());
+//        $progressBar = new ProgressBar($this->getAllCount());
 
         $items = [];
         $itemId = 1;
-        $database = new InMemoryDatabase(new ColumnFactory());
         foreach ($this->logFiles as $logFile) {
-//            $logFile->ignoreParsedError($ignoreParseError);
-//
+            $logFile->ignoreParsedError($ignoreParseError);
+
 //            foreach (range(0, $logFile->count()) as $linePos) {
 //                /*
 //                 * @var ItemInterface $item
@@ -100,14 +107,20 @@ class CollectionBuilder
             foreach ($logFile as $line) {
                 $items[] = $itemId;
                 $parsedLine = $logFile->getCurrentParsedLine();
+                if (is_null($parsedLine)) {
+                    continue;
+                }
+
                 foreach ($parsedLine as $key => $value) {
-                    $database->addColumnValue($key, $value, $itemId);
+                    $this->database->addColumnValue($key, $value, $itemId);
                 }
                 $itemId++;
             }
         }
 
-        return new Collection($items, $database);
+        $this->database->save();
+
+        return new Collection($items, $this->database);
     }
 
     /**

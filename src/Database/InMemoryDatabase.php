@@ -53,4 +53,15 @@ class InMemoryDatabase implements DatabaseInterface
     {
         return $this->isExistColumn($columnName) ? $this->getColumn($columnName)->getValues() : [];
     }
+
+    public function save()
+    {
+        foreach ($this->columns as $column) {
+            if ($column->save() === false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

@@ -3,13 +3,22 @@ namespace Tests\Feature;
 
 use LogAnalyzer\CollectionBuilder;
 use LogAnalyzer\CollectionBuilder\Collection;
+use LogAnalyzer\Database\ColumnFactory;
+use LogAnalyzer\Database\InMemoryColumn;
+use LogAnalyzer\Database\InMemoryDatabase;
 use Tests\LogAnalyzer\TestCase;
 
 class CollectionBuilderTest extends TestCase
 {
     public function testGetCollectionsRecursive()
     {
-        $builder = new CollectionBuilder();
+        $factory = new class extends ColumnFactory {
+            public function build($saveDir = '')
+            {
+                return new InMemoryColumn();
+            }
+        };
+        $builder = new CollectionBuilder(new InMemoryDatabase($factory));
         $builder->addApacheLog($this->getFixturePath('apache.log'), '%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"');
         $collection = $builder->build();
 

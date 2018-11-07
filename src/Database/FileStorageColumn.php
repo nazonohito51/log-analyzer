@@ -14,7 +14,7 @@ class FileStorageColumn implements ColumnInterface
         }
 
         $this->data = $data;
-        $this->file = new \SplFileObject($this->getSavePath($saveDir), 'w');
+        $this->file = new \SplFileObject($this->getSavePath($saveDir), 'w+');
     }
 
     protected function getSavePath($dir)
@@ -66,13 +66,18 @@ class FileStorageColumn implements ColumnInterface
 
     public function getValues()
     {
-        return array_keys($this->data);
+        return array_keys($this->getData());
     }
 
     public function save()
     {
-        $this->file->fwrite(serialize($this->data));
+        if ($this->file->fwrite(serialize($this->data)) === 0) {
+            return false;
+        }
+        $this->data = [];
         $this->loaded = false;
+
+        return true;
     }
 
     protected function load()

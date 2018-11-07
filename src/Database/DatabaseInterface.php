@@ -7,4 +7,5 @@ interface DatabaseInterface
     public function getItemIds($columnName, $value);
     public function getValue($columnName, $itemId);
     public function getColumnValues($columnName);
+    public function save();
 }

@@ -3,6 +3,7 @@ namespace Tests\Unit\LogAnalyzer\Database;
 
 use LogAnalyzer\Database\ColumnFactory;
 use LogAnalyzer\Database\ColumnInterface;
+use LogAnalyzer\Database\DatabaseInterface;
 use LogAnalyzer\Database\InMemoryDatabase;
 use Tests\LogAnalyzer\TestCase;
 
@@ -19,7 +20,7 @@ class InMemoryDatabaseTest extends TestCase
             {
                 $this->stub = $stub;
             }
-            public function build()
+            public function build($saveDir = '')
             {
                 return $this->stub;
             }

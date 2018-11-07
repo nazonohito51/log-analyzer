@@ -3,8 +3,12 @@ namespace LogAnalyzer\Database;
 
 class ColumnFactory
 {
-    public function build()
+    public function build($saveDir = '')
     {
-        return new InMemoryColumn();
+        if (empty($saveDir)) {
+            $saveDir = __DIR__ . '/../../storage/';
+        }
+
+        return new FileStorageColumn($saveDir);
     }
 }
