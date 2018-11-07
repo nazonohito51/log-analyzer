@@ -5,7 +5,7 @@ use LogAnalyzer\CollectionBuilder;
 use LogAnalyzer\CollectionBuilder\Collection;
 use LogAnalyzer\Database\ColumnFactory;
 use LogAnalyzer\Database\InMemoryColumn;
-use LogAnalyzer\Database\InMemoryDatabase;
+use LogAnalyzer\Database\ColumnarDatabase;
 use Tests\LogAnalyzer\TestCase;
 
 class CollectionBuilderTest extends TestCase
@@ -18,7 +18,7 @@ class CollectionBuilderTest extends TestCase
                 return new InMemoryColumn();
             }
         };
-        $builder = new CollectionBuilder(new InMemoryDatabase($factory));
+        $builder = new CollectionBuilder(new ColumnarDatabase($factory));
         $builder->addApacheLog($this->getFixturePath('apache.log'), '%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"');
         $collection = $builder->build();
 

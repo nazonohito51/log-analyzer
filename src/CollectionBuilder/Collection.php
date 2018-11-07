@@ -4,7 +4,7 @@ namespace LogAnalyzer\CollectionBuilder;
 use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
 use LogAnalyzer\Database\ColumnFactory;
 use LogAnalyzer\Database\DatabaseInterface;
-use LogAnalyzer\Database\InMemoryDatabase;
+use LogAnalyzer\Database\ColumnarDatabase;
 use LogAnalyzer\View;
 
 class Collection implements \Countable, \IteratorAggregate
@@ -26,7 +26,7 @@ class Collection implements \Countable, \IteratorAggregate
     {
         $this->itemIds = $items;
         // TODO: fix $database in argument
-        $this->database = !is_null($database) ? $database : new InMemoryDatabase(new ColumnFactory());
+        $this->database = !is_null($database) ? $database : new ColumnarDatabase(new ColumnFactory());
     }
 
     public function count()

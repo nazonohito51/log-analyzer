@@ -1,7 +1,7 @@
 <?php
 namespace LogAnalyzer\Database;
 
-class InMemoryDatabase implements DatabaseInterface
+class ColumnarDatabase implements DatabaseInterface
 {
     /**
      * @var ColumnInterface[]

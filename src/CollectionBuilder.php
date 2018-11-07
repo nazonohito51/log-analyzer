@@ -9,7 +9,7 @@ use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
 use LogAnalyzer\Database\ColumnFactory;
 use LogAnalyzer\Database\DatabaseInterface;
-use LogAnalyzer\Database\InMemoryDatabase;
+use LogAnalyzer\Database\ColumnarDatabase;
 
 class CollectionBuilder
 {
@@ -37,7 +37,7 @@ class CollectionBuilder
 
     protected function getDefaultDatabase()
     {
-        return new InMemoryDatabase(new ColumnFactory());
+        return new ColumnarDatabase(new ColumnFactory());
     }
 
     protected function getDefaultItemClass()
