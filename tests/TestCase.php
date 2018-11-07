@@ -32,6 +32,11 @@ class TestCase extends \PHPUnit\Framework\TestCase
         return __DIR__ . '/Fixtures' . $fileName;
     }
 
+    protected function getTmpDir()
+    {
+        return __DIR__ . '/tmp/';
+    }
+
     protected function getLogFileMock(array $body)
     {
         return new LogFile($this->getFileMock($body), new LtsvParser());
