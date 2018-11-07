@@ -37,4 +37,9 @@ class InMemoryColumn implements ColumnInterface
     {
         return array_keys($this->data);
     }
+
+    public function save()
+    {
+        return true;
+    }
 }

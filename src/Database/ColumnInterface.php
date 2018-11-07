@@ -7,4 +7,5 @@ interface ColumnInterface
     public function getItems($value);
     public function getValue($itemId);
     public function getValues();
+    public function save();
 }
