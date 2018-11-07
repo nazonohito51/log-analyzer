@@ -17,6 +17,8 @@ class TestCase extends \PHPUnit\Framework\TestCase
     {
         parent::tearDown();
 
+        $this->cleanupTmpDir();
+
         foreach ($this->tearDownFuncs as $tearDownFunc) {
             $tearDownFunc();
         }
@@ -50,5 +52,15 @@ class TestCase extends \PHPUnit\Framework\TestCase
         };
 
         return FileStreamWrapper::STREAM_PROTOCOL . '://wrapper.txt';
+    }
+
+    protected function cleanupTmpDir()
+    {
+        foreach (glob($this->getTmpDir() . '*') as $file) {
+            if (!is_dir($file) && !preg_match('/\.gitkeep$/', $file)) {
+                var_dump($file);
+                unlink($file);
+            }
+        }
     }
 }
