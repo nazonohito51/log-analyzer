@@ -8,8 +8,6 @@ use Tests\LogAnalyzer\TestCase;
 
 class ColumnarDatabaseTest extends TestCase
 {
-    // TODO: add testCase
-
     public function testAddColumn()
     {
         $stub = $this->createMock(ColumnInterface::class);
@@ -32,7 +30,27 @@ class ColumnarDatabaseTest extends TestCase
         $this->assertEquals([1], $database->getItemIds('key1', 'value1'));
     }
 
-    public function testGetValues()
+    public function testGetItemIds()
+    {
+        $column = $this->createMock(ColumnInterface::class);
+        $column->expects($this->once())->method('getItems')->with('value')->willReturn([1, 2, 3]);
+        $factory = $this->createMock(ColumnFactory::class);
+        $database = new ColumnarDatabase($factory, ['column' => $column]);
+
+        $this->assertEquals([1, 2, 3], $database->getItemIds('column', 'value'));
+    }
+
+    public function testGetValue()
+    {
+        $column = $this->createMock(ColumnInterface::class);
+        $column->expects($this->once())->method('getValue')->with(1)->willReturn('value');
+        $factory = $this->createMock(ColumnFactory::class);
+        $database = new ColumnarDatabase($factory, ['column' => $column]);
+
+        $this->assertEquals('value', $database->getValue('column', 1));
+    }
+
+    public function testGetColumnValues()
     {
         $column = $this->createMock(ColumnInterface::class);
         $column->expects($this->once())->method('getValues')->willReturn(['value1', 'value2']);
@@ -40,5 +58,21 @@ class ColumnarDatabaseTest extends TestCase
         $database = new ColumnarDatabase($factory, ['key1' => $column]);
 
         $this->assertEquals(['value1', 'value2'], $database->getColumnValues('key1'));
+    }
+
+    public function testGetSubset()
+    {
+        $column = $this->createMock(ColumnInterface::class);
+        $column->expects($this->once())->method('getSubset')->willReturn([
+            'value1' => [1, 2],
+            'value2' => [3]
+        ]);
+        $factory = $this->createMock(ColumnFactory::class);
+        $database = new ColumnarDatabase($factory, ['column' => $column]);
+
+        $this->assertEquals([
+            'value1' => [1, 2],
+            'value2' => [3]
+        ], $database->getColumnSubset('column', [1, 2, 3]));
     }
 }
