@@ -110,10 +110,10 @@ class ViewTest extends TestCase
     {
         $collectionValue1 = $this->createMock(Collection::class);
         $collectionValue1->method('count')->willReturn(2);
-        $collectionValue1->method('columnValues')->willReturn(['1', '2']);
+        $collectionValue1->method('columnValues')->willReturn([100, 200]);
         $collectionValue2 = $this->createMock(Collection::class);
         $collectionValue2->method('count')->willReturn(1);
-        $collectionValue2->method('columnValues')->willReturn(['3']);
+        $collectionValue2->method('columnValues')->willReturn([300]);
         $view = new View('dimension_name', [
             'value1' => $collectionValue1,
             'value2' => $collectionValue2
@@ -121,34 +121,32 @@ class ViewTest extends TestCase
 
         $array = $view->addColumn('other_property')->toArray();
 
-        $this->assertEquals(['1', '2'], $array[0]['other_property']);
-        $this->assertEquals(['3'], $array[1]['other_property']);
+        $this->assertEquals([
+            [100, 200],
+            [300]
+        ], array_column($array, 'other_property'));
     }
 
     public function testAddColumnByClosure()
     {
-        $this->markTestSkipped();
-        $file = $this->getLogFileMock([
-            "dimension_name:value1\tother_property:1",
-            "dimension_name:value1\tother_property:2",
-            "dimension_name:value2\tother_property:6",
-        ]);
+        $collectionValue1 = $this->createMock(Collection::class);
+        $collectionValue1->method('count')->willReturn(2);
+        $collectionValue1->method('columnValues')->willReturn([100, 200]);
+        $collectionValue2 = $this->createMock(Collection::class);
+        $collectionValue2->method('count')->willReturn(1);
+        $collectionValue2->method('columnValues')->willReturn([300]);
         $view = new View('dimension_name', [
-            'value1' => new Collection([
-                new Item($file, 0),
-                new Item($file, 1),
-            ]),
-            'value2' => new Collection([
-                new Item($file, 2)
-            ])
+            'value1' => $collectionValue1,
+            'value2' => $collectionValue2
         ]);
 
-        $array = $view->addColumn('other_property', function ($carry, ItemInterface $item) {
-            $carry += $item->get('other_property');
-            return $carry;
+        $array = $view->addColumn('other_property', function ($value) {
+            return $value * 100;
         })->toArray();
 
-        $this->assertEquals(3, $array[0]['other_property']);
-        $this->assertEquals(6, $array[1]['other_property']);
+        $this->assertEquals([
+            [10000, 20000],
+            [30000]
+        ], array_column($array, 'other_property'));
     }
 }

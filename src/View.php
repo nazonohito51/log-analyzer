@@ -26,7 +26,7 @@ class View implements \Countable
 
     public function addColumn($name, callable $procedure = null)
     {
-        $this->columns[$name] = !is_null($procedure) ? $procedure : $name;
+        $this->columns[$name] = $procedure ?? function ($value) {return $value;};
 
         return $this;
     }
@@ -62,11 +62,9 @@ class View implements \Countable
                     $row[$columnName] = $dimensionValue;
                 } elseif ($procedure == self::COUNT_COLUMN) {
                     $row[$columnName] = $collection->count();
-                } elseif (is_callable($procedure)) {
-                    throw new \LogicException();
-//                    $row[$columnName] = $collection->map('', $procedure);
                 } else {
-                    $row[$columnName] = array_unique($collection->columnValues($procedure));
+                    $values = array_unique($collection->columnValues($procedure));
+                    $row[$columnName] = array_map($procedure, $values);
                 }
             }
             $ret[] = $row;
