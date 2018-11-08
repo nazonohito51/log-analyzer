@@ -24,9 +24,9 @@ class ValueStore
 
     public function getValueNo($value)
     {
-        $keys = array_keys($this->values, $value);
+        $valueNo = array_search($value, $this->values);
 
-        return count($keys) === 1 ? $keys[0] : $this->add($value);
+        return $valueNo !== false ? $valueNo : $this->add($value);
     }
 
     protected function add($value)
