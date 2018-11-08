@@ -46,12 +46,11 @@ class Collection implements \Countable, \IteratorAggregate
         return new View($columnName, $collections);
     }
 
-    public function map($columnName, callable $procedure = null)
+    public function columnValues($columnName)
     {
         $ret = [];
         foreach ($this->itemIds as $itemId) {
-            $value = $this->database->getValue($columnName, $itemId);
-            $ret[] = $this->calcValue($value, $procedure);
+            $ret[] = $this->database->getValue($columnName, $itemId);
         }
 
         return $ret;

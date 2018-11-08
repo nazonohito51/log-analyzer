@@ -110,10 +110,10 @@ class ViewTest extends TestCase
     {
         $collectionValue1 = $this->createMock(Collection::class);
         $collectionValue1->method('count')->willReturn(2);
-        $collectionValue1->method('map')->willReturn(['1', '2']);
+        $collectionValue1->method('columnValues')->willReturn(['1', '2']);
         $collectionValue2 = $this->createMock(Collection::class);
         $collectionValue2->method('count')->willReturn(1);
-        $collectionValue2->method('map')->willReturn(['3']);
+        $collectionValue2->method('columnValues')->willReturn(['3']);
         $view = new View('dimension_name', [
             'value1' => $collectionValue1,
             'value2' => $collectionValue2

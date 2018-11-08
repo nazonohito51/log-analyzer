@@ -66,7 +66,7 @@ class View implements \Countable
                     throw new \LogicException();
 //                    $row[$columnName] = $collection->map('', $procedure);
                 } else {
-                    $row[$columnName] = array_unique($collection->map($procedure));
+                    $row[$columnName] = array_unique($collection->columnValues($procedure));
                 }
             }
             $ret[] = $row;
