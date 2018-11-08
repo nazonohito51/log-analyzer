@@ -29,47 +29,6 @@ class ViewTest extends TestCase
         ], $array);
     }
 
-    public function testToArrayUsingSort()
-    {
-        $this->markTestSkipped();
-        $file = $this->getLogFileMock([
-            'dimension_name:have_one',
-            'dimension_name:have_three',
-            'dimension_name:have_two',
-            'dimension_name:have_three',
-            'dimension_name:have_two',
-            'dimension_name:have_three',
-        ]);
-        $view = new View('dimension_name', [
-            'have_one' => new Collection([
-                new Item($file, 0)
-            ]),
-            'have_three' => new Collection([
-                new Item($file, 1),
-                new Item($file, 3),
-                new Item($file, 5),
-            ]),
-            'have_two' => new Collection([
-                new Item($file, 2),
-                new Item($file, 4),
-            ]),
-        ]);
-
-        $array = $view->toArray(function ($a, $b) {
-            if ($a['Count'] == $b['Count']) {
-                return 0;
-            }
-
-            return ($a['Count'] < $b['Count']) ? 1 : -1;
-        });
-
-        $this->assertEquals([
-            ['dimension_name' => 'have_three', 'Count' => 3],
-            ['dimension_name' => 'have_two', 'Count' => 2],
-            ['dimension_name' => 'have_one', 'Count' => 1]
-        ], $array);
-    }
-
     public function testToArrayUsingWhere()
     {
         $closure = function ($value) {

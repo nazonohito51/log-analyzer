@@ -31,20 +31,17 @@ class View implements \Countable
         return $this;
     }
 
-    public function display(array $options = [])
+    public function display($strLength = 60)
     {
         $table = new ConsoleTable();
-        $str_length = isset($options['length']) ? $options['length'] : null;
-        $sort = isset($options['sort']) ? $options['sort'] : null;
-        $where = isset($options['where']) ? $options['where'] : null;
 
         foreach ($this->columns as $name => $procedure) {
             $table->addHeader($name);
         }
-        foreach ($this->toArray($sort, $where) as $row) {
+        foreach ($this->toArray() as $row) {
             $table->addRow();
             foreach ($this->columns as $name => $procedure) {
-                $value = $this->formatColumnValue($row[$name], $str_length);
+                $value = $this->formatColumnValue($row[$name], $strLength);
                 $table->addColumn($value);
             }
         }
@@ -52,7 +49,7 @@ class View implements \Countable
         $table->display();
     }
 
-    public function toArray(callable $sort = null)
+    public function toArray()
     {
         $ret = [];
         foreach ($this->collections as $dimensionValue => $collection) {
@@ -68,10 +65,6 @@ class View implements \Countable
                 }
             }
             $ret[] = $row;
-        }
-
-        if ($sort) {
-            usort($ret, $sort);
         }
 
         return $ret;
