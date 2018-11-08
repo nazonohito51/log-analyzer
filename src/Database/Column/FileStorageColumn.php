@@ -42,12 +42,12 @@ class FileStorageColumn implements ColumnInterface
 
     public function getItems($value)
     {
-        return array_keys($this->itemIds, $this->values->getValueNo($value));
+        return array_keys($this->getItemIds(), $this->values->getValueNo($value));
     }
 
     public function getValue($itemId)
     {
-        $valueNo = $this->itemIds[$itemId];
+        $valueNo = $this->getItemIds()[$itemId];
         return $this->values->get($valueNo);
     }
 
