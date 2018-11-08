@@ -58,7 +58,6 @@ class TestCase extends \PHPUnit\Framework\TestCase
     {
         foreach (glob($this->getTmpDir() . '*') as $file) {
             if (!is_dir($file) && !preg_match('/\.gitkeep$/', $file)) {
-                var_dump($file);
                 unlink($file);
             }
         }
