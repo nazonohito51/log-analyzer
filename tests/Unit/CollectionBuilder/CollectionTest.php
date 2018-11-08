@@ -14,10 +14,9 @@ class CollectionTest extends TestCase
     public function testDimension()
     {
         $database = $this->createMock(DatabaseInterface::class);
-        $database->method('getColumnValues')->willReturn(['value1', 'value2']);
-        $database->method('getItemIds')->willReturnMap([
-            ['key1', 'value1', [1, 2]],
-            ['key1', 'value2', [3]]
+        $database->method('getColumnSubset')->with('key1', [1, 2, 3])->willReturn([
+            'value1' => [1, 2],
+            'value2' => [3]
         ]);
         $collection = new Collection([1, 2, 3], $database);
 

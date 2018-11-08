@@ -2,7 +2,7 @@
 namespace LogAnalyzer\CollectionBuilder;
 
 use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
-use LogAnalyzer\Database\ColumnFactory;
+use LogAnalyzer\Database\Column\ColumnFactory;
 use LogAnalyzer\Database\DatabaseInterface;
 use LogAnalyzer\Database\ColumnarDatabase;
 use LogAnalyzer\View;
@@ -59,13 +59,9 @@ class Collection implements \Countable, \IteratorAggregate
 //            $progressBar->update($item->getLogFile(), $item->getLinePos());
 //        }
 
-        $collection = [];
-        foreach ($this->database->getColumnValues($key) as $value) {
-            $itemIds = array_intersect($this->itemIds, $this->database->getItemIds($key, $value));
-
-            if (count($itemIds) > 0) {
-                $collection[$value] = new self($itemIds, $this->database);
-            }
+        $collections = [];
+        foreach ($this->database->getColumnSubset($key, $this->itemIds) as $value => $itemIds) {
+            $collections[$value] = new self($itemIds, $this->database);
         }
 
 //        $collection = [];
@@ -73,7 +69,7 @@ class Collection implements \Countable, \IteratorAggregate
 //            $collection[$dimensionValue] = new self($items);
 //        }
 
-        return new View($key, $collection);
+        return new View($key, $collections);
     }
 
     /**
