@@ -9,14 +9,8 @@ use LogAnalyzer\View;
 
 class Collection implements \Countable, \IteratorAggregate
 {
-    /**
-     * @var ItemInterface[]
-     */
-    private $itemIds;
-    /**
-     * @var DatabaseInterface
-     */
-    private $database;
+    protected $itemIds;
+    protected $database;
 
     /**
      * @param int[] $items
