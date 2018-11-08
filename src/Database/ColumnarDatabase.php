@@ -54,7 +54,12 @@ class ColumnarDatabase implements DatabaseInterface
 
     public function getColumnValues($columnName)
     {
-        return $this->isExistColumn($columnName) ? $this->getColumn($columnName)->getValues() : [];
+        return $this->isExistColumn($columnName) ? $this->getColumn($columnName)->getValues() : null;
+    }
+
+    public function getColumnSubset($columnName, array $itemIds)
+    {
+        return $this->isExistColumn($columnName) ? $this->getColumn($columnName)->getSubset($itemIds) : [];
     }
 
     public function save()
