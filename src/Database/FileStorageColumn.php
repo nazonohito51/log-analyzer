@@ -52,6 +52,28 @@ class FileStorageColumn implements ColumnInterface
         return array_values($this->values);
     }
 
+    public function getSubset(array $itemIds)
+    {
+        $ret = [];
+        $thisItemIds = $this->getItemIds();
+
+        foreach ($itemIds as $itemId) {
+            if (!isset($thisItemIds[$itemId])) {
+                continue;
+            }
+
+            $valueNo = $thisItemIds[$itemId];
+            $valueKey = $this->getValueKey($valueNo);
+
+            if (!isset($ret[$valueKey])) {
+                $ret[$valueKey] = [];
+            }
+            $ret[$valueKey][] = $itemId;
+        }
+
+        return $ret;
+    }
+
     public function save()
     {
         if ($this->file->fwrite(serialize($this->itemIds)) === 0) {

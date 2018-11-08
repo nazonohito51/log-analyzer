@@ -38,6 +38,21 @@ class InMemoryColumn implements ColumnInterface
         return array_keys($this->data);
     }
 
+    public function getSubset(array $itemIds)
+    {
+        $ret = [];
+
+        foreach ($itemIds as $itemId) {
+            if (is_null($value = $this->getValue($itemId))) {
+                continue;
+            }
+
+            $ret[$value][] = $itemId;
+        }
+
+        return $ret;
+    }
+
     public function save()
     {
         return true;

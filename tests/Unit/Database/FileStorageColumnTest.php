@@ -56,6 +56,13 @@ class FileStorageColumnTest extends TestCase
         $this->assertEquals(['value1', 'value2'], $column->getValues());
     }
 
+    public function testGetSubset()
+    {
+        $column = new FileStorageColumn($this->getTmpDir(), ['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]);
+
+        $this->assertEquals(['value1' => [1, 2], 'value3' => [5]], $column->getSubset([1, 2, 5, 7]));
+    }
+
     public function testSave()
     {
         // TODO: fix docker settings
