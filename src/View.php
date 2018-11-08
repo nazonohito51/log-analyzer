@@ -63,9 +63,10 @@ class View implements \Countable
                 } elseif ($procedure == self::COUNT_COLUMN) {
                     $row[$columnName] = $collection->count();
                 } elseif (is_callable($procedure)) {
-                    $row[$columnName] = $collection->sum($procedure);
+                    throw new \LogicException();
+//                    $row[$columnName] = $collection->map('', $procedure);
                 } else {
-                    $row[$columnName] = array_unique($collection->sum($procedure));
+                    $row[$columnName] = array_unique($collection->map($procedure));
                 }
             }
             $ret[] = $row;

@@ -50,7 +50,7 @@ class CollectionTest extends TestCase
         $this->assertEquals(1, $view->getCollection('getAdView')->count());
     }
 
-    public function testSum()
+    public function testMap()
     {
         $database = $this->createMock(DatabaseInterface::class);
         $database->method('getValue')->willReturnMap([
@@ -60,31 +60,26 @@ class CollectionTest extends TestCase
         ]);
         $collection = new Collection([1, 2, 3], $database);
 
-        $implode = $collection->sum('column');
+        $implode = $collection->map('column');
 
         $this->assertEquals(['value1', 'value1', 'value2'], $implode);
     }
 
-    public function testSumByClosure()
+    public function testMapByClosure()
     {
-        $this->markTestSkipped();
-        $file = $this->getLogFileMock([
-            'column:1',
-            'column:2',
-            'column:3'
+        $database = $this->createMock(DatabaseInterface::class);
+        $database->method('getValue')->willReturnMap([
+            ['column', 1, 'value1'],
+            ['column', 2, 'value1'],
+            ['column', 3, 'value2']
         ]);
-        $collection = new Collection([
-            new Item($file, 0),
-            new Item($file, 1),
-            new Item($file, 2),
-        ]);
+        $collection = new Collection([1, 2, 3], $database);
 
-        $implode = $collection->sum(function ($carry, ItemInterface $item) {
-            $carry += $item->get('column');
-            return $carry;
+        $implode = $collection->map('column', function ($value) {
+            return strtoupper($value);
         });
 
-        $this->assertEquals(6, $implode);
+        $this->assertEquals(['VALUE1', 'VALUE1', 'VALUE2'], $implode);
     }
 
     public function testExtract()

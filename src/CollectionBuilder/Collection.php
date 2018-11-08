@@ -28,23 +28,14 @@ class Collection implements \Countable, \IteratorAggregate
         return count($this->itemIds);
     }
 
-    /**
-     * @param string $columnName
-     * @param callable $procedure
-     * @return View
-     */
     public function dimension($columnName, callable $procedure = null)
     {
 //        $progressBar = new View\ProgressBar($this->count());
 
         $itemIdsByValue = [];
         foreach ($this->database->getColumnSubset($columnName, $this->itemIds) as $value => $itemIds) {
-            if (!is_null($procedure)) {
-                if (is_null($value = $procedure($value))) {
-                    $value = 'null';
-                }
-            }
-            $itemIdsByValue[$value] = array_merge($itemIds, $itemIdsByValue[$value] ?? []);
+            $calcValue = $this->calcValue($value, $procedure);
+            $itemIdsByValue[$calcValue] = array_merge($itemIds, $itemIdsByValue[$calcValue] ?? []);
         }
 
         $collections = [];
@@ -55,21 +46,12 @@ class Collection implements \Countable, \IteratorAggregate
         return new View($columnName, $collections);
     }
 
-    /**
-     * @param string|callable $procedure
-     * @return array|mixed
-     */
-    public function sum($procedure)
+    public function map($columnName, callable $procedure = null)
     {
-        if (is_callable($procedure)) {
-            $ret = array_reduce($this->itemIds, $procedure);
-        } elseif (is_string($procedure)) {
-            $ret = [];
-            foreach ($this->itemIds as $itemId) {
-                $ret[] = $this->database->getValue($procedure, $itemId);
-            }
-        } else {
-            throw new \InvalidArgumentException('$calc is not callable or string.');
+        $ret = [];
+        foreach ($this->itemIds as $itemId) {
+            $value = $this->database->getValue($columnName, $itemId);
+            $ret[] = $this->calcValue($value, $procedure);
         }
 
         return $ret;
@@ -90,6 +72,15 @@ class Collection implements \Countable, \IteratorAggregate
         }
 
         return new self($items);
+    }
+
+    protected function calcValue($value, callable $procedure = null)
+    {
+        if (!is_null($procedure)) {
+            $value = $procedure($value) ?? 'null';
+        }
+
+        return $value;
     }
 
     public function getIterator()
