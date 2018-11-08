@@ -56,21 +56,16 @@ class Collection implements \Countable, \IteratorAggregate
         return $ret;
     }
 
-    /**
-     * Build new collection on items satisfied with callable
-     * @param callable $procedure
-     * @return Collection
-     */
-    public function filter(callable $procedure)
+    public function filter($columnName, callable $procedure)
     {
-        $items = [];
-        foreach ($this->itemIds as $item) {
-            if ($procedure($item) === true) {
-                $items[] = $item;
+        $itemIds = [];
+        foreach ($this->itemIds as $itemId) {
+            if ($procedure($this->database->getValue($columnName, $itemId)) === true) {
+                $itemIds[] = $itemId;
             }
         }
 
-        return new self($items);
+        return new self($itemIds, $this->database);
     }
 
     protected function calcValue($value, callable $procedure = null)

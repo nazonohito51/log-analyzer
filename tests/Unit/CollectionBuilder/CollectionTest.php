@@ -65,22 +65,18 @@ class CollectionTest extends TestCase
         $this->assertEquals(['value1', 'value1', 'value2'], $implode);
     }
 
-    public function testExtract()
+    public function testFilter()
     {
-        $this->markTestSkipped();
-        $file = $this->getLogFileMock([
-            "column:value1\tshould_extract_key:1",
-            'column:value2',
-            "column:value3\tshould_extract_key:1"
+        $database = $this->createMock(DatabaseInterface::class);
+        $database->method('getValue')->willReturnMap([
+            ['column', 1, 100],
+            ['column', 2, 101],
+            ['column', 3, 102]
         ]);
-        $collection = new Collection([
-            new Item($file, 0),
-            new Item($file, 1),
-            new Item($file, 2),
-        ]);
+        $collection = new Collection([1, 2, 3], $database);
 
-        $newCollection = $collection->filter(function (ItemInterface $item) {
-            return $item->have('should_extract_key');
+        $newCollection = $collection->filter('column', function ($value) {
+            return $value >= 101;
         });
 
         $this->assertEquals(2, $newCollection->count());
