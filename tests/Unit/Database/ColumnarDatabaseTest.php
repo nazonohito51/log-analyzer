@@ -8,6 +8,8 @@ use Tests\LogAnalyzer\TestCase;
 
 class ColumnarDatabaseTest extends TestCase
 {
+    // TODO: add testCase
+
     public function testAddColumn()
     {
         $stub = $this->createMock(ColumnInterface::class);
