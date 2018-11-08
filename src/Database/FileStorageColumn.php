@@ -4,7 +4,8 @@ namespace LogAnalyzer\Database;
 class FileStorageColumn implements ColumnInterface
 {
     private $file;
-    protected $data = [];
+    protected $itemIds = [];
+    protected $values = [];
     protected $loaded = true;
 
     public function __construct($saveDir, array $data = [])
@@ -13,8 +14,13 @@ class FileStorageColumn implements ColumnInterface
             throw new \InvalidArgumentException();
         }
 
-        $this->data = $data;
         $this->file = new \SplFileObject($this->getSavePath($saveDir), 'w+');
+
+        foreach ($data as $value => $itemIds) {
+            foreach ($itemIds as $itemId) {
+                $this->addData($value, $itemId);
+            }
+        }
     }
 
     protected function getSavePath($dir)
@@ -32,27 +38,38 @@ class FileStorageColumn implements ColumnInterface
 
     public function getItems($value)
     {
-        return isset($this->getData()[$value]) ? $this->getData()[$value] : [];
+        return array_keys($this->itemIds, $this->getValueNo($value));
     }
 
     public function getValue($itemId)
     {
-        foreach ($this->getData() as $value => $itemIds) {
-            if (in_array($itemId, $itemIds)) {
-                return $value;
-            }
-        }
-
-        return null;
+        $valueNo = $this->itemIds[$itemId];
+        return $this->getValueKey($valueNo);
     }
 
-    protected function getData()
+    public function getValues()
+    {
+        return array_values($this->values);
+    }
+
+    public function save()
+    {
+        if ($this->file->fwrite(serialize($this->itemIds)) === 0) {
+            return false;
+        }
+        $this->itemIds = [];
+        $this->loaded = false;
+
+        return true;
+    }
+
+    protected function getItemIds()
     {
         if ($this->loaded === false) {
             $this->load();
         }
 
-        return $this->data;
+        return $this->itemIds;
     }
 
     protected function addData($value, $itemId)
@@ -61,29 +78,32 @@ class FileStorageColumn implements ColumnInterface
             $this->load();
         }
 
-        isset($this->data[$value]) ? $this->data[$value][] = $itemId : $this->data[$value] = [$itemId];
-    }
-
-    public function getValues()
-    {
-        return array_keys($this->getData());
-    }
-
-    public function save()
-    {
-        if ($this->file->fwrite(serialize($this->data)) === 0) {
-            return false;
-        }
-        $this->data = [];
-        $this->loaded = false;
-
-        return true;
+        $this->itemIds[$itemId] = $this->getValueNo($value);
     }
 
     protected function load()
     {
         $this->file->rewind();
-        $this->data = unserialize($this->file->fread($this->file->getSize()));
+        $this->itemIds = unserialize($this->file->fread($this->file->getSize()));
         $this->loaded = true;
+    }
+
+    protected function getValueKey($valueNo)
+    {
+        return isset($this->values[$valueNo]) ? $this->values[$valueNo] : null;
+    }
+
+    protected function getValueNo($value)
+    {
+        $keys = array_keys($this->values, $value);
+
+        return count($keys) === 1 ? $keys[0] : $this->addValue($value);
+    }
+
+    protected function addValue($value)
+    {
+        $this->values[] = $value;
+
+        return count($this->values) - 1;
     }
 }
