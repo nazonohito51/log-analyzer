@@ -68,8 +68,20 @@ class FileStorageColumnTest extends TestCase
 
     public function testSave()
     {
-        // TODO: fix docker settings
-        $this->markTestSkipped();
+        $column = new FileStorageColumn($this->getTmpDir(), $this->getValueStoreMock(), ['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]);
+
+        $column->save();
+
+        $file = new \SplFileObject($this->getTmpDir() . spl_object_hash($column));
+        $line = unserialize($file->fread($file->getSize()));
+        $this->assertEquals([
+            1 => 0,
+            2 => 0,
+            3 => 1,
+            4 => 1,
+            5 => 2,
+            6 => 2
+        ], $line);
     }
 
     protected function getValueStoreMock()
