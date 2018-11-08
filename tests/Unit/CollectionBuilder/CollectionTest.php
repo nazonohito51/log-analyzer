@@ -29,20 +29,16 @@ class CollectionTest extends TestCase
 
     public function testDimensionByClosure()
     {
-        $this->markTestSkipped();
-        $file = $this->getLogFileMock([
-            'column:<methodCall><methodName>getBlogInfo</methodName><params><param>111</param></params></methodCall>',
-            'column:<methodCall><methodName>getAdView</methodName><params><param>account</param></params></methodCall>',
-            'column:<methodCall><methodName>getBlogInfo</methodName><params><param>222</param></params></methodCall>'
+        $database = $this->createMock(DatabaseInterface::class);
+        $database->method('getColumnSubset')->with('key1', [1, 2, 3])->willReturn([
+            '<methodCall><methodName>getBlogInfo</methodName><params><param>111</param></params></methodCall>' => [1],
+            '<methodCall><methodName>getAdView</methodName><params><param>account</param></params></methodCall>' => [2],
+            '<methodCall><methodName>getBlogInfo</methodName><params><param>222</param></params></methodCall>' => [3]
         ]);
-        $collection = new Collection([
-            new Item($file, 0),
-            new Item($file, 1),
-            new Item($file, 2),
-        ]);
+        $collection = new Collection([1, 2, 3], $database);
 
-        $view = $collection->dimension('methodName', function (ItemInterface $item) {
-            if (($xml = simplexml_load_string($item->get('column'))) !== false) {
+        $view = $collection->dimension('key1', function ($value) {
+            if (($xml = simplexml_load_string($value)) !== false) {
                 return (string)$xml->methodName;
             }
 

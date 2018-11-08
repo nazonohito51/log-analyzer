@@ -21,6 +21,7 @@
     ]
   },
   "require": {
+    "ext-simplexml": "*",
     "kassner/log-parser": "~1.0",
     "clover/text-ltsv": "~1.0",
     "phplucidframe/console-table": "~1.0",

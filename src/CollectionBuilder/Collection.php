@@ -35,41 +35,30 @@ class Collection implements \Countable, \IteratorAggregate
     }
 
     /**
-     * @param string $key
+     * @param string $columnName
      * @param callable $procedure
      * @return View
      */
-    public function dimension($key, callable $procedure = null)
+    public function dimension($columnName, callable $procedure = null)
     {
 //        $progressBar = new View\ProgressBar($this->count());
 
-//        $dimensionItems = [];
-//        foreach ($this->items as $item) {
-//            if (!is_null($procedure)) {
-//                $dimensionValue = $procedure($item);
-//                $dimensionValue = is_null($dimensionValue) ? 'null' : $dimensionValue;
-//                $dimensionItems[$dimensionValue][] = $item;
-//            } elseif ($item->have($key)) {
-//                $dimensionValue = $item->get($key);
-//                $dimensionItems[$dimensionValue][] = $item;
-//            } else {
-//                $dimensionItems['null'][] = $item;
-//            }
-//
-//            $progressBar->update($item->getLogFile(), $item->getLinePos());
-//        }
+        $itemIdsByValue = [];
+        foreach ($this->database->getColumnSubset($columnName, $this->itemIds) as $value => $itemIds) {
+            if (!is_null($procedure)) {
+                if (is_null($value = $procedure($value))) {
+                    $value = 'null';
+                }
+            }
+            $itemIdsByValue[$value] = array_merge($itemIds, $itemIdsByValue[$value] ?? []);
+        }
 
         $collections = [];
-        foreach ($this->database->getColumnSubset($key, $this->itemIds) as $value => $itemIds) {
+        foreach ($itemIdsByValue as $value => $itemIds) {
             $collections[$value] = new self($itemIds, $this->database);
         }
 
-//        $collection = [];
-//        foreach ($dimensionItems as $dimensionValue => $items) {
-//            $collection[$dimensionValue] = new self($items);
-//        }
-
-        return new View($key, $collections);
+        return new View($columnName, $collections);
     }
 
     /**
