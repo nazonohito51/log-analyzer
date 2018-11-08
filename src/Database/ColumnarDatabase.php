@@ -1,6 +1,9 @@
 <?php
 namespace LogAnalyzer\Database;
 
+use LogAnalyzer\Database\Column\ColumnFactory;
+use LogAnalyzer\Database\Column\ColumnInterface;
+
 class ColumnarDatabase implements DatabaseInterface
 {
     /**

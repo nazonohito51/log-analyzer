@@ -1,5 +1,7 @@
 <?php
-namespace LogAnalyzer\Database;
+namespace LogAnalyzer\Database\Column;
+
+use LogAnalyzer\Database\Column\FileStorageColumn;
 
 class ColumnFactory
 {

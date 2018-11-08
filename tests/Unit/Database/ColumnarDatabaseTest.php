@@ -1,8 +1,8 @@
 <?php
 namespace Tests\Unit\LogAnalyzer\Database;
 
-use LogAnalyzer\Database\ColumnFactory;
-use LogAnalyzer\Database\ColumnInterface;
+use LogAnalyzer\Database\Column\ColumnFactory;
+use LogAnalyzer\Database\Column\ColumnInterface;
 use LogAnalyzer\Database\ColumnarDatabase;
 use Tests\LogAnalyzer\TestCase;
 

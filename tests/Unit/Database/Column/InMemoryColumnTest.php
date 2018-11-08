@@ -1,10 +1,10 @@
 <?php
-namespace Tests\Unit\LogAnalyzer\Database;
+namespace Tests\Unit\LogAnalyzer\Database\Column;
 
-use LogAnalyzer\Database\FileStorageColumn;
+use LogAnalyzer\Database\Column\InMemoryColumn;
 use Tests\LogAnalyzer\TestCase;
 
-class FileStorageColumnTest extends TestCase
+class InMemoryColumnTest extends TestCase
 {
     public function providerAdd()
     {
@@ -24,7 +24,7 @@ class FileStorageColumnTest extends TestCase
      */
     public function testAdd($initial, $addValue, $addId, $expected)
     {
-        $column = new FileStorageColumn($this->getTmpDir(), $initial);
+        $column = new InMemoryColumn($initial);
 
         $column->add($addValue, $addId);
 
@@ -33,7 +33,7 @@ class FileStorageColumnTest extends TestCase
 
     public function testGetItems()
     {
-        $column = new FileStorageColumn($this->getTmpDir(), ['value1' => [1, 2, 3]]);
+        $column = new InMemoryColumn(['value1' => [1, 2, 3]]);
 
         $this->assertEquals([1, 2, 3], $column->getItems('value1'));
         $this->assertEquals([], $column->getItems('value2'));
@@ -41,7 +41,7 @@ class FileStorageColumnTest extends TestCase
 
     public function testGetValue()
     {
-        $column = new FileStorageColumn($this->getTmpDir(), ['value1' => [1, 2], 'value2' => [3]]);
+        $column = new InMemoryColumn(['value1' => [1, 2], 'value2' => [3]]);
 
         $this->assertEquals('value1', $column->getValue(1));
         $this->assertEquals('value1', $column->getValue(2));
@@ -51,21 +51,22 @@ class FileStorageColumnTest extends TestCase
 
     public function testGetValues()
     {
-        $column = new FileStorageColumn($this->getTmpDir(), ['value1' => [1, 2], 'value2' => [3]]);
+        $column = new InMemoryColumn(['value1' => [1, 2], 'value2' => [3]]);
 
         $this->assertEquals(['value1', 'value2'], $column->getValues());
     }
 
     public function testGetSubset()
     {
-        $column = new FileStorageColumn($this->getTmpDir(), ['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]);
+        $column = new InMemoryColumn(['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]);
 
         $this->assertEquals(['value1' => [1, 2], 'value3' => [5]], $column->getSubset([1, 2, 5, 7]));
     }
 
     public function testSave()
     {
-        // TODO: fix docker settings
-        $this->markTestSkipped();
+        $column = new InMemoryColumn();
+
+        $this->assertTrue($column->save());
     }
 }

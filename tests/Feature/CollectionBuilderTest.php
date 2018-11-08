@@ -3,8 +3,8 @@ namespace Tests\Feature;
 
 use LogAnalyzer\CollectionBuilder;
 use LogAnalyzer\CollectionBuilder\Collection;
-use LogAnalyzer\Database\ColumnFactory;
-use LogAnalyzer\Database\InMemoryColumn;
+use LogAnalyzer\Database\Column\ColumnFactory;
+use LogAnalyzer\Database\Column\InMemoryColumn;
 use LogAnalyzer\Database\ColumnarDatabase;
 use Tests\LogAnalyzer\TestCase;
 

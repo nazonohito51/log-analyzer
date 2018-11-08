@@ -1,5 +1,5 @@
 <?php
-namespace LogAnalyzer\Database;
+namespace LogAnalyzer\Database\Column;
 
 interface ColumnInterface
 {
