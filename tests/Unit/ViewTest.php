@@ -72,38 +72,28 @@ class ViewTest extends TestCase
 
     public function testToArrayUsingWhere()
     {
-        $this->markTestSkipped();
-        $file = $this->getLogFileMock([
-            'dimension_name:have_one',
-            'dimension_name:have_three',
-            'dimension_name:have_two',
-            'dimension_name:have_three',
-            'dimension_name:have_two',
-            'dimension_name:have_three',
-        ]);
-        $view = new View('dimension_name', [
-            'have_one' => new Collection([
-                new Item($file, 0)
-            ]),
-            'have_two' => new Collection([
-                new Item($file, 2),
-                new Item($file, 4),
-            ]),
-            'have_three' => new Collection([
-                new Item($file, 1),
-                new Item($file, 3),
-                new Item($file, 5),
-            ]),
+        $closure = function ($value) {
+            return $value > 100;
+        };
+        $newCollectionValue1 = $this->createMock(Collection::class);
+        $newCollectionValue1->method('count')->willReturn(2);
+        $newCollectionValue2 = $this->createMock(Collection::class);
+        $newCollectionValue2->method('count')->willReturn(1);
+        $collectionValue1 = $this->createMock(Collection::class);
+        $collectionValue1->method('filter')->with('column', $closure)->willReturn($newCollectionValue1);
+        $collectionValue2 = $this->createMock(Collection::class);
+        $collectionValue2->method('filter')->with('column', $closure)->willReturn($newCollectionValue2);
+        $view = new View('column', [
+            'value1' => $collectionValue1,
+            'value2' => $collectionValue2
         ]);
 
-        $array = $view->toArray(null, function ($row) {
-            return ($row['Count'] >= 2);
-        });
+        $newView = $view->where('column', $closure)->toArray();
 
         $this->assertEquals([
-            ['dimension_name' => 'have_two', 'Count' => 2],
-            ['dimension_name' => 'have_three', 'Count' => 3],
-        ], $array);
+            ['column' => 'value1', 'Count' => 2],
+            ['column' => 'value2', 'Count' => 1],
+        ], $newView);
     }
 
     public function testAddColumn()

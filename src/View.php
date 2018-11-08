@@ -52,7 +52,7 @@ class View implements \Countable
         $table->display();
     }
 
-    public function toArray(callable $sort = null, callable $where = null)
+    public function toArray(callable $sort = null)
     {
         $ret = [];
         foreach ($this->collections as $dimensionValue => $collection) {
@@ -70,10 +70,6 @@ class View implements \Countable
             $ret[] = $row;
         }
 
-        if ($where) {
-            // array_values will number index again.
-            $ret = array_values(array_filter($ret, $where));
-        }
         if ($sort) {
             usort($ret, $sort);
         }
@@ -84,6 +80,20 @@ class View implements \Countable
     public function count()
     {
         return count($this->collections);
+    }
+
+    public function where($columnName, callable $procedure)
+    {
+        $collections = [];
+        foreach ($this->collections as $value => $collection) {
+            $newCollection = $collection->filter($columnName, $procedure);
+
+            if ($newCollection->count() > 0) {
+                $collections[$value] = $newCollection;
+            }
+        }
+
+        return new self($this->dimension, $collections);
     }
 
     public function getCollection($dimensionValue)
