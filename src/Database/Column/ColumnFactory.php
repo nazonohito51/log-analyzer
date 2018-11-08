@@ -1,7 +1,7 @@
 <?php
 namespace LogAnalyzer\Database\Column;
 
-use LogAnalyzer\Database\Column\FileStorageColumn;
+use LogAnalyzer\Database\Column\FileStorageColumn\ValueStore;
 
 class ColumnFactory
 {
@@ -11,6 +11,6 @@ class ColumnFactory
             $saveDir = __DIR__ . '/../../storage/';
         }
 
-        return new FileStorageColumn($saveDir);
+        return new FileStorageColumn($saveDir, new ValueStore());
     }
 }

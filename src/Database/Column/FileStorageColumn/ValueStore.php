@@ -5,7 +5,7 @@ class ValueStore
 {
     protected $values = [];
 
-    public function __construct(array $values)
+    public function __construct(array $values = [])
     {
         foreach ($values as $value) {
             $this->values[] = $value;

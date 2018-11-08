@@ -2,6 +2,7 @@
 namespace LogAnalyzer\Database\Column;
 
 use LogAnalyzer\Database\Column\ColumnInterface;
+use LogAnalyzer\Database\Column\FileStorageColumn\ValueStore;
 
 class FileStorageColumn implements ColumnInterface
 {
@@ -9,8 +10,12 @@ class FileStorageColumn implements ColumnInterface
     protected $itemIds = [];
     protected $values = [];
     protected $loaded = true;
+    /**
+     * @var ValueStore
+     */
+    private $valueStore;
 
-    public function __construct($saveDir, array $data = [])
+    public function __construct($saveDir, ValueStore $valueStore, array $data = [])
     {
         if (!file_exists($saveDir)) {
             throw new \InvalidArgumentException();
@@ -23,6 +28,7 @@ class FileStorageColumn implements ColumnInterface
                 $this->addData($value, $itemId);
             }
         }
+        $this->valueStore = $valueStore;
     }
 
     protected function getSavePath($dir)
