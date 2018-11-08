@@ -8,7 +8,7 @@ class ColumnFactory
     public function build($saveDir = '')
     {
         if (empty($saveDir)) {
-            $saveDir = __DIR__ . '/../../storage/';
+            $saveDir = __DIR__ . '/../../../storage/';
         }
 
         return new FileStorageColumn($saveDir, new ValueStore());
