@@ -65,24 +65,6 @@ class CollectionTest extends TestCase
         $this->assertEquals(['value1', 'value1', 'value2'], $implode);
     }
 
-    public function testMapByClosure()
-    {
-        $this->markTestSkipped();
-        $database = $this->createMock(DatabaseInterface::class);
-        $database->method('getValue')->willReturnMap([
-            ['column', 1, 'value1'],
-            ['column', 2, 'value1'],
-            ['column', 3, 'value2']
-        ]);
-        $collection = new Collection([1, 2, 3], $database);
-
-        $implode = $collection->columnValues('column', function ($value) {
-            return strtoupper($value);
-        });
-
-        $this->assertEquals(['VALUE1', 'VALUE1', 'VALUE2'], $implode);
-    }
-
     public function testExtract()
     {
         $this->markTestSkipped();
