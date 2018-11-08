@@ -17,6 +17,11 @@ class ValueStore
         return isset($this->values[$valueNo]) ? $this->values[$valueNo] : null;
     }
 
+    public function getAll()
+    {
+        return array_values($this->values);
+    }
+
     public function getValueNo($value)
     {
         $keys = array_keys($this->values, $value);

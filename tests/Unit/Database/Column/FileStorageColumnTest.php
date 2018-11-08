@@ -21,12 +21,11 @@ class FileStorageColumnTest extends TestCase
      * @param $addValue
      * @param $addId
      * @param $expected
-     * @throws \ReflectionException
      * @dataProvider providerAdd
      */
     public function testAdd($initial, $addValue, $addId, $expected)
     {
-        $column = new FileStorageColumn($this->getTmpDir(), $this->createMock(ValueStore::class), $initial);
+        $column = new FileStorageColumn($this->getTmpDir(), $this->getValueStoreMock(), $initial);
 
         $column->add($addValue, $addId);
 
@@ -35,7 +34,7 @@ class FileStorageColumnTest extends TestCase
 
     public function testGetItems()
     {
-        $column = new FileStorageColumn($this->getTmpDir(), $this->createMock(ValueStore::class), ['value1' => [1, 2, 3]]);
+        $column = new FileStorageColumn($this->getTmpDir(), $this->getValueStoreMock(), ['value1' => [1, 2, 3]]);
 
         $this->assertEquals([1, 2, 3], $column->getItems('value1'));
         $this->assertEquals([], $column->getItems('value2'));
@@ -43,7 +42,7 @@ class FileStorageColumnTest extends TestCase
 
     public function testGetValue()
     {
-        $column = new FileStorageColumn($this->getTmpDir(), $this->createMock(ValueStore::class), ['value1' => [1, 2], 'value2' => [3]]);
+        $column = new FileStorageColumn($this->getTmpDir(), $this->getValueStoreMock(), ['value1' => [1, 2], 'value2' => [3]]);
 
         $this->assertEquals('value1', $column->getValue(1));
         $this->assertEquals('value1', $column->getValue(2));
@@ -53,14 +52,16 @@ class FileStorageColumnTest extends TestCase
 
     public function testGetValues()
     {
-        $column = new FileStorageColumn($this->getTmpDir(), $this->createMock(ValueStore::class), ['value1' => [1, 2], 'value2' => [3]]);
+        $store = $this->getValueStoreMock();
+        $store->method('getAll')->willReturn(['value1', 'value2']);
+        $column = new FileStorageColumn($this->getTmpDir(), $store, ['value1' => [1, 2], 'value2' => [3]]);
 
         $this->assertEquals(['value1', 'value2'], $column->getValues());
     }
 
     public function testGetSubset()
     {
-        $column = new FileStorageColumn($this->getTmpDir(), $this->createMock(ValueStore::class), ['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]);
+        $column = new FileStorageColumn($this->getTmpDir(), $this->getValueStoreMock(), ['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]);
 
         $this->assertEquals(['value1' => [1, 2], 'value3' => [5]], $column->getSubset([1, 2, 5, 7]));
     }
@@ -69,5 +70,22 @@ class FileStorageColumnTest extends TestCase
     {
         // TODO: fix docker settings
         $this->markTestSkipped();
+    }
+
+    protected function getValueStoreMock()
+    {
+        $store = $this->createMock(ValueStore::class);
+        $store->method('getValueNo')->willReturnMap([
+            ['value1', 0],
+            ['value2', 1],
+            ['value3', 2],
+        ]);
+        $store->method('get')->willReturnMap([
+            [0, 'value1'],
+            [1, 'value2'],
+            [2, 'value3'],
+        ]);
+
+        return $store;
     }
 }

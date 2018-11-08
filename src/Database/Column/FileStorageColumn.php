@@ -6,29 +6,25 @@ use LogAnalyzer\Database\Column\FileStorageColumn\ValueStore;
 
 class FileStorageColumn implements ColumnInterface
 {
-    private $file;
+    protected $file;
     protected $itemIds = [];
-    protected $values = [];
+    protected $values;
     protected $loaded = true;
-    /**
-     * @var ValueStore
-     */
-    private $valueStore;
 
-    public function __construct($saveDir, ValueStore $valueStore, array $data = [])
+    public function __construct($saveDir, ValueStore $valueStore, array $initialData = [])
     {
         if (!file_exists($saveDir)) {
             throw new \InvalidArgumentException();
         }
 
         $this->file = new \SplFileObject($this->getSavePath($saveDir), 'w+');
+        $this->values = $valueStore;
 
-        foreach ($data as $value => $itemIds) {
+        foreach ($initialData as $value => $itemIds) {
             foreach ($itemIds as $itemId) {
                 $this->addData($value, $itemId);
             }
         }
-        $this->valueStore = $valueStore;
     }
 
     protected function getSavePath($dir)
@@ -46,18 +42,18 @@ class FileStorageColumn implements ColumnInterface
 
     public function getItems($value)
     {
-        return array_keys($this->itemIds, $this->getValueNo($value));
+        return array_keys($this->itemIds, $this->values->getValueNo($value));
     }
 
     public function getValue($itemId)
     {
         $valueNo = $this->itemIds[$itemId];
-        return $this->getValueKey($valueNo);
+        return $this->values->get($valueNo);
     }
 
     public function getValues()
     {
-        return array_values($this->values);
+        return $this->values->getAll();
     }
 
     public function getSubset(array $itemIds)
@@ -71,12 +67,9 @@ class FileStorageColumn implements ColumnInterface
             }
 
             $valueNo = $thisItemIds[$itemId];
-            $valueKey = $this->getValueKey($valueNo);
+            $value = $this->values->get($valueNo);
 
-            if (!isset($ret[$valueKey])) {
-                $ret[$valueKey] = [];
-            }
-            $ret[$valueKey][] = $itemId;
+            $ret[$value][] = $itemId;
         }
 
         return $ret;
@@ -108,7 +101,7 @@ class FileStorageColumn implements ColumnInterface
             $this->load();
         }
 
-        $this->itemIds[$itemId] = $this->getValueNo($value);
+        $this->itemIds[$itemId] = $this->values->getValueNo($value);
     }
 
     protected function load()
@@ -116,24 +109,5 @@ class FileStorageColumn implements ColumnInterface
         $this->file->rewind();
         $this->itemIds = unserialize($this->file->fread($this->file->getSize()));
         $this->loaded = true;
-    }
-
-    protected function getValueKey($valueNo)
-    {
-        return isset($this->values[$valueNo]) ? $this->values[$valueNo] : null;
-    }
-
-    protected function getValueNo($value)
-    {
-        $keys = array_keys($this->values, $value);
-
-        return count($keys) === 1 ? $keys[0] : $this->addValue($value);
-    }
-
-    protected function addValue($value)
-    {
-        $this->values[] = $value;
-
-        return count($this->values) - 1;
     }
 }

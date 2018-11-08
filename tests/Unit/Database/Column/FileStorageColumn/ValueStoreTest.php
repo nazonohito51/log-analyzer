@@ -16,6 +16,13 @@ class ValueStoreTest extends TestCase
         $this->assertNull($store->get(3));
     }
 
+    public function testGetAll()
+    {
+        $store = new ValueStore(['value1', 'value2', 'value3']);
+
+        $this->assertEquals(['value1', 'value2', 'value3'], $store->getAll());
+    }
+
     public function testGetValueNo()
     {
         $store = new ValueStore(['value1', 'value2', 'value3']);
