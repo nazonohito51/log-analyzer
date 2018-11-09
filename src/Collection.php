@@ -39,6 +39,8 @@ class Collection implements \Countable, \IteratorAggregate
         $collections = [];
         foreach ($itemIdsByValue as $value => $itemIds) {
             $collections[$value] = new self($itemIds, $this->database);
+            // For performance, cache dimension value.
+            $collections[$value]->cacheColumnValues($columnName, $value);
         }
 
         return new View($columnName, $collections);
