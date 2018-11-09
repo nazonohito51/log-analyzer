@@ -11,6 +11,7 @@ class Collection implements \Countable, \IteratorAggregate
 {
     protected $itemIds;
     protected $database;
+    protected $cache = [];
 
     /**
      * @param int[] $items
@@ -45,6 +46,10 @@ class Collection implements \Countable, \IteratorAggregate
 
     public function columnValues($columnName)
     {
+        if (isset($this->cache[$columnName])) {
+            return $this->cache[$columnName];
+        }
+
         $ret = [];
         foreach ($this->itemIds as $itemId) {
             if (!is_null($value = $this->database->getValue($columnName, $itemId))) {
@@ -53,6 +58,16 @@ class Collection implements \Countable, \IteratorAggregate
         }
 
         return $ret;
+    }
+
+    public function cacheColumnValues($columnName, $cacheValue)
+    {
+        $this->cache[$columnName] = $cacheValue;
+    }
+
+    public function flushCache()
+    {
+        $this->cache = [];
     }
 
     public function filter($columnName, callable $procedure)

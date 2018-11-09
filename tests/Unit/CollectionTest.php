@@ -50,7 +50,7 @@ class CollectionTest extends TestCase
         $this->assertEquals(1, $view->getCollection('getAdView')->count());
     }
 
-    public function testMap()
+    public function testColumnValues()
     {
         $database = $this->createMock(DatabaseInterface::class);
         $database->method('getValue')->willReturnMap([
@@ -63,6 +63,33 @@ class CollectionTest extends TestCase
         $implode = $collection->columnValues('column');
 
         $this->assertEquals(['value1', 'value1', 'value2'], $implode);
+
+        return $collection;
+    }
+
+    /**
+     * @param Collection $collection
+     * @return Collection
+     * @depends testColumnValues
+     */
+    public function testCacheColumnValues(Collection $collection)
+    {
+        $collection->cacheColumnValues('column', ['cachedValue1', 'cachedValue2']);
+
+        $this->assertEquals(['cachedValue1', 'cachedValue2'], $collection->columnValues('column'));
+
+        return $collection;
+    }
+
+    /**
+     * @param Collection $collection
+     * @depends testCacheColumnValues
+     */
+    public function testFlushCache(Collection $collection)
+    {
+        $collection->flushCache();
+
+        $this->assertEquals(['value1', 'value1', 'value2'], $collection->columnValues('column'));
     }
 
     public function testFilter()
