@@ -26,7 +26,7 @@ class CollectionBuilderTest extends TestCase
         $this->assertEquals(8, $collection->count());
 
         $view = $collection->dimension('status');
-        $this->assertEquals([['status' => 200, 'Count' => 7], ['status' => 302, 'Count' => 1]], $view->toArray());
+        $this->assertEquals([['status' => 200, '_count' => 7], ['status' => 302, '_count' => 1]], $view->toArray());
 
         $status200 = $view->getCollection('200');
         $status302 = $view->getCollection('302');
@@ -36,10 +36,10 @@ class CollectionBuilderTest extends TestCase
 
         $view = $status200->dimension('host');
         $this->assertEquals([
-            ['host' => '133.130.35.34', 'Count' => 2],
-            ['host' => '93.158.152.5', 'Count' => 3],
-            ['host' => '133.130.35.35', 'Count' => 1],
-            ['host' => '66.249.79.82', 'Count' => 1],
+            ['host' => '133.130.35.34', '_count' => 2],
+            ['host' => '93.158.152.5', '_count' => 3],
+            ['host' => '133.130.35.35', '_count' => 1],
+            ['host' => '66.249.79.82', '_count' => 1],
         ], $view->toArray());
     }
 }

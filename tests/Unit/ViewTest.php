@@ -24,8 +24,8 @@ class ViewTest extends TestCase
         $array = $view->toArray();
 
         $this->assertEquals([
-            ['dimension_name' => 'value1', 'Count' => 2],
-            ['dimension_name' => 'value2', 'Count' => 1]
+            ['dimension_name' => 'value1', '_count' => 2],
+            ['dimension_name' => 'value2', '_count' => 1]
         ], $array);
     }
 
@@ -50,8 +50,8 @@ class ViewTest extends TestCase
         $newView = $view->where('column', $closure)->toArray();
 
         $this->assertEquals([
-            ['column' => 'value1', 'Count' => 2],
-            ['column' => 'value2', 'Count' => 1],
+            ['column' => 'value1', '_count' => 2],
+            ['column' => 'value2', '_count' => 1],
         ], $newView);
     }
 

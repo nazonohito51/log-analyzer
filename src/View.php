@@ -2,6 +2,9 @@
 namespace LogAnalyzer;
 
 use LogAnalyzer\Collection;
+use LogAnalyzer\View\ColumnValueStrategy\AbstractStrategy;
+use LogAnalyzer\View\ColumnValueStrategy\CountStrategy;
+use LogAnalyzer\View\ColumnValueStrategy\DimensionValueStrategy;
 use LucidFrame\Console\ConsoleTable;
 
 class View implements \Countable
@@ -19,8 +22,8 @@ class View implements \Countable
     public function __construct($dimension, array $collections)
     {
         $this->dimension = $dimension;
-        $this->columns[$dimension] = $dimension;
-        $this->columns['Count'] = self::COUNT_COLUMN;
+        $this->columns[$dimension] = new DimensionValueStrategy();
+        $this->columns[self::COUNT_COLUMN] = new CountStrategy();
         $this->collections = $collections;
     }
 
@@ -44,14 +47,14 @@ class View implements \Countable
             foreach ($this->columns as $name => $procedure) {
                 $table->addColumn($this->formatColumnValue($row[$name], $strLength));
 
-                if ($procedure === self::COUNT_COLUMN) {
+                if ($name === self::COUNT_COLUMN) {
                     $cnt += $row[$name];
                 }
             }
         }
 
         $table->display();
-        echo "sum(Count): {$cnt}\n";
+        echo 'sum(' . self::COUNT_COLUMN . "): {$cnt}\n";
     }
 
     public function toArray()
@@ -61,9 +64,9 @@ class View implements \Countable
             $row = [];
             foreach ($this->columns as $columnName => $procedure) {
                 if ($columnName == $this->dimension) {
-                    $row[$columnName] = $dimensionValue;
-                } elseif ($procedure == self::COUNT_COLUMN) {
-                    $row[$columnName] = $collection->count();
+                    $row[$columnName] = $procedure($collection, $dimensionValue);
+                } elseif ($columnName == self::COUNT_COLUMN) {
+                    $row[$columnName] = $procedure($collection, $dimensionValue);
                 } else {
                     $values = array_unique($collection->columnValues($columnName));
                     $row[$columnName] = array_map($procedure, $values);

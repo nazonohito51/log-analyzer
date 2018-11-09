@@ -5,7 +5,7 @@ class IdSequence
 {
     private $id = 1;
 
-    public function __construct($initialId = 1)
+    public function __construct($initialId = 0)
     {
         $this->id = $initialId;
     }
