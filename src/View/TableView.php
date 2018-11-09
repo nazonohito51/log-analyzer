@@ -38,6 +38,7 @@ class TableView
         if (is_array($value)) {
             $value = $this->arrayToString($value);
         }
+        $value = (string)$value;
 
         if ($max && strlen($value) > $max) {
             $value = substr($value, 0, $max) . '...';
