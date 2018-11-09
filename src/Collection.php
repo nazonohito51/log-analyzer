@@ -16,11 +16,10 @@ class Collection implements \Countable, \IteratorAggregate
      * @param int[] $items
      * @param DatabaseInterface $database
      */
-    public function __construct(array $items, DatabaseInterface $database = null)
+    public function __construct(array $items, DatabaseInterface $database)
     {
         $this->itemIds = $items;
-        // TODO: fix $database in argument
-        $this->database = !is_null($database) ? $database : new ColumnarDatabase(new ColumnFactory());
+        $this->database = $database;
     }
 
     public function count()
@@ -30,8 +29,6 @@ class Collection implements \Countable, \IteratorAggregate
 
     public function dimension($columnName, callable $procedure = null)
     {
-//        $progressBar = new View\ProgressBar($this->count());
-
         $itemIdsByValue = [];
         foreach ($this->database->getColumnSubset($columnName, $this->itemIds) as $value => $itemIds) {
             $calcValue = $this->calcValue($value, $procedure);
