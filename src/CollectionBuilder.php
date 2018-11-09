@@ -36,11 +36,6 @@ class CollectionBuilder
         return new ColumnarDatabase(new ColumnFactory());
     }
 
-    protected function getDefaultItemClass()
-    {
-        return Item::class;
-    }
-
     /**
      * @param string|array $files
      * @param ParserInterface $parser
@@ -82,6 +77,10 @@ class CollectionBuilder
         return $this;
     }
 
+    /**
+     * @param bool $ignoreParseError
+     * @return \LogAnalyzer\Collection
+     */
     public function build($ignoreParseError = false)
     {
         $progressBar = new ProgressBar($this->getAllLogCount());
