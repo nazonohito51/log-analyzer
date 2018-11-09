@@ -3,17 +3,11 @@ namespace LogAnalyzer\CollectionBuilder;
 
 class IdSequence
 {
-    private static $instance = null;
+    private $id = 1;
 
-    private $id = 0;
-
-    private function __construct()
+    public function __construct($initialId = 1)
     {
-    }
-
-    public static function getInstance()
-    {
-        return self::$instance ?? self::$instance = new IdSequence();
+        $this->id = $initialId;
     }
 
     public function now()
@@ -23,6 +17,8 @@ class IdSequence
 
     public function update()
     {
-        return ++$this->id;
+        $this->id++;
+
+        return $this;
     }
 }

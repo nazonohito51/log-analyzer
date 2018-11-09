@@ -85,7 +85,7 @@ class CollectionBuilder
     public function build($ignoreParseError = false)
     {
         $progressBar = new ProgressBar($this->getAllLogCount());
-        $idSequence = IdSequence::getInstance();
+        $idSequence = new IdSequence();
 
         $items = [];
         foreach ($this->logFiles as $logFile) {
@@ -96,7 +96,7 @@ class CollectionBuilder
                     continue;
                 }
 
-                $items[] = $idSequence->update();
+                $items[] = $idSequence->update()->now();
                 foreach ($line as $key => $value) {
                     $this->database->addColumnValue($key, $value, $idSequence->now());
                 }
