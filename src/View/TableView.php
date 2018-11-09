@@ -16,7 +16,7 @@ class TableView
         $this->matrix = $matrix;
     }
 
-    public function display($strLen = null): void
+    public function display($strLen = 60): void
     {
         $table = new ConsoleTable();
 
@@ -52,5 +52,13 @@ class TableView
         $str = implode(', ', $arr);
 
         return count($arr) > 1 ? "[{$str}]" : $str;
+    }
+
+    public function sort($columnName, $orderByDesc = false): self
+    {
+        $sortColumn = array_column($this->matrix, $columnName);
+        array_multisort($sortColumn, $orderByDesc ? SORT_DESC : SORT_ASC, $this->matrix);
+
+        return $this;
     }
 }

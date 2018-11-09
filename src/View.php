@@ -38,9 +38,9 @@ class View implements \Countable
         return $this;
     }
 
-    public function display($strLength = 60): void
+    public function table(): TableView
     {
-        (new TableView(array_keys($this->columns), $this->toArray()))->display($strLength);
+        return new TableView(array_keys($this->columns), $this->toArray());
     }
 
     public function toArray(): array
