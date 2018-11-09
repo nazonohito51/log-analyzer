@@ -34,7 +34,7 @@ class LogFile extends \SplFileObject
     public function getCurrentParsedLine()
     {
         try {
-            return $this->parser->parse($this->current());
+            return $this->parser->parse(parent::current());
         } catch (ReadException $e) {
             if (!$this->ignoreParseError) {
                 throw $e;
@@ -42,6 +42,11 @@ class LogFile extends \SplFileObject
         }
 
         return null;
+    }
+
+    public function current()
+    {
+        return $this->getCurrentParsedLine();
     }
 
     public function count()

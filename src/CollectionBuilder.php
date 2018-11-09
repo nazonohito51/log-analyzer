@@ -84,7 +84,7 @@ class CollectionBuilder
 
     public function build($ignoreParseError = false)
     {
-        $progressBar = new ProgressBar($this->getAllCount());
+        $progressBar = new ProgressBar($this->getAllLogCount());
 
         $items = [];
         $itemId = 1;
@@ -92,13 +92,12 @@ class CollectionBuilder
             $logFile->ignoreParsedError($ignoreParseError);
 
             foreach ($logFile as $line) {
-                $items[] = $itemId;
-                $parsedLine = $logFile->getCurrentParsedLine();
-                if (is_null($parsedLine)) {
+                if (is_null($line) || empty($line)) {
                     continue;
                 }
 
-                foreach ($parsedLine as $key => $value) {
+                $items[] = $itemId;
+                foreach ($line as $key => $value) {
                     $this->database->addColumnValue($key, $value, $itemId);
                 }
                 $itemId++;
@@ -114,7 +113,7 @@ class CollectionBuilder
     /**
      * @return int
      */
-    public function getAllCount()
+    public function getAllLogCount()
     {
         $count = 0;
         foreach ($this->logFiles as $logFile) {
