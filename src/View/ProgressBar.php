@@ -7,13 +7,12 @@ use ProgressBar\Registry;
 
 class ProgressBar
 {
-    const INTERVAL_SEC = 0.5;
-
     private $manager;
-    private $counter = 0;
+    private $counterWhileInterval = 0;
     private $beforeTimestamp;
+    private $intervalSec;
 
-    public function __construct($max)
+    public function __construct($max, $intervalSec = 0.5)
     {
         $this->manager = new Manager(0, $max, 120);
         $this->manager->setFormat("%current%/%max% [%bar%] %percent%% %eta%   Loading: %file%(%line%/%lineMax%)");
@@ -31,18 +30,19 @@ class ProgressBar
         });
 
         $this->beforeTimestamp = microtime(true);
+        $this->intervalSec = $intervalSec;
     }
 
-    public function update(LogFile $file, $linePos)
+    public function update(LogFile $file)
     {
-        $this->counter++;
-        if (microtime(true) - $this->beforeTimestamp > self::INTERVAL_SEC) {
+        $this->counterWhileInterval++;
+        if (microtime(true) - $this->beforeTimestamp > $this->intervalSec) {
             $this->manager->getRegistry()->setValue('file', $file->getFilename());
             $this->manager->getRegistry()->setValue('lineMax', $file->count());
-            $this->manager->getRegistry()->setValue('line', $linePos);
-            $this->manager->update($this->manager->getRegistry()->getValue('current') + $this->counter);
+            $this->manager->getRegistry()->setValue('line', $file->key());
+            $this->manager->update($this->manager->getRegistry()->getValue('current') + $this->counterWhileInterval);
 
-            $this->counter = 0;
+            $this->counterWhileInterval = 0;
             $this->beforeTimestamp = microtime(true);
         }
     }

@@ -10,6 +10,7 @@ use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
 use LogAnalyzer\Database\Column\ColumnFactory;
 use LogAnalyzer\Database\DatabaseInterface;
 use LogAnalyzer\Database\ColumnarDatabase;
+use LogAnalyzer\View\ProgressBar;
 
 class CollectionBuilder
 {
@@ -27,11 +28,6 @@ class CollectionBuilder
      */
     public function __construct(DatabaseInterface $database = null)
     {
-//        if (!is_null($itemClass) && !class_exists($itemClass)) {
-//            throw new InvalidArgumentException('item class is not found.');
-//        }
-//
-//        $this->itemClass = !is_null($itemClass) ? $itemClass : $this->getDefaultItemClass();
         $this->database = !is_null($database) ? $database : $this->getDefaultDatabase();
     }
 
@@ -88,21 +84,12 @@ class CollectionBuilder
 
     public function build($ignoreParseError = false)
     {
-//        $progressBar = new ProgressBar($this->getAllCount());
+        $progressBar = new ProgressBar($this->getAllCount());
 
         $items = [];
         $itemId = 1;
         foreach ($this->logFiles as $logFile) {
             $logFile->ignoreParsedError($ignoreParseError);
-
-//            foreach (range(0, $logFile->count()) as $linePos) {
-//                /*
-//                 * @var ItemInterface $item
-//                 */
-//                $item = new $this->itemClass($logFile, $linePos);
-//                $items[] = $item;
-//                $progressBar->update($logFile, $linePos);
-//            }
 
             foreach ($logFile as $line) {
                 $items[] = $itemId;
@@ -115,6 +102,7 @@ class CollectionBuilder
                     $this->database->addColumnValue($key, $value, $itemId);
                 }
                 $itemId++;
+                $progressBar->update($logFile);
             }
         }
 
