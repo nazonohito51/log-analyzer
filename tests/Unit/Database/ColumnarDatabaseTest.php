@@ -12,7 +12,7 @@ class ColumnarDatabaseTest extends TestCase
     {
         $stub = $this->createMock(ColumnInterface::class);
         $stub->expects($this->once())->method('add')->with('value1', 1)->willReturnSelf();
-        $stub->expects($this->once())->method('getItems')->with('value1')->willReturn([1]);
+        $stub->expects($this->once())->method('getItemIds')->with('value1')->willReturn([1]);
         $database = new ColumnarDatabase(new class ($stub) extends ColumnFactory {
             private $stub;
             public function __construct(ColumnInterface $stub)
@@ -33,7 +33,7 @@ class ColumnarDatabaseTest extends TestCase
     public function testGetItemIds()
     {
         $column = $this->createMock(ColumnInterface::class);
-        $column->expects($this->once())->method('getItems')->with('value')->willReturn([1, 2, 3]);
+        $column->expects($this->once())->method('getItemIds')->with('value')->willReturn([1, 2, 3]);
         $factory = $this->createMock(ColumnFactory::class);
         $database = new ColumnarDatabase($factory, ['column' => $column]);
 

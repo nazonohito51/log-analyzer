@@ -44,7 +44,7 @@ class ColumnarDatabase implements DatabaseInterface
             return [];
         }
 
-        return $this->getColumn($columnName)->getItems($value);
+        return $this->getColumn($columnName)->getItemIds($value);
     }
 
     public function getValue($columnName, $itemId)

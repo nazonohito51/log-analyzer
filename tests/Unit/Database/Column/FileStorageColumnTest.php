@@ -29,15 +29,15 @@ class FileStorageColumnTest extends TestCase
 
         $column->add($addValue, $addId);
 
-        $this->assertEquals($expected, $column->getItems($addValue));
+        $this->assertEquals($expected, $column->getItemIds($addValue));
     }
 
     public function testGetItems()
     {
         $column = new FileStorageColumn($this->getTmpDir(), $this->getValueStoreMock(), ['value1' => [1, 2, 3]]);
 
-        $this->assertEquals([1, 2, 3], $column->getItems('value1'));
-        $this->assertEquals([], $column->getItems('value2'));
+        $this->assertEquals([1, 2, 3], $column->getItemIds('value1'));
+        $this->assertEquals([], $column->getItemIds('value2'));
     }
 
     public function testGetValue()

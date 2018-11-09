@@ -19,7 +19,7 @@ class InMemoryColumn implements ColumnInterface
         return $this;
     }
 
-    public function getItems($value)
+    public function getItemIds($value)
     {
         return isset($this->data[$value]) ? $this->data[$value] : [];
     }

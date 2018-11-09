@@ -1,13 +1,12 @@
 <?php
 namespace LogAnalyzer\Database\Column;
 
-use LogAnalyzer\Database\Column\ColumnInterface;
 use LogAnalyzer\Database\Column\FileStorageColumn\ValueStore;
 
 class FileStorageColumn implements ColumnInterface
 {
     protected $file;
-    protected $itemIds = [];
+    protected $items = [];
     protected $values;
     protected $loaded = true;
 
@@ -40,14 +39,14 @@ class FileStorageColumn implements ColumnInterface
         return $this;
     }
 
-    public function getItems($value)
+    public function getItemIds($value)
     {
-        return array_keys($this->getItemIds(), $this->values->getValueNo($value));
+        return array_keys($this->getItems(), $this->values->getValueNo($value));
     }
 
     public function getValue($itemId)
     {
-        $valueNo = $this->getItemIds()[$itemId];
+        $valueNo = $this->getItems()[$itemId];
         return $this->values->get($valueNo);
     }
 
@@ -59,7 +58,7 @@ class FileStorageColumn implements ColumnInterface
     public function getSubset(array $itemIds)
     {
         $ret = [];
-        $thisItemIds = $this->getItemIds();
+        $thisItemIds = $this->getItems();
 
         foreach ($itemIds as $itemId) {
             if (!isset($thisItemIds[$itemId])) {
@@ -77,22 +76,22 @@ class FileStorageColumn implements ColumnInterface
 
     public function save()
     {
-        if ($this->file->fwrite(serialize($this->itemIds)) === 0) {
+        if ($this->file->fwrite(serialize($this->items)) === 0) {
             return false;
         }
-        $this->itemIds = [];
+        $this->items = [];
         $this->loaded = false;
 
         return true;
     }
 
-    protected function getItemIds()
+    protected function getItems()
     {
         if ($this->loaded === false) {
             $this->load();
         }
 
-        return $this->itemIds;
+        return $this->items;
     }
 
     protected function addData($value, $itemId)
@@ -101,13 +100,13 @@ class FileStorageColumn implements ColumnInterface
             $this->load();
         }
 
-        $this->itemIds[$itemId] = $this->values->getValueNo($value);
+        $this->items[$itemId] = $this->values->getValueNo($value);
     }
 
     protected function load()
     {
         $this->file->rewind();
-        $this->itemIds = unserialize($this->file->fread($this->file->getSize()));
+        $this->items = unserialize($this->file->fread($this->file->getSize()));
         $this->loaded = true;
     }
 }
