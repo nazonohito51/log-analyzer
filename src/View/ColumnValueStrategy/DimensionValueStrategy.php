@@ -5,8 +5,8 @@ use LogAnalyzer\Collection;
 
 class DimensionValueStrategy extends AbstractStrategy
 {
-    public function __invoke(Collection $collection, $dimensionValue)
+    public function __invoke(Collection $collection)
     {
-        return $dimensionValue;
+        return $collection->columnValues($this->dimensionColumnName);
     }
 }

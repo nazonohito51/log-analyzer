@@ -5,7 +5,7 @@ use LogAnalyzer\Collection;
 
 class CountStrategy extends AbstractStrategy
 {
-    public function __invoke(Collection $collection, $dimensionValue)
+    public function __invoke(Collection $collection)
     {
         return $collection->count();
     }

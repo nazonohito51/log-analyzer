@@ -28,8 +28,8 @@ class CollectionBuilderTest extends TestCase
         $view = $collection->dimension('status');
         $this->assertEquals([['status' => 200, '_count' => 7], ['status' => 302, '_count' => 1]], $view->toArray());
 
-        $status200 = $view->getCollection('200');
-        $status302 = $view->getCollection('302');
+        $status200 = $view->getCollection(200);
+        $status302 = $view->getCollection(302);
 
         $this->assertEquals(7, $status200->count());
         $this->assertEquals(1, $status302->count());

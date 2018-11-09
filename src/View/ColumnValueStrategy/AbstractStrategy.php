@@ -5,5 +5,12 @@ use LogAnalyzer\Collection;
 
 abstract class AbstractStrategy
 {
-    abstract public function __invoke(Collection $collection, $dimensionValue);
+    protected $dimensionColumnName;
+
+    public function __construct($dimensionColumnName)
+    {
+        $this->dimensionColumnName = $dimensionColumnName;
+    }
+
+    abstract public function __invoke(Collection $collection);
 }

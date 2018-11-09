@@ -14,23 +14,23 @@ class View implements \Countable
 
     protected $dimension;
     protected $columns;
-
-    /**
-     * @var Collection[]
-     */
     private $collections;
 
+    /**
+     * @param string $dimension
+     * @param Collection[] $collections
+     */
     public function __construct($dimension, array $collections)
     {
         $this->dimension = $dimension;
-        $this->columns[$dimension] = new DimensionValueStrategy();
-        $this->columns[self::COUNT_COLUMN] = new CountStrategy();
+        $this->columns[$dimension] = new DimensionValueStrategy($this->dimension);
+        $this->columns[self::COUNT_COLUMN] = new CountStrategy($this->dimension);
         $this->collections = $collections;
     }
 
     public function addColumn($name, callable $procedure = null)
     {
-        $this->columns[$name] = $procedure ?? new UniqueValuesStrategy($name);
+        $this->columns[$name] = $procedure ?? new UniqueValuesStrategy($name, $this->dimension);
 
         return $this;
     }
@@ -56,10 +56,10 @@ class View implements \Countable
     public function toArray()
     {
         $ret = [];
-        foreach ($this->collections as $dimensionValue => $collection) {
+        foreach ($this->collections as $collection) {
             $row = [];
             foreach ($this->columns as $columnName => $procedure) {
-                $row[$columnName] = $procedure($collection, $dimensionValue);
+                $row[$columnName] = $procedure($collection);
             }
             $ret[] = $row;
         }
@@ -75,11 +75,13 @@ class View implements \Countable
     public function where($columnName, callable $procedure)
     {
         $collections = [];
-        foreach ($this->collections as $value => $collection) {
+        foreach ($this->collections as $collection) {
             $newCollection = $collection->filter($columnName, $procedure);
+            // For performance, cache dimension value.
+            $newCollection->cacheColumnValues($this->dimension, $collection->columnValues($this->dimension));
 
             if ($newCollection->count() > 0) {
-                $collections[$value] = $newCollection;
+                $collections[] = $newCollection;
             }
         }
 
@@ -88,7 +90,13 @@ class View implements \Countable
 
     public function getCollection($dimensionValue)
     {
-        return isset($this->collections[$dimensionValue]) ? $this->collections[$dimensionValue] : null;
+        foreach ($this->collections as $collection) {
+            if ($collection->columnValues($this->dimension) == $dimensionValue) {
+                return $collection;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -117,7 +125,7 @@ class View implements \Countable
     {
         $cnt = 0;
 
-        foreach ($this->collections as $dimensionValue => $collection) {
+        foreach ($this->collections as $collection) {
             $cnt += $collection->count();
         }
 

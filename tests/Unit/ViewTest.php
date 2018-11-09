@@ -13,8 +13,10 @@ class ViewTest extends TestCase
     public function testToArray()
     {
         $collectionValue1 = $this->createMock(Collection::class);
+        $collectionValue1->method('columnValues')->willReturn('value1');
         $collectionValue1->method('count')->willReturn(2);
         $collectionValue2 = $this->createMock(Collection::class);
+        $collectionValue2->method('columnValues')->willReturn('value2');
         $collectionValue2->method('count')->willReturn(1);
         $view = new View('dimension_name', [
             'value1' => $collectionValue1,
@@ -35,8 +37,10 @@ class ViewTest extends TestCase
             return $value > 100;
         };
         $newCollectionValue1 = $this->createMock(Collection::class);
+        $newCollectionValue1->method('columnValues')->willReturn('value1');
         $newCollectionValue1->method('count')->willReturn(2);
         $newCollectionValue2 = $this->createMock(Collection::class);
+        $newCollectionValue2->method('columnValues')->willReturn('value2');
         $newCollectionValue2->method('count')->willReturn(1);
         $collectionValue1 = $this->createMock(Collection::class);
         $collectionValue1->method('filter')->with('column', $closure)->willReturn($newCollectionValue1);
@@ -95,7 +99,7 @@ class ViewTest extends TestCase
             'value2' => $collectionValue2
         ]);
 
-        $array = $view->addColumn('my_column', function (Collection $collection, $dimensionValue) {
+        $array = $view->addColumn('my_column', function (Collection $collection) {
             $column1Values = $collection->columnValues('column1');
             $column2Values = $collection->columnValues('column2');
             return max(array_merge($column1Values, $column2Values));
