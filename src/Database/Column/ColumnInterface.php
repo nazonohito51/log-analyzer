@@ -9,4 +9,5 @@ interface ColumnInterface
     public function getValues();
     public function getSubset(array $itemIds);
     public function save();
+    public function delete();
 }

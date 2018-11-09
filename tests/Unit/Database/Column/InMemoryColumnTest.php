@@ -69,4 +69,11 @@ class InMemoryColumnTest extends TestCase
 
         $this->assertTrue($column->save());
     }
+
+    public function testDelete()
+    {
+        $column = new InMemoryColumn();
+
+        $this->assertTrue($column->delete());
+    }
 }

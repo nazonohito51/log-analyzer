@@ -109,4 +109,9 @@ class FileStorageColumn implements ColumnInterface
         $this->items = unserialize($this->file->fread($this->file->getSize()));
         $this->loaded = true;
     }
+
+    public function delete()
+    {
+        return unlink($this->file->getRealPath());
+    }
 }

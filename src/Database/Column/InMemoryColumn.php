@@ -1,8 +1,6 @@
 <?php
 namespace LogAnalyzer\Database\Column;
 
-use LogAnalyzer\Database\Column\ColumnInterface;
-
 class InMemoryColumn implements ColumnInterface
 {
     protected $data = [];
@@ -56,6 +54,11 @@ class InMemoryColumn implements ColumnInterface
     }
 
     public function save()
+    {
+        return true;
+    }
+
+    public function delete()
     {
         return true;
     }
