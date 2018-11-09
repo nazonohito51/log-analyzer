@@ -21,6 +21,13 @@ class ColumnarDatabase implements DatabaseInterface
         $this->factory = $factory;
     }
 
+    public function __destruct()
+    {
+        foreach ($this->columns as $column) {
+            $column->delete();
+        }
+    }
+
     public function addColumnValue($columnName, $value, $itemId)
     {
         $this->isExistColumn($columnName) ?
