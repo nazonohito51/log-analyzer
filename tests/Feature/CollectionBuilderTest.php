@@ -6,6 +6,7 @@ use LogAnalyzer\Collection;
 use LogAnalyzer\Database\Column\ColumnFactory;
 use LogAnalyzer\Database\Column\InMemoryColumn;
 use LogAnalyzer\Database\ColumnarDatabase;
+use LogAnalyzer\View\ProgressBarObserver;
 use Tests\LogAnalyzer\TestCase;
 
 class CollectionBuilderTest extends TestCase
@@ -18,7 +19,7 @@ class CollectionBuilderTest extends TestCase
                 return new InMemoryColumn();
             }
         };
-        $builder = new CollectionBuilder(new ColumnarDatabase($factory));
+        $builder = new CollectionBuilder(new ColumnarDatabase($factory), $this->createMock(ProgressBarObserver::class));
         $builder->addApacheLog($this->getFixturePath('apache.log'), '%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"');
         $collection = $builder->build();
 

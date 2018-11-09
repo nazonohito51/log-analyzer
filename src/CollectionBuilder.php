@@ -11,7 +11,7 @@ use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
 use LogAnalyzer\Database\Column\ColumnFactory;
 use LogAnalyzer\Database\DatabaseInterface;
 use LogAnalyzer\Database\ColumnarDatabase;
-use LogAnalyzer\View\ProgressBar;
+use LogAnalyzer\View\ProgressBarObserver;
 
 class CollectionBuilder
 {
@@ -19,22 +19,27 @@ class CollectionBuilder
      * @var LogFile[]
      */
     private $logFiles = [];
-    /**
-     * @var DatabaseInterface
-     */
     private $database;
+    private $progressBar;
 
     /**
-     * @param DatabaseInterface $database
+     * @param DatabaseInterface|null $database
+     * @param ProgressBarObserver|null $progressBar
      */
-    public function __construct(DatabaseInterface $database = null)
+    public function __construct(DatabaseInterface $database = null, ProgressBarObserver $progressBar = null)
     {
-        $this->database = !is_null($database) ? $database : $this->getDefaultDatabase();
+        $this->database = $database ?? $this->getDefaultDatabase();
+        $this->progressBar = $progressBar ?? $this->getDefaultProgressBar();
     }
 
     protected function getDefaultDatabase()
     {
         return new ColumnarDatabase(new ColumnFactory());
+    }
+
+    protected function getDefaultProgressBar()
+    {
+        return new ProgressBarObserver();
     }
 
     /**
@@ -84,8 +89,8 @@ class CollectionBuilder
      */
     public function build($ignoreParseError = false)
     {
-        $progressBar = new ProgressBar($this->getAllLogCount());
         $idSequence = new IdSequence();
+        $this->progressBar->start($this->getAllLogCount());
 
         $items = [];
         foreach ($this->logFiles as $logFile) {
@@ -100,10 +105,11 @@ class CollectionBuilder
                 foreach ($line as $key => $value) {
                     $this->database->addColumnValue($key, $value, $idSequence->now());
                 }
-                $progressBar->update($logFile);
+                $this->progressBar->update(sprintf('Loading: %s(%d/%d)', $logFile->getFilename(), $logFile->key(), $logFile->count()));
             }
         }
 
+        $this->progressBar->end();
         $this->database->save();
 
         return new Collection($items, $this->database);

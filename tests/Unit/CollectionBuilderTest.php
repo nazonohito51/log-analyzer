@@ -3,6 +3,7 @@ namespace Tests\Unit\LogAnalyzer;
 
 use LogAnalyzer\CollectionBuilder;
 use LogAnalyzer\Database\DatabaseInterface;
+use LogAnalyzer\View\ProgressBarObserver;
 use Tests\LogAnalyzer\Helpers\ItemMock;
 use Tests\LogAnalyzer\TestCase;
 
@@ -10,7 +11,10 @@ class CollectionBuilderTest extends TestCase
 {
     public function testCount()
     {
-        $builder = new CollectionBuilder($this->createMock(DatabaseInterface::class));
+        $builder = new CollectionBuilder(
+            $this->createMock(DatabaseInterface::class),
+            $this->createMock(ProgressBarObserver::class)
+        );
         $builder->addLtsv($this->getFixturePath('log.ltsv'));
         $collection = $builder->build();
 

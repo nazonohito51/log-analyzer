@@ -9,6 +9,7 @@ use SplFileObject;
 class LogFile extends \SplFileObject
 {
     private $parser;
+    private $count;
     private $ignoreParseError = false;
 
     /**
@@ -24,6 +25,9 @@ class LogFile extends \SplFileObject
         parent::__construct($path);
         $this->setFlags(SplFileObject::READ_AHEAD | SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE);
         $this->parser = $parser;
+
+        $count = exec('wc -l ' . $this->getRealPath());
+        $this->count = trim(str_replace($this->getRealPath(), '', $count));
     }
 
     public function ignoreParsedError($ignore)
@@ -51,7 +55,6 @@ class LogFile extends \SplFileObject
 
     public function count()
     {
-        $count = exec('wc -l ' . $this->getRealPath());
-        return trim(str_replace($this->getRealPath(), '', $count));
+        return $this->count;
     }
 }
