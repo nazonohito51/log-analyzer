@@ -34,6 +34,7 @@ class View implements \Countable
     public function display($strLength = 60)
     {
         $table = new ConsoleTable();
+        $cnt = 0;
 
         foreach ($this->columns as $name => $procedure) {
             $table->addHeader($name);
@@ -41,12 +42,16 @@ class View implements \Countable
         foreach ($this->toArray() as $row) {
             $table->addRow();
             foreach ($this->columns as $name => $procedure) {
-                $value = $this->formatColumnValue($row[$name], $strLength);
-                $table->addColumn($value);
+                $table->addColumn($this->formatColumnValue($row[$name], $strLength));
+
+                if ($procedure === self::COUNT_COLUMN) {
+                    $cnt += $row[$name];
+                }
             }
         }
 
         $table->display();
+        echo "sum(Count): {$cnt}\n";
     }
 
     public function toArray()
