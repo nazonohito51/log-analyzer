@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer;
 
 use LogAnalyzer\Collection;
@@ -22,22 +24,18 @@ class CollectionBuilder
     private $database;
     private $progressBar;
 
-    /**
-     * @param DatabaseInterface|null $database
-     * @param ProgressBarObserver|null $progressBar
-     */
     public function __construct(DatabaseInterface $database = null, ProgressBarObserver $progressBar = null)
     {
         $this->database = $database ?? $this->getDefaultDatabase();
         $this->progressBar = $progressBar ?? $this->getDefaultProgressBar();
     }
 
-    protected function getDefaultDatabase()
+    protected function getDefaultDatabase(): DatabaseInterface
     {
         return new ColumnarDatabase(new ColumnFactory());
     }
 
-    protected function getDefaultProgressBar()
+    protected function getDefaultProgressBar(): ProgressBarObserver
     {
         return new ProgressBarObserver();
     }
@@ -47,7 +45,7 @@ class CollectionBuilder
      * @param ParserInterface $parser
      * @return $this
      */
-    public function add($files, ParserInterface $parser)
+    public function add($files, ParserInterface $parser): self
     {
         if (!is_array($files)) {
             $files = [$files];
@@ -64,7 +62,7 @@ class CollectionBuilder
      * @param string|array $files
      * @return $this
      */
-    public function addLtsv($files)
+    public function addLtsv($files): self
     {
         $this->add($files, new LtsvParser());
 
@@ -76,7 +74,7 @@ class CollectionBuilder
      * @param string $format kassner/log-parser format string. see https://github.com/kassner/log-parser
      * @return $this
      */
-    public function addApacheLog($files, $format = null)
+    public function addApacheLog($files, $format = null): self
     {
         $this->add($files, new ApacheLogParser($format));
 
@@ -87,7 +85,7 @@ class CollectionBuilder
      * @param bool $ignoreParseError
      * @return \LogAnalyzer\Collection
      */
-    public function build($ignoreParseError = false)
+    public function build($ignoreParseError = false): Collection
     {
         $idSequence = new IdSequence();
         $this->progressBar->start($this->getAllLogCount());
@@ -118,7 +116,7 @@ class CollectionBuilder
     /**
      * @return int
      */
-    public function getAllLogCount()
+    public function getAllLogCount(): int
     {
         $count = 0;
         foreach ($this->logFiles as $logFile) {

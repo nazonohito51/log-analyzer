@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer\Database\Column;
 
 use LogAnalyzer\Database\Column\FileStorageColumn\ValueStore;
@@ -26,20 +28,20 @@ class FileStorageColumn implements ColumnInterface
         }
     }
 
-    protected function getSavePath($dir)
+    protected function getSavePath($dir): string
     {
         $objectHash = spl_object_hash($this);
         return substr($dir, -1) === '/' ? $dir . $objectHash : $dir . '/' . $objectHash;
     }
 
-    public function add($value, $itemId)
+    public function add($value, $itemId): ColumnInterface
     {
         $this->addData($value, $itemId);
 
         return $this;
     }
 
-    public function getItemIds($value)
+    public function getItemIds($value): array
     {
         return array_keys($this->getItems(), $this->values->getValueNo($value));
     }
@@ -50,12 +52,12 @@ class FileStorageColumn implements ColumnInterface
         return $this->values->get($valueNo);
     }
 
-    public function getValues()
+    public function getValues(): array
     {
         return $this->values->getAll();
     }
 
-    public function getSubset(array $itemIds)
+    public function getSubset(array $itemIds): array
     {
         $ret = [];
         $thisItemIds = $this->getItems();
@@ -74,7 +76,7 @@ class FileStorageColumn implements ColumnInterface
         return $ret;
     }
 
-    public function save()
+    public function save(): bool
     {
         if ($this->file->fwrite(serialize($this->items)) === 0) {
             return false;
@@ -85,7 +87,7 @@ class FileStorageColumn implements ColumnInterface
         return true;
     }
 
-    protected function getItems()
+    protected function getItems(): array
     {
         if ($this->loaded === false) {
             $this->load();
@@ -94,7 +96,7 @@ class FileStorageColumn implements ColumnInterface
         return $this->items;
     }
 
-    protected function addData($value, $itemId)
+    protected function addData($value, $itemId): void
     {
         if ($this->loaded === false) {
             $this->load();
@@ -103,14 +105,14 @@ class FileStorageColumn implements ColumnInterface
         $this->items[$itemId] = $this->values->getValueNo($value);
     }
 
-    protected function load()
+    protected function load(): void
     {
         $this->file->rewind();
         $this->items = unserialize($this->file->fread($this->file->getSize()));
         $this->loaded = true;
     }
 
-    public function delete()
+    public function delete(): bool
     {
         return unlink($this->file->getRealPath());
     }

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Tests\Unit\LogAnalyzer\Database;
 
 use LogAnalyzer\Database\Column\ColumnFactory;
@@ -19,7 +21,7 @@ class ColumnarDatabaseTest extends TestCase
             {
                 $this->stub = $stub;
             }
-            public function build($saveDir = '')
+            public function build($saveDir = ''): ColumnInterface
             {
                 return $this->stub;
             }

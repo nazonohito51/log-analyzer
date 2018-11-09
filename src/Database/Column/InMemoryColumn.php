@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer\Database\Column;
 
 class InMemoryColumn implements ColumnInterface
@@ -10,14 +12,14 @@ class InMemoryColumn implements ColumnInterface
         $this->data = $data;
     }
 
-    public function add($value, $itemId)
+    public function add($value, $itemId): ColumnInterface
     {
         isset($this->data[$value]) ? $this->data[$value][] = $itemId : $this->data[$value] = [$itemId];
 
         return $this;
     }
 
-    public function getItemIds($value)
+    public function getItemIds($value): array
     {
         return isset($this->data[$value]) ? $this->data[$value] : [];
     }
@@ -33,12 +35,12 @@ class InMemoryColumn implements ColumnInterface
         return null;
     }
 
-    public function getValues()
+    public function getValues(): array
     {
         return array_keys($this->data);
     }
 
-    public function getSubset(array $itemIds)
+    public function getSubset(array $itemIds): array
     {
         $ret = [];
 
@@ -53,12 +55,12 @@ class InMemoryColumn implements ColumnInterface
         return $ret;
     }
 
-    public function save()
+    public function save(): bool
     {
         return true;
     }
 
-    public function delete()
+    public function delete(): bool
     {
         return true;
     }

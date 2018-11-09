@@ -1,13 +1,15 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer\Database\Column;
 
 interface ColumnInterface
 {
-    public function add($value, $itemId);
-    public function getItemIds($value);
+    public function add($value, $itemId): self;
+    public function getItemIds($value): array;
     public function getValue($itemId);
-    public function getValues();
-    public function getSubset(array $itemIds);
-    public function save();
-    public function delete();
+    public function getValues(): array;
+    public function getSubset(array $itemIds): array;
+    public function save(): bool;
+    public function delete(): bool;
 }

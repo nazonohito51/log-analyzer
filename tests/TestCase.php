@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Tests\LogAnalyzer;
 
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;

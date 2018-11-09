@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer\View;
 
 use LucidFrame\Console\ConsoleTable;
@@ -14,7 +16,7 @@ class TableView
         $this->matrix = $matrix;
     }
 
-    public function display($strLen = null)
+    public function display($strLen = null): void
     {
         $table = new ConsoleTable();
 
@@ -31,7 +33,7 @@ class TableView
         $table->display();
     }
 
-    protected function formatValue($value, $max = null)
+    protected function formatValue($value, $max = null): string
     {
         if (is_array($value)) {
             $value = $this->arrayToString($value);
@@ -44,7 +46,7 @@ class TableView
         return $value;
     }
 
-    protected function arrayToString(array $arr)
+    protected function arrayToString(array $arr): string
     {
         $str = implode(', ', $arr);
 

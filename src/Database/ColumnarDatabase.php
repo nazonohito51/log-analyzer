@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer\Database;
 
 use LogAnalyzer\Database\Column\ColumnFactory;
@@ -19,33 +21,38 @@ class ColumnarDatabase implements DatabaseInterface
     {
         $this->columns = $columns;
         $this->factory = $factory;
+
+        $this->registerShutdownFunc();
     }
 
-    public function __destruct()
+    public function registerShutdownFunc(): void
     {
-        foreach ($this->columns as $column) {
-            $column->delete();
-        }
+        $column = $this->columns;
+        register_shutdown_function(function () use ($column) {
+            foreach ($this->columns as $column) {
+                $column->delete();
+            }
+        });
     }
 
-    public function addColumnValue($columnName, $value, $itemId)
+    public function addColumnValue($columnName, $value, $itemId): void
     {
         $this->isExistColumn($columnName) ?
             $this->getColumn($columnName)->add($value, $itemId) :
             $this->columns[$columnName] = $this->factory->build()->add($value, $itemId);
     }
 
-    protected function isExistColumn($columnName)
+    protected function isExistColumn($columnName): bool
     {
         return isset($this->columns[$columnName]);
     }
 
-    protected function getColumn($columnName)
+    protected function getColumn($columnName): ColumnInterface
     {
         return $this->columns[$columnName];
     }
 
-    public function getItemIds($columnName, $value)
+    public function getItemIds($columnName, $value): array
     {
         if (!$this->isExistColumn($columnName)) {
             return [];
@@ -59,17 +66,17 @@ class ColumnarDatabase implements DatabaseInterface
         return $this->isExistColumn($columnName) ? $this->getColumn($columnName)->getValue($itemId) : null;
     }
 
-    public function getColumnValues($columnName)
+    public function getColumnValues($columnName): array
     {
         return $this->isExistColumn($columnName) ? $this->getColumn($columnName)->getValues() : null;
     }
 
-    public function getColumnSubset($columnName, array $itemIds)
+    public function getColumnSubset($columnName, array $itemIds): array
     {
         return $this->isExistColumn($columnName) ? $this->getColumn($columnName)->getSubset($itemIds) : [];
     }
 
-    public function save()
+    public function save(): bool
     {
         foreach ($this->columns as $column) {
             if ($column->save() === false) {

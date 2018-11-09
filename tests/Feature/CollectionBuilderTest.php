@@ -1,9 +1,12 @@
 <?php
+declare(strict_types=1);
+
 namespace Tests\Feature;
 
 use LogAnalyzer\CollectionBuilder;
 use LogAnalyzer\Collection;
 use LogAnalyzer\Database\Column\ColumnFactory;
+use LogAnalyzer\Database\Column\ColumnInterface;
 use LogAnalyzer\Database\Column\InMemoryColumn;
 use LogAnalyzer\Database\ColumnarDatabase;
 use LogAnalyzer\View\ProgressBarObserver;
@@ -14,7 +17,7 @@ class CollectionBuilderTest extends TestCase
     public function testGetCollectionsRecursive()
     {
         $factory = new class extends ColumnFactory {
-            public function build($saveDir = '')
+            public function build($saveDir = ''): ColumnInterface
             {
                 return new InMemoryColumn();
             }

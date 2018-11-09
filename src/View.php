@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer;
 
 use LogAnalyzer\Collection;
@@ -29,19 +31,19 @@ class View implements \Countable
         $this->collections = $collections;
     }
 
-    public function addColumn($name, callable $procedure = null)
+    public function addColumn($name, callable $procedure = null): self
     {
         $this->columns[$name] = $procedure ?? new UniqueValuesStrategy($name, $this->dimension);
 
         return $this;
     }
 
-    public function display($strLength = 60)
+    public function display($strLength = 60): void
     {
         (new TableView(array_keys($this->columns), $this->toArray()))->display($strLength);
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         $ret = [];
         foreach ($this->collections as $collection) {
@@ -55,7 +57,7 @@ class View implements \Countable
         return $ret;
     }
 
-    public function where($columnName, callable $procedure)
+    public function where($columnName, callable $procedure): self
     {
         $collections = [];
         foreach ($this->collections as $collection) {
@@ -71,7 +73,7 @@ class View implements \Countable
         return new self($this->dimension, $collections);
     }
 
-    public function getCollection($dimensionValue)
+    public function getCollection($dimensionValue): Collection
     {
         foreach ($this->collections as $collection) {
             if ($collection->columnValues($this->dimension) == $dimensionValue) {
@@ -82,19 +84,8 @@ class View implements \Countable
         return null;
     }
 
-    public function count()
+    public function count(): int
     {
         return count($this->collections);
-    }
-
-    public function itemCount()
-    {
-        $cnt = 0;
-
-        foreach ($this->collections as $collection) {
-            $cnt += $collection->count();
-        }
-
-        return $cnt;
     }
 }

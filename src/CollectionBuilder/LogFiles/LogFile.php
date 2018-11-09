@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer\CollectionBuilder\LogFiles;
 
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
@@ -8,15 +10,22 @@ use SplFileObject;
 
 class LogFile extends \SplFileObject
 {
+    /**
+     * @var ParserInterface $parser
+     */
     private $parser;
-    private $count;
-    private $ignoreParseError = false;
 
     /**
-     * @param $path
-     * @param ParserInterface $parser
+     * @var int $count
      */
-    public function __construct($path, ParserInterface $parser)
+    private $count;
+
+    /**
+     * @var bool $ignoreParseError
+     */
+    private $ignoreParseError = false;
+
+    public function __construct(string $path, ParserInterface $parser)
     {
         if (!file_exists($path)) {
             throw new InvalidArgumentException('file not found.');
@@ -27,15 +36,15 @@ class LogFile extends \SplFileObject
         $this->parser = $parser;
 
         $count = exec('wc -l ' . $this->getRealPath());
-        $this->count = trim(str_replace($this->getRealPath(), '', $count));
+        $this->count = intval(trim(str_replace($this->getRealPath(), '', $count)));
     }
 
-    public function ignoreParsedError($ignore)
+    public function ignoreParsedError($ignore): void
     {
         $this->ignoreParseError = $ignore;
     }
 
-    public function getCurrentParsedLine()
+    public function getCurrentParsedLine(): ?array
     {
         try {
             return $this->parser->parse(parent::current());
@@ -48,12 +57,12 @@ class LogFile extends \SplFileObject
         return null;
     }
 
-    public function current()
+    public function current(): ?array
     {
         return $this->getCurrentParsedLine();
     }
 
-    public function count()
+    public function count(): int
     {
         return $this->count;
     }

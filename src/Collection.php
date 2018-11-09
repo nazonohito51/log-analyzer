@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer;
 
 use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
@@ -23,12 +25,12 @@ class Collection implements \Countable, \IteratorAggregate
         $this->database = $database;
     }
 
-    public function count()
+    public function count(): int
     {
         return count($this->itemIds);
     }
 
-    public function dimension($columnName, callable $procedure = null)
+    public function dimension($columnName, callable $procedure = null): View
     {
         $itemIdsByValue = [];
         foreach ($this->database->getColumnSubset($columnName, $this->itemIds) as $value => $itemIds) {
@@ -62,17 +64,17 @@ class Collection implements \Countable, \IteratorAggregate
         return $ret;
     }
 
-    public function cacheColumnValues($columnName, $cacheValue)
+    public function cacheColumnValues($columnName, $cacheValue): void
     {
         $this->cache[$columnName] = $cacheValue;
     }
 
-    public function flushCache()
+    public function flushCache(): void
     {
         $this->cache = [];
     }
 
-    public function filter($columnName, callable $procedure)
+    public function filter($columnName, callable $procedure): self
     {
         $itemIds = [];
         foreach ($this->itemIds as $itemId) {

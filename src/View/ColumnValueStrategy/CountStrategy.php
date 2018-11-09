@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer\View\ColumnValueStrategy;
 
 use LogAnalyzer\Collection;

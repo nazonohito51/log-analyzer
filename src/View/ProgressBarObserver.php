@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer\View;
 
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
@@ -12,7 +14,7 @@ class ProgressBarObserver
     private $beforeTimestamp;
     private $intervalSec;
 
-    public function start($max, $intervalSec = 0.5)
+    public function start($max, $intervalSec = 0.5): void
     {
         $this->progressBarView = new Manager(0, $max, 120);
         $this->progressBarView->setFormat("%current%/%max% [%bar%] %percent%% %eta%   %additionMessage%");
@@ -25,12 +27,12 @@ class ProgressBarObserver
         $this->beforeTimestamp = microtime(true);
     }
 
-    public function end()
+    public function end(): void
     {
         $this->progressBarView = null;
     }
 
-    public function update($additionMessage = '')
+    public function update($additionMessage = ''): void
     {
         $this->counterWhileInterval++;
         if (microtime(true) - $this->beforeTimestamp > $this->intervalSec) {

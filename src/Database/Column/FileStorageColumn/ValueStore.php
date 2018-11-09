@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer\Database\Column\FileStorageColumn;
 
 class ValueStore
@@ -17,19 +19,19 @@ class ValueStore
         return isset($this->values[$valueNo]) ? $this->values[$valueNo] : null;
     }
 
-    public function getAll()
+    public function getAll(): array
     {
         return array_values($this->values);
     }
 
-    public function getValueNo($value)
+    public function getValueNo($value): int
     {
         $valueNo = array_search($value, $this->values);
 
         return $valueNo !== false ? $valueNo : $this->add($value);
     }
 
-    protected function add($value)
+    protected function add($value): int
     {
         $this->values[] = $value;
 

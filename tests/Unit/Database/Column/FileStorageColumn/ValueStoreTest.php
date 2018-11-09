@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Tests\Unit\LogAnalyzer\Database\Column\FileStorageColumn;
 
 use LogAnalyzer\Database\Column\FileStorageColumn\ValueStore;

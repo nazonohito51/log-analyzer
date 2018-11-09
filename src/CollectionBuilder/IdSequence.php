@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer\CollectionBuilder;
 
 class IdSequence
@@ -10,12 +12,12 @@ class IdSequence
         $this->id = $initialId;
     }
 
-    public function now()
+    public function now(): int
     {
         return $this->id;
     }
 
-    public function update()
+    public function update(): self
     {
         $this->id++;
 
