@@ -80,22 +80,27 @@ class ViewTest extends TestCase
     {
         $collectionValue1 = $this->createMock(Collection::class);
         $collectionValue1->method('count')->willReturn(2);
-        $collectionValue1->method('columnValues')->willReturn([100, 200]);
+        $collectionValue1->method('columnValues')->willReturnMap([
+            ['column1', [1, 2, 3]],
+            ['column2', [4, 5, 6]],
+        ]);
         $collectionValue2 = $this->createMock(Collection::class);
         $collectionValue2->method('count')->willReturn(1);
-        $collectionValue2->method('columnValues')->willReturn([300]);
+        $collectionValue2->method('columnValues')->willReturnMap([
+            ['column1', [100, 400]],
+            ['column2', [200, 300]],
+        ]);
         $view = new View('dimension_name', [
             'value1' => $collectionValue1,
             'value2' => $collectionValue2
         ]);
 
-        $array = $view->addColumn('other_property', function ($value) {
-            return $value * 100;
+        $array = $view->addColumn('my_column', function (Collection $collection, $dimensionValue) {
+            $column1Values = $collection->columnValues('column1');
+            $column2Values = $collection->columnValues('column2');
+            return max(array_merge($column1Values, $column2Values));
         })->toArray();
 
-        $this->assertEquals([
-            [10000, 20000],
-            [30000]
-        ], array_column($array, 'other_property'));
+        $this->assertEquals([6, 400], array_column($array, 'my_column'));
     }
 }

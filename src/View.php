@@ -5,6 +5,7 @@ use LogAnalyzer\Collection;
 use LogAnalyzer\View\ColumnValueStrategy\AbstractStrategy;
 use LogAnalyzer\View\ColumnValueStrategy\CountStrategy;
 use LogAnalyzer\View\ColumnValueStrategy\DimensionValueStrategy;
+use LogAnalyzer\View\ColumnValueStrategy\UniqueValuesStrategy;
 use LucidFrame\Console\ConsoleTable;
 
 class View implements \Countable
@@ -29,7 +30,7 @@ class View implements \Countable
 
     public function addColumn($name, callable $procedure = null)
     {
-        $this->columns[$name] = $procedure ?? function ($value) {return $value;};
+        $this->columns[$name] = $procedure ?? new UniqueValuesStrategy($name);
 
         return $this;
     }
@@ -63,14 +64,7 @@ class View implements \Countable
         foreach ($this->collections as $dimensionValue => $collection) {
             $row = [];
             foreach ($this->columns as $columnName => $procedure) {
-                if ($columnName == $this->dimension) {
-                    $row[$columnName] = $procedure($collection, $dimensionValue);
-                } elseif ($columnName == self::COUNT_COLUMN) {
-                    $row[$columnName] = $procedure($collection, $dimensionValue);
-                } else {
-                    $values = array_unique($collection->columnValues($columnName));
-                    $row[$columnName] = array_map($procedure, $values);
-                }
+                $row[$columnName] = $procedure($collection, $dimensionValue);
             }
             $ret[] = $row;
         }

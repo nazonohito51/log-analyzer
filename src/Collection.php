@@ -47,7 +47,9 @@ class Collection implements \Countable, \IteratorAggregate
     {
         $ret = [];
         foreach ($this->itemIds as $itemId) {
-            $ret[] = $this->database->getValue($columnName, $itemId);
+            if (!is_null($value = $this->database->getValue($columnName, $itemId))) {
+                $ret[] = $value;
+            }
         }
 
         return $ret;
