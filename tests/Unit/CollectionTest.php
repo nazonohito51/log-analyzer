@@ -1,7 +1,7 @@
 <?php
-namespace Tests\Unit\LogAnalyzer\CollectionBuilder;
+namespace Tests\Unit\LogAnalyzer;
 
-use LogAnalyzer\CollectionBuilder\Collection;
+use LogAnalyzer\Collection;
 use LogAnalyzer\CollectionBuilder\Items\Item;
 use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;

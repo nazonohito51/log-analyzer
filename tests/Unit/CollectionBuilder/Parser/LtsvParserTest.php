@@ -1,6 +1,7 @@
 <?php
 namespace Tests\Unit\LogAnalyzer\CollectionBuilder\Parser;
 
+use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use Tests\LogAnalyzer\TestCase;
 
 class LtsvParserTest extends TestCase

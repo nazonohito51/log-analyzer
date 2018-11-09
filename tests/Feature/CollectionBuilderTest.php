@@ -2,7 +2,7 @@
 namespace Tests\Feature;
 
 use LogAnalyzer\CollectionBuilder;
-use LogAnalyzer\CollectionBuilder\Collection;
+use LogAnalyzer\Collection;
 use LogAnalyzer\Database\Column\ColumnFactory;
 use LogAnalyzer\Database\Column\InMemoryColumn;
 use LogAnalyzer\Database\ColumnarDatabase;

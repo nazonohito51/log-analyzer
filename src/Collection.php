@@ -1,5 +1,5 @@
 <?php
-namespace LogAnalyzer\CollectionBuilder;
+namespace LogAnalyzer;
 
 use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
 use LogAnalyzer\Database\Column\ColumnFactory;
