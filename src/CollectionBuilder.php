@@ -2,6 +2,7 @@
 namespace LogAnalyzer;
 
 use LogAnalyzer\Collection;
+use LogAnalyzer\CollectionBuilder\IdSequence;
 use LogAnalyzer\CollectionBuilder\Items\Item;
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
 use LogAnalyzer\CollectionBuilder\Parser\ApacheLogParser;
@@ -84,9 +85,9 @@ class CollectionBuilder
     public function build($ignoreParseError = false)
     {
         $progressBar = new ProgressBar($this->getAllLogCount());
+        $idSequence = IdSequence::getInstance();
 
         $items = [];
-        $itemId = 1;
         foreach ($this->logFiles as $logFile) {
             $logFile->ignoreParsedError($ignoreParseError);
 
@@ -95,11 +96,10 @@ class CollectionBuilder
                     continue;
                 }
 
-                $items[] = $itemId;
+                $items[] = $idSequence->update();
                 foreach ($line as $key => $value) {
-                    $this->database->addColumnValue($key, $value, $itemId);
+                    $this->database->addColumnValue($key, $value, $idSequence->now());
                 }
-                $itemId++;
                 $progressBar->update($logFile);
             }
         }
