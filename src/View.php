@@ -60,7 +60,7 @@ class View implements \Countable
                 } elseif ($procedure == self::COUNT_COLUMN) {
                     $row[$columnName] = $collection->count();
                 } else {
-                    $values = array_unique($collection->columnValues($procedure));
+                    $values = array_unique($collection->columnValues($columnName));
                     $row[$columnName] = array_map($procedure, $values);
                 }
             }
