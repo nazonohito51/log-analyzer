@@ -6,6 +6,7 @@ use LogAnalyzer\View\ColumnValueStrategy\AbstractStrategy;
 use LogAnalyzer\View\ColumnValueStrategy\CountStrategy;
 use LogAnalyzer\View\ColumnValueStrategy\DimensionValueStrategy;
 use LogAnalyzer\View\ColumnValueStrategy\UniqueValuesStrategy;
+use LogAnalyzer\View\TableView;
 use LucidFrame\Console\ConsoleTable;
 
 class View implements \Countable
@@ -37,20 +38,7 @@ class View implements \Countable
 
     public function display($strLength = 60)
     {
-        $table = new ConsoleTable();
-
-        foreach ($this->columns as $name => $procedure) {
-            $table->addHeader($name);
-        }
-        foreach ($this->toArray() as $row) {
-            $table->addRow();
-            foreach ($this->columns as $name => $procedure) {
-                $table->addColumn($this->formatColumnValue($row[$name], $strLength));
-            }
-        }
-
-        $table->display();
-        echo 'sum(' . self::COUNT_COLUMN . "): {$this->itemCount()}\n";
+        (new TableView(array_keys($this->columns), $this->toArray()))->display($strLength);
     }
 
     public function toArray()
@@ -67,21 +55,16 @@ class View implements \Countable
         return $ret;
     }
 
-    public function count()
-    {
-        return count($this->collections);
-    }
-
     public function where($columnName, callable $procedure)
     {
         $collections = [];
         foreach ($this->collections as $collection) {
             $newCollection = $collection->filter($columnName, $procedure);
-            // For performance, cache dimension value.
-            $newCollection->cacheColumnValues($this->dimension, $collection->columnValues($this->dimension));
 
             if ($newCollection->count() > 0) {
                 $collections[] = $newCollection;
+                // For performance, cache dimension value.
+                $newCollection->cacheColumnValues($this->dimension, $collection->columnValues($this->dimension));
             }
         }
 
@@ -99,26 +82,9 @@ class View implements \Countable
         return null;
     }
 
-    /**
-     * @param string|array $value
-     * @param int $maxLength
-     * @return string
-     */
-    protected function formatColumnValue($value, $maxLength = null)
+    public function count()
     {
-        if (is_array($value)) {
-            if (count($value) > 1) {
-                $value = '[' . implode(', ', $value) . ']';
-            } else {
-                $value = $value[0];
-            }
-        }
-
-        if ($maxLength && strlen($value) > $maxLength) {
-            $value = substr($value, 0, $maxLength) . '...';
-        }
-
-        return $value;
+        return count($this->collections);
     }
 
     public function itemCount()
