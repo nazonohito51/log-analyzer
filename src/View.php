@@ -12,8 +12,8 @@ class View implements \Countable
 {
     const COUNT_COLUMN = '_count';
 
-    private $dimension;
-    private $columns;
+    protected $dimension;
+    protected $columns;
 
     /**
      * @var Collection[]
@@ -38,7 +38,6 @@ class View implements \Countable
     public function display($strLength = 60)
     {
         $table = new ConsoleTable();
-        $cnt = 0;
 
         foreach ($this->columns as $name => $procedure) {
             $table->addHeader($name);
@@ -47,15 +46,11 @@ class View implements \Countable
             $table->addRow();
             foreach ($this->columns as $name => $procedure) {
                 $table->addColumn($this->formatColumnValue($row[$name], $strLength));
-
-                if ($name === self::COUNT_COLUMN) {
-                    $cnt += $row[$name];
-                }
             }
         }
 
         $table->display();
-        echo 'sum(' . self::COUNT_COLUMN . "): {$cnt}\n";
+        echo 'sum(' . self::COUNT_COLUMN . "): {$this->itemCount()}\n";
     }
 
     public function toArray()
@@ -101,7 +96,7 @@ class View implements \Countable
      * @param int $maxLength
      * @return string
      */
-    private function formatColumnValue($value, $maxLength = null)
+    protected function formatColumnValue($value, $maxLength = null)
     {
         if (is_array($value)) {
             if (count($value) > 1) {
@@ -116,5 +111,16 @@ class View implements \Countable
         }
 
         return $value;
+    }
+
+    public function itemCount()
+    {
+        $cnt = 0;
+
+        foreach ($this->collections as $dimensionValue => $collection) {
+            $cnt += $collection->count();
+        }
+
+        return $cnt;
     }
 }
