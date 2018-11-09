@@ -14,7 +14,7 @@ class View implements \Countable
 
     protected $dimension;
     protected $columns;
-    private $collections;
+    protected $collections;
 
     /**
      * @param string $dimension
