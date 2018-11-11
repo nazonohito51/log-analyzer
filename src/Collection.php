@@ -3,11 +3,7 @@ declare(strict_types=1);
 
 namespace LogAnalyzer;
 
-use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
-use LogAnalyzer\Database\Column\ColumnFactory;
 use LogAnalyzer\Database\DatabaseInterface;
-use LogAnalyzer\Database\ColumnarDatabase;
-use LogAnalyzer\View;
 
 class Collection implements \Countable, \IteratorAggregate
 {
@@ -16,12 +12,12 @@ class Collection implements \Countable, \IteratorAggregate
     protected $cache = [];
 
     /**
-     * @param int[] $items
+     * @param int[] $itemIds
      * @param DatabaseInterface $database
      */
-    public function __construct(array $items, DatabaseInterface $database)
+    public function __construct(array $itemIds, DatabaseInterface $database)
     {
-        $this->itemIds = $items;
+        $this->itemIds = $itemIds;
         $this->database = $database;
     }
 
