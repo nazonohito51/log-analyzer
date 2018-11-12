@@ -112,6 +112,11 @@ class View implements \Countable
         return $this->dimension->__invoke($collection);
     }
 
+    public function reset()
+    {
+        $this->columnStrategies = [$this->dimension, new CountStrategy()];
+    }
+
     public function count(): int
     {
         return count($this->collections);
