@@ -63,7 +63,7 @@ class View implements \Countable
             if ($newCollection->count() > 0) {
                 $collections[] = $newCollection;
                 // For performance, cache dimension value.
-                $newCollection->cacheColumnValues($this->dimension, $collection->columnValues($this->dimension));
+                $newCollection->cache($this->dimension, $collection->values($this->dimension));
             }
         }
 
@@ -73,7 +73,7 @@ class View implements \Countable
     public function getCollection($dimensionValue): Collection
     {
         foreach ($this->collections as $collection) {
-            if ($collection->columnValues($this->dimension) == $dimensionValue) {
+            if ($collection->values($this->dimension) == $dimensionValue) {
                 return $collection;
             }
         }

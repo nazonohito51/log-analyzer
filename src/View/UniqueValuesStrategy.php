@@ -18,6 +18,6 @@ class UniqueValuesStrategy extends AbstractStrategy
 
     public function __invoke(Collection $collection)
     {
-        return array_unique($collection->columnValues($this->columnName));
+        return array_unique($collection->values($this->columnName));
     }
 }

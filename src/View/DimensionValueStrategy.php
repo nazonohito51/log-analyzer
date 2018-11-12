@@ -10,6 +10,6 @@ class DimensionValueStrategy extends AbstractStrategy
 {
     public function __invoke(Collection $collection)
     {
-        return $collection->columnValues($this->dimensionColumnName);
+        return $collection->values($this->dimensionColumnName);
     }
 }

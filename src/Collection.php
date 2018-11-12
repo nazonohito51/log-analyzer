@@ -28,6 +28,22 @@ class Collection implements \Countable, \IteratorAggregate
 
     public function dimension($columnName, callable $procedure = null): View
     {
+        $collections = $this->groupBy($columnName, $procedure);
+        foreach ($collections as $value => $collection) {
+            // For performance, cache dimension value.
+            $collection->cache($columnName, $value);
+        }
+
+        return new View($columnName, array_values($collections));
+    }
+
+    /**
+     * @param string $columnName
+     * @param callable|null $procedure
+     * @return Collection[]
+     */
+    public function groupBy($columnName, callable $procedure = null): array
+    {
         $itemIdsByValue = [];
         foreach ($this->database->getColumnSubset($columnName, $this->itemIds) as $value => $itemIds) {
             $calcValue = $this->calcValue($value, $procedure);
@@ -37,14 +53,12 @@ class Collection implements \Countable, \IteratorAggregate
         $collections = [];
         foreach ($itemIdsByValue as $value => $itemIds) {
             $collections[$value] = new self($itemIds, $this->database);
-            // For performance, cache dimension value.
-            $collections[$value]->cacheColumnValues($columnName, $value);
         }
 
-        return new View($columnName, $collections);
+        return $collections;
     }
 
-    public function columnValues($columnName)
+    public function values($columnName)
     {
         if (isset($this->cache[$columnName])) {
             return $this->cache[$columnName];
@@ -60,16 +74,6 @@ class Collection implements \Countable, \IteratorAggregate
         return $ret;
     }
 
-    public function cacheColumnValues($columnName, $cacheValue): void
-    {
-        $this->cache[$columnName] = $cacheValue;
-    }
-
-    public function flushCache(): void
-    {
-        $this->cache = [];
-    }
-
     public function filter($columnName, callable $procedure): self
     {
         $itemIds = [];
@@ -80,6 +84,16 @@ class Collection implements \Countable, \IteratorAggregate
         }
 
         return new self($itemIds, $this->database);
+    }
+
+    public function cache($columnName, $value): void
+    {
+        $this->cache[$columnName] = $value;
+    }
+
+    public function flush(): void
+    {
+        $this->cache = [];
     }
 
     protected function calcValue($value, callable $procedure = null)

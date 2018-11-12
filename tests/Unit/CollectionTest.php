@@ -9,6 +9,7 @@ use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
 use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use LogAnalyzer\Collection\DatabaseInterface;
+use LogAnalyzer\View;
 use Tests\LogAnalyzer\TestCase;
 
 class CollectionTest extends TestCase
@@ -16,14 +17,15 @@ class CollectionTest extends TestCase
     public function testDimension()
     {
         $database = $this->createMock(DatabaseInterface::class);
-        $database->method('getColumnSubset')->with('key1', [1, 2, 3])->willReturn([
+        $database->method('getColumnSubset')->with('column1', [1, 2, 3])->willReturn([
             'value1' => [1, 2],
             'value2' => [3]
         ]);
         $collection = new Collection([1, 2, 3], $database);
 
-        $view = $collection->dimension('key1');
+        $view = $collection->dimension('column1');
 
+        $this->assertInstanceOf(View::class, $view);
         $this->assertEquals(2, $view->count());
         $this->assertEquals(2, $view->getCollection('value1')->count());
         $this->assertEquals(1, $view->getCollection('value2')->count());
@@ -32,14 +34,14 @@ class CollectionTest extends TestCase
     public function testDimensionByClosure()
     {
         $database = $this->createMock(DatabaseInterface::class);
-        $database->method('getColumnSubset')->with('key1', [1, 2, 3])->willReturn([
+        $database->method('getColumnSubset')->with('column1', [1, 2, 3])->willReturn([
             '<methodCall><methodName>getBlogInfo</methodName><params><param>111</param></params></methodCall>' => [1],
             '<methodCall><methodName>getAdView</methodName><params><param>account</param></params></methodCall>' => [2],
             '<methodCall><methodName>getBlogInfo</methodName><params><param>222</param></params></methodCall>' => [3]
         ]);
         $collection = new Collection([1, 2, 3], $database);
 
-        $view = $collection->dimension('key1', function ($value) {
+        $view = $collection->dimension('column1', function ($value) {
             if (($xml = simplexml_load_string($value)) !== false) {
                 return (string)$xml->methodName;
             }
@@ -47,12 +49,56 @@ class CollectionTest extends TestCase
             return null;
         });
 
+        $this->assertInstanceOf(View::class, $view);
         $this->assertEquals(2, $view->count());
         $this->assertEquals(2, $view->getCollection('getBlogInfo')->count());
         $this->assertEquals(1, $view->getCollection('getAdView')->count());
     }
 
-    public function testColumnValues()
+    public function testGroupBy()
+    {
+        $database = $this->createMock(DatabaseInterface::class);
+        $database->method('getColumnSubset')->with('column1', [1, 2, 3])->willReturn([
+            'value1' => [1, 2],
+            'value2' => [3]
+        ]);
+        $collection = new Collection([1, 2, 3], $database);
+
+        $collections = $collection->groupBy('column1');
+
+        $this->assertEquals(2, count($collections));
+        $this->assertInstanceOf(Collection::class, $collections['value1']);
+        $this->assertEquals(2, $collections['value1']->count());
+        $this->assertInstanceOf(Collection::class, $collections['value2']);
+        $this->assertEquals(1, $collections['value2']->count());
+    }
+
+    public function testGroupByClosure()
+    {
+        $database = $this->createMock(DatabaseInterface::class);
+        $database->method('getColumnSubset')->with('column1', [1, 2, 3])->willReturn([
+            '<methodCall><methodName>getBlogInfo</methodName><params><param>111</param></params></methodCall>' => [1],
+            '<methodCall><methodName>getAdView</methodName><params><param>account</param></params></methodCall>' => [2],
+            '<methodCall><methodName>getBlogInfo</methodName><params><param>222</param></params></methodCall>' => [3]
+        ]);
+        $collection = new Collection([1, 2, 3], $database);
+
+        $collections = $collection->groupBy('column1', function ($value) {
+            if (($xml = simplexml_load_string($value)) !== false) {
+                return (string)$xml->methodName;
+            }
+
+            return null;
+        });
+
+        $this->assertEquals(2, count($collections));
+        $this->assertInstanceOf(Collection::class, $collections['getBlogInfo']);
+        $this->assertEquals(2, $collections['getBlogInfo']->count());
+        $this->assertInstanceOf(Collection::class, $collections['getAdView']);
+        $this->assertEquals(1, $collections['getAdView']->count());
+    }
+
+    public function testValues()
     {
         $database = $this->createMock(DatabaseInterface::class);
         $database->method('getValue')->willReturnMap([
@@ -62,7 +108,7 @@ class CollectionTest extends TestCase
         ]);
         $collection = new Collection([1, 2, 3], $database);
 
-        $implode = $collection->columnValues('column');
+        $implode = $collection->values('column');
 
         $this->assertEquals(['value1', 'value1', 'value2'], $implode);
 
@@ -72,26 +118,26 @@ class CollectionTest extends TestCase
     /**
      * @param Collection $collection
      * @return Collection
-     * @depends testColumnValues
+     * @depends testValues
      */
-    public function testCacheColumnValues(Collection $collection)
+    public function testCache(Collection $collection)
     {
-        $collection->cacheColumnValues('column', ['cachedValue1', 'cachedValue2']);
+        $collection->cache('column', ['cachedValue1', 'cachedValue2']);
 
-        $this->assertEquals(['cachedValue1', 'cachedValue2'], $collection->columnValues('column'));
+        $this->assertEquals(['cachedValue1', 'cachedValue2'], $collection->values('column'));
 
         return $collection;
     }
 
     /**
      * @param Collection $collection
-     * @depends testCacheColumnValues
+     * @depends testCache
      */
-    public function testFlushCache(Collection $collection)
+    public function testFlush(Collection $collection)
     {
-        $collection->flushCache();
+        $collection->flush();
 
-        $this->assertEquals(['value1', 'value1', 'value2'], $collection->columnValues('column'));
+        $this->assertEquals(['value1', 'value1', 'value2'], $collection->values('column'));
     }
 
     public function testFilter()
