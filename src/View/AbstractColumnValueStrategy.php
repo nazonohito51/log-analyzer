@@ -5,7 +5,7 @@ namespace LogAnalyzer\View;
 
 use LogAnalyzer\Collection;
 
-abstract class AbstractColumnValueStrategy
+abstract class AbstractColumnValueStrategy implements ColumnValueStrategyInterface
 {
     protected $columnHeader;
 
