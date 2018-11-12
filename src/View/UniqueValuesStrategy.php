@@ -4,16 +4,16 @@ declare(strict_types=1);
 namespace LogAnalyzer\View;
 
 use LogAnalyzer\Collection;
-use LogAnalyzer\View\AbstractColumnValueStrategy;
+use LogAnalyzer\View\AbstractColumnStrategy;
 
-class UniqueValuesStrategy extends AbstractColumnValueStrategy
+class UniqueValuesStrategy extends AbstractColumnStrategy
 {
     protected $columnName;
 
-    public function __construct(string $columnHeader)
+    public function __construct(string $name)
     {
-        parent::__construct($columnHeader);
-        $this->columnName = $columnHeader;
+        parent::__construct($name);
+        $this->columnName = $name;
     }
 
     public function __invoke(Collection $collection)

@@ -5,16 +5,16 @@ namespace LogAnalyzer\View;
 
 use LogAnalyzer\Collection;
 
-class ColumnValueStrategyFactory
+class ColumnStrategyFactory
 {
-    public function build(string $columnHeader, callable $procedure = null): ColumnValueStrategyInterface
+    public function build(string $columnHeader, callable $procedure = null): ColumnStrategyInterface
     {
         return is_null($procedure) ? new UniqueValuesStrategy($columnHeader) : $this->buildByClosure($columnHeader, $procedure);
     }
 
-    protected function buildByClosure(string $columnHeader, callable $procedure): ColumnValueStrategyInterface
+    protected function buildByClosure(string $columnHeader, callable $procedure): ColumnStrategyInterface
     {
-        return new class ($procedure, $columnHeader) extends AbstractColumnValueStrategy
+        return new class ($procedure, $columnHeader) extends AbstractColumnStrategy
         {
             private $procedure;
 

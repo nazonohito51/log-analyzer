@@ -5,14 +5,14 @@ namespace LogAnalyzer\View;
 
 use LogAnalyzer\Collection;
 
-class DimensionStrategy extends AbstractColumnValueStrategy
+class DimensionStrategy extends AbstractColumnStrategy
 {
     protected $columnName;
 
-    public function __construct(string $columnHeader)
+    public function __construct(string $name)
     {
-        parent::__construct($columnHeader);
-        $this->columnName = $columnHeader;
+        parent::__construct($name);
+        $this->columnName = $name;
     }
 
     public function __invoke(Collection $collection)

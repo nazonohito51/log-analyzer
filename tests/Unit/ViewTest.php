@@ -17,7 +17,7 @@ class ViewTest extends TestCase
         $strategy = View::buildDimensionStrategy('dimensionName');
 
         $this->assertInstanceOf(View\DimensionStrategy::class, $strategy);
-        $this->assertEquals('dimensionName', $strategy->columnHeader());
+        $this->assertEquals('dimensionName', $strategy->name());
     }
 
     public function testToArray()
@@ -29,7 +29,7 @@ class ViewTest extends TestCase
         $collectionValue2->method('values')->willReturn('value2');
         $collectionValue2->method('count')->willReturn(1);
         $strategy = $this->createMock(View\DimensionStrategy::class);
-        $strategy->method('columnHeader')->willReturn('dimension_value');
+        $strategy->method('name')->willReturn('dimension_value');
         $strategy->method('__invoke')->willReturnMap([
             [$collectionValue1, 'value1'],
             [$collectionValue2, 'value2'],
@@ -60,7 +60,7 @@ class ViewTest extends TestCase
         $collectionValue2 = $this->createMock(Collection::class);
         $collectionValue2->method('filter')->with('column', $closure)->willReturn($newCollectionValue2);
         $strategy = $this->createMock(View\DimensionStrategy::class);
-        $strategy->method('columnHeader')->willReturn('column');
+        $strategy->method('name')->willReturn('column');
         $strategy->method('__invoke')->willReturnMap([
             [$newCollectionValue1, 'value1'],
             [$newCollectionValue2, 'value2'],

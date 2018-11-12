@@ -5,8 +5,8 @@ namespace LogAnalyzer\View;
 
 use LogAnalyzer\Collection;
 
-interface ColumnValueStrategyInterface
+interface ColumnStrategyInterface
 {
-    public function columnHeader();
+    public function name();
     public function __invoke(Collection $collection);
 }

@@ -5,9 +5,9 @@ namespace LogAnalyzer\View;
 
 use LogAnalyzer\Collection;
 use LogAnalyzer\CollectionBuilder\IdSequence;
-use LogAnalyzer\View\AbstractColumnValueStrategy;
+use LogAnalyzer\View\AbstractColumnStrategy;
 
-class IdStrategy extends AbstractColumnValueStrategy
+class IdStrategy extends AbstractColumnStrategy
 {
     private $sequence;
 

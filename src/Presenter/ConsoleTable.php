@@ -3,16 +3,21 @@ declare(strict_types=1);
 
 namespace LogAnalyzer\Presenter;
 
+use LogAnalyzer\View\ColumnStrategyInterface;
 use LucidFrame\Console\ConsoleTable as TableView;
 
 class ConsoleTable
 {
-    private $headers;
+    private $strategies;
     private $matrix;
 
-    public function __construct(array $headers, array $matrix)
+    /**
+     * @param ColumnStrategyInterface[] $strategies
+     * @param array $matrix
+     */
+    public function __construct(array $strategies, array $matrix)
     {
-        $this->headers = $headers;
+        $this->strategies = $strategies;
         $this->matrix = $matrix;
     }
 
@@ -20,13 +25,13 @@ class ConsoleTable
     {
         $table = new TableView();
 
-        foreach ($this->headers as $header) {
-            $table->addHeader($header);
+        foreach ($this->strategies as $strategy) {
+            $table->addHeader($strategy->name());
         }
         foreach ($this->matrix as $row) {
             $table->addRow();
-            foreach ($this->headers as $header) {
-                $table->addColumn($this->formatValue($row[$header], $strLen));
+            foreach ($this->strategies as $strategy) {
+                $table->addColumn($this->formatValue($row[$strategy->name()], $strLen));
             }
         }
 

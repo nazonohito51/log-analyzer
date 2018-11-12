@@ -3,12 +3,10 @@ declare(strict_types=1);
 
 namespace LogAnalyzer;
 
-use LogAnalyzer\View\AbstractColumnValueStrategy;
-use LogAnalyzer\View\ColumnValueStrategyFactory;
-use LogAnalyzer\View\ColumnValueStrategyInterface;
+use LogAnalyzer\View\AbstractColumnStrategy;
+use LogAnalyzer\View\ColumnStrategyFactory;
 use LogAnalyzer\View\CountStrategy;
 use LogAnalyzer\View\DimensionStrategy;
-use LogAnalyzer\View\UniqueValuesStrategy;
 use LogAnalyzer\Presenter\ConsoleTable;
 
 class View implements \Countable
@@ -19,7 +17,7 @@ class View implements \Countable
     protected $dimension;
 
     /**
-     * @var AbstractColumnValueStrategy[]
+     * @var AbstractColumnStrategy[]
      */
     protected $columnStrategies;
 
@@ -28,16 +26,16 @@ class View implements \Countable
      */
     protected $collections;
     /**
-     * @var ColumnValueStrategyFactory
+     * @var ColumnStrategyFactory
      */
     protected $factory;
 
     /**
      * @param DimensionStrategy $dimension
      * @param Collection[] $collections
-     * @param ColumnValueStrategyFactory|null $factory
+     * @param ColumnStrategyFactory|null $factory
      */
-    public function __construct(DimensionStrategy $dimension, array $collections, ColumnValueStrategyFactory $factory = null)
+    public function __construct(DimensionStrategy $dimension, array $collections, ColumnStrategyFactory $factory = null)
     {
         $this->dimension = $dimension;
         $this->collections = $collections;
@@ -48,7 +46,7 @@ class View implements \Countable
 
     public function getDefaultStrategyFactory()
     {
-        return new ColumnValueStrategyFactory();
+        return new ColumnStrategyFactory();
     }
 
     public static function buildDimensionStrategy($dimensionName)
@@ -74,7 +72,7 @@ class View implements \Countable
         foreach ($this->collections as $collection) {
             $row = [];
             foreach ($this->columnStrategies as $strategy) {
-                $row[$strategy->columnHeader()] = $strategy($collection);
+                $row[$strategy->name()] = $strategy($collection);
             }
             $ret[] = $row;
         }
@@ -91,7 +89,7 @@ class View implements \Countable
             if ($newCollection->count() > 0) {
                 $collections[] = $newCollection;
                 // For performance, cache dimension value.
-                $newCollection->cache($this->dimension->columnHeader(), $this->dimensionValueOf($collection));
+                $newCollection->cache($this->dimension->name(), $this->dimensionValueOf($collection));
             }
         }
 
