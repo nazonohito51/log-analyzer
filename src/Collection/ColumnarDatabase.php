@@ -83,6 +83,11 @@ class ColumnarDatabase implements DatabaseInterface
         return $this->haveColumn($columnName) ? $this->getColumn($columnName)->getSubset($itemIds) : [];
     }
 
+    public function getScheme(): array
+    {
+        return array_keys($this->columns);
+    }
+
     public function save(): bool
     {
         foreach ($this->columns as $column) {

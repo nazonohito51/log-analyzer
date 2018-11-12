@@ -105,6 +105,11 @@ class Collection implements \Countable, \IteratorAggregate
         return $value;
     }
 
+    public function scheme(): array
+    {
+        return $this->database->getScheme();
+    }
+
     public function getIterator()
     {
         return new \ArrayIterator($this->itemIds);

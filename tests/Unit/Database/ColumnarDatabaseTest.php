@@ -77,4 +77,17 @@ class ColumnarDatabaseTest extends TestCase
             'value2' => [3]
         ], $database->getSubset([1, 2, 3], 'column'));
     }
+
+    public function testGetScheme()
+    {
+        $column = $this->createMock(ColumnInterface::class);
+        $factory = $this->createMock(ColumnFactory::class);
+        $database = new ColumnarDatabase($factory, [
+            'column1' => $column,
+            'column2' => $column,
+            'column3' => $column
+        ]);
+
+        $this->assertEquals(['column1', 'column2', 'column3'], $database->getScheme());
+    }
 }

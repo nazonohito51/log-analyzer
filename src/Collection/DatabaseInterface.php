@@ -10,5 +10,6 @@ interface DatabaseInterface
     public function getValue($itemId, $columnName);
     public function getValues($columnName): array;
     public function getSubset(array $itemIds, $columnName): array;
+    public function getScheme(): array;
     public function save(): bool;
 }
