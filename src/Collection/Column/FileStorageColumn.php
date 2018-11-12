@@ -34,7 +34,7 @@ class FileStorageColumn implements ColumnInterface
         return substr($dir, -1) === '/' ? $dir . $objectHash : $dir . '/' . $objectHash;
     }
 
-    public function add($value, $itemId): ColumnInterface
+    public function add($itemId, $value): ColumnInterface
     {
         $this->addData($value, $itemId);
 

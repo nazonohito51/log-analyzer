@@ -28,7 +28,7 @@ class InMemoryColumnTest extends TestCase
     {
         $column = new InMemoryColumn($initial);
 
-        $column->add($addValue, $addId);
+        $column->add($addId, $addValue);
 
         $this->assertEquals($expected, $column->getItemIds($addValue));
     }

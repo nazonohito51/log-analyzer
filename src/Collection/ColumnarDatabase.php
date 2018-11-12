@@ -38,8 +38,8 @@ class ColumnarDatabase implements DatabaseInterface
     public function addValue($itemId, $columnName, $value): void
     {
         $this->haveColumn($columnName) ?
-            $this->getColumn($columnName)->add($value, $itemId) :
-            $this->columns[$columnName] = $this->factory->build()->add($value, $itemId);
+            $this->getColumn($columnName)->add($itemId, $value) :
+            $this->columns[$columnName] = $this->factory->build()->add($itemId, $value);
     }
 
     protected function haveColumn($columnName): bool

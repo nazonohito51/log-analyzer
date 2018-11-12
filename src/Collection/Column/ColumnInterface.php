@@ -5,7 +5,7 @@ namespace LogAnalyzer\Collection\Column;
 
 interface ColumnInterface
 {
-    public function add($value, $itemId): self;
+    public function add($itemId, $value): self;
     public function getItemIds($value): array;
     public function getValue($itemId);
     public function getValues(): array;

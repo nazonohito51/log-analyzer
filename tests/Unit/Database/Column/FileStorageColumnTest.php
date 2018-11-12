@@ -29,7 +29,7 @@ class FileStorageColumnTest extends TestCase
     {
         $column = new FileStorageColumn($this->getTmpDir(), $this->getValueStoreMock(), $initial);
 
-        $column->add($addValue, $addId);
+        $column->add($addId, $addValue);
 
         $this->assertEquals($expected, $column->getItemIds($addValue));
     }
