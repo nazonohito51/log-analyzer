@@ -10,19 +10,8 @@ use SplFileObject;
 
 class LogFile extends \SplFileObject
 {
-    /**
-     * @var ParserInterface $parser
-     */
     private $parser;
-
-    /**
-     * @var int $count
-     */
     private $count;
-
-    /**
-     * @var bool $ignoreParseError
-     */
     private $ignoreParseError = false;
 
     public function __construct(string $path, ParserInterface $parser)
@@ -32,11 +21,13 @@ class LogFile extends \SplFileObject
         }
 
         parent::__construct($path);
-        $this->setFlags(SplFileObject::READ_AHEAD | SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE);
+        $this->setFlags($this->getDefaultFlags());
         $this->parser = $parser;
+    }
 
-        $count = exec('wc -l ' . $this->getRealPath());
-        $this->count = intval(trim(str_replace($this->getRealPath(), '', $count)));
+    protected function getDefaultFlags()
+    {
+        return SplFileObject::READ_AHEAD | SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE;
     }
 
     public function ignoreParsedError($ignore): void
@@ -44,7 +35,7 @@ class LogFile extends \SplFileObject
         $this->ignoreParseError = $ignore;
     }
 
-    public function getCurrentParsedLine(): ?array
+    public function getCurrentParsedLine(): array
     {
         try {
             return $this->parser->parse(parent::current());
@@ -54,16 +45,21 @@ class LogFile extends \SplFileObject
             }
         }
 
-        return null;
-    }
-
-    public function current(): ?array
-    {
-        return $this->getCurrentParsedLine();
+        return [];
     }
 
     public function count(): int
     {
+        if (is_null($this->count)) {
+            $count = exec('wc -l ' . $this->getRealPath());
+            $this->count = intval(trim(str_replace($this->getRealPath(), '', $count)));
+        }
+
         return $this->count;
+    }
+
+    public function current(): array
+    {
+        return $this->getCurrentParsedLine();
     }
 }

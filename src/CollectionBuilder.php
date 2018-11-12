@@ -74,7 +74,7 @@ class CollectionBuilder
      * @param string $format kassner/log-parser format string. see https://github.com/kassner/log-parser
      * @return $this
      */
-    public function addApacheLog($files, $format = null): self
+    public function addApacheLog($files, string $format = null): self
     {
         $this->add($files, new ApacheLogParser($format));
 
@@ -88,17 +88,13 @@ class CollectionBuilder
     public function build($ignoreParseError = false): Collection
     {
         $idSequence = new IdSequence();
-        $this->progressBar->start($this->getAllLogCount());
+        $this->progressBar->start($this->getItemCount());
 
         $items = [];
         foreach ($this->logFiles as $logFile) {
             $logFile->ignoreParsedError($ignoreParseError);
 
             foreach ($logFile as $line) {
-                if (is_null($line) || empty($line)) {
-                    continue;
-                }
-
                 $items[] = $idSequence->update()->now();
                 foreach ($line as $key => $value) {
                     $this->database->addColumnValue($key, $value, $idSequence->now());
@@ -116,7 +112,7 @@ class CollectionBuilder
     /**
      * @return int
      */
-    public function getAllLogCount(): int
+    public function getItemCount(): int
     {
         $count = 0;
         foreach ($this->logFiles as $logFile) {
