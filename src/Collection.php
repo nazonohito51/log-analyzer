@@ -34,7 +34,7 @@ class Collection implements \Countable, \IteratorAggregate
             $collection->cache($columnName, $value);
         }
 
-        return new View($columnName, array_values($collections));
+        return new View(View::buildDimensionStrategy($columnName), array_values($collections));
     }
 
     /**

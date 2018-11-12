@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace LogAnalyzer;
 
+use LogAnalyzer\View\AbstractColumnValueStrategy;
+use LogAnalyzer\View\ColumnValueStrategyFactory;
+use LogAnalyzer\View\ColumnValueStrategyInterface;
 use LogAnalyzer\View\CountStrategy;
 use LogAnalyzer\View\DimensionStrategy;
 use LogAnalyzer\View\UniqueValuesStrategy;
@@ -10,34 +13,59 @@ use LogAnalyzer\Presenter\ConsoleTable;
 
 class View implements \Countable
 {
-    const COUNT_COLUMN = '_count';
-
+    /**
+     * @var DimensionStrategy
+     */
     protected $dimension;
-    protected $columns;
-    protected $collections;
 
     /**
-     * @param string $dimension
-     * @param Collection[] $collections
+     * @var AbstractColumnValueStrategy[]
      */
-    public function __construct($dimension, array $collections)
+    protected $columnStrategies;
+
+    /**
+     * @var Collection[]
+     */
+    protected $collections;
+    /**
+     * @var ColumnValueStrategyFactory
+     */
+    protected $factory;
+
+    /**
+     * @param DimensionStrategy $dimension
+     * @param Collection[] $collections
+     * @param ColumnValueStrategyFactory|null $factory
+     */
+    public function __construct(DimensionStrategy $dimension, array $collections, ColumnValueStrategyFactory $factory = null)
     {
         $this->dimension = $dimension;
-        $this->columns[$dimension] = new DimensionStrategy($this->dimension);
-        $this->columns[self::COUNT_COLUMN] = new CountStrategy($this->dimension);
         $this->collections = $collections;
+        $this->factory = $factory ?? $this->getDefaultStrategyFactory();
+        $this->columnStrategies[] = $dimension;
+        $this->columnStrategies[] = new CountStrategy();
     }
 
-    public function addColumn($name, callable $procedure = null): self
+    public function getDefaultStrategyFactory()
     {
-        $this->columns[$name] = $procedure ?? new UniqueValuesStrategy($name, $this->dimension);
+        return new ColumnValueStrategyFactory();
+    }
+
+    public static function buildDimensionStrategy($dimensionName)
+    {
+        return new DimensionStrategy($dimensionName);
+    }
+
+    public function addColumn(string $name, callable $procedure = null): self
+    {
+        $this->columnStrategies[] = $this->factory->build($name, $procedure);
 
         return $this;
     }
 
     public function table(): ConsoleTable
     {
-        return new ConsoleTable(array_keys($this->columns), $this->toArray());
+        return new ConsoleTable($this->columnStrategies, $this->toArray());
     }
 
     public function toArray(): array
@@ -45,8 +73,8 @@ class View implements \Countable
         $ret = [];
         foreach ($this->collections as $collection) {
             $row = [];
-            foreach ($this->columns as $columnName => $procedure) {
-                $row[$columnName] = $procedure($collection);
+            foreach ($this->columnStrategies as $strategy) {
+                $row[$strategy->columnHeader()] = $strategy($collection);
             }
             $ret[] = $row;
         }
@@ -63,7 +91,7 @@ class View implements \Countable
             if ($newCollection->count() > 0) {
                 $collections[] = $newCollection;
                 // For performance, cache dimension value.
-                $newCollection->cache($this->dimension, $collection->values($this->dimension));
+                $newCollection->cache($this->dimension->columnHeader(), $this->dimensionValueOf($collection));
             }
         }
 
@@ -73,12 +101,17 @@ class View implements \Countable
     public function getCollection($dimensionValue): Collection
     {
         foreach ($this->collections as $collection) {
-            if ($collection->values($this->dimension) == $dimensionValue) {
+            if ($this->dimensionValueOf($collection) == $dimensionValue) {
                 return $collection;
             }
         }
 
         return null;
+    }
+
+    protected function dimensionValueOf(Collection $collection)
+    {
+        return $this->dimension->__invoke($collection);
     }
 
     public function count(): int
