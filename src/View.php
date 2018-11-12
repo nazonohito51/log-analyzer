@@ -3,13 +3,10 @@ declare(strict_types=1);
 
 namespace LogAnalyzer;
 
-use LogAnalyzer\Collection;
-use LogAnalyzer\View\AbstractStrategy;
 use LogAnalyzer\View\CountStrategy;
 use LogAnalyzer\View\DimensionValueStrategy;
 use LogAnalyzer\View\UniqueValuesStrategy;
-use LogAnalyzer\Presenter\TableView;
-use LucidFrame\Console\ConsoleTable;
+use LogAnalyzer\Presenter\ConsoleTable;
 
 class View implements \Countable
 {
@@ -38,9 +35,9 @@ class View implements \Countable
         return $this;
     }
 
-    public function table(): TableView
+    public function table(): ConsoleTable
     {
-        return new TableView(array_keys($this->columns), $this->toArray());
+        return new ConsoleTable(array_keys($this->columns), $this->toArray());
     }
 
     public function toArray(): array

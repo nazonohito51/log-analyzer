@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace LogAnalyzer\Presenter;
 
-use LucidFrame\Console\ConsoleTable;
+use LucidFrame\Console\ConsoleTable as TableView;
 
-class TableView
+class ConsoleTable
 {
     private $headers;
     private $matrix;
@@ -18,7 +18,7 @@ class TableView
 
     public function display($strLen = 60): void
     {
-        $table = new ConsoleTable();
+        $table = new TableView();
 
         foreach ($this->headers as $header) {
             $table->addHeader($header);

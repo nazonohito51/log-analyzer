@@ -71,13 +71,13 @@ package View {
     + array showScheme()
   }
 
-  interface ValueStrategyInterface {
+  interface ColumnValueStrategyInterface {
   }
 
-  abstract class AbstractValueStrategy {
+  abstract class AbstractColumnValueStrategy {
   }
 
-  class DimensionValueStrategy {
+  class DimensionStrategy {
   }
 
   class CountStrategy {
@@ -88,14 +88,14 @@ package Presenter {
   class ProgressBarObserver {
   }
 
-  class ConsoleTableView {
+  class ConsoleTable {
   }
 }
 
 LogFile "0..n" -- "1" ParserInterface
 LogFile <|-- SplFileObject
 View o- Collection : create
-View o-- ValueStrategyInterface
+View o-- ColumnValueStrategyInterface
 CollectionBuilder .> Collection : create
 CollectionBuilder o-- LogFile
 Collection "1..n" *-- "1" DatabaseInterface
@@ -105,9 +105,9 @@ ColumnarDatabase <|- DatabaseInterface
 FileStorageColumn <|- ColumnInterface
 InMemoryColumn <|- ColumnInterface
 DatabaseInterface o-- ColumnInterface
-AbstractValueStrategy <|- ValueStrategyInterface
-DimensionValueStrategy <|- AbstractValueStrategy
-CountStrategy <|- AbstractValueStrategy
+AbstractColumnValueStrategy <|- ColumnValueStrategyInterface
+DimensionStrategy <|- AbstractColumnValueStrategy
+CountStrategy <|- AbstractColumnValueStrategy
 ProgressBarObserver "1" -- "0..1" CollectionBuilder
-ConsoleTableView <.. View : create
+ConsoleTable <.. View : create
 @enduml

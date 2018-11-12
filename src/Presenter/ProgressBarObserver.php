@@ -37,9 +37,6 @@ class ProgressBarObserver
         $this->counterWhileInterval++;
         if (microtime(true) - $this->beforeTimestamp > $this->intervalSec) {
             $this->progressBarView->getRegistry()->setValue('additionMessage', $additionMessage);
-//            $this->pregressBarView->getRegistry()->setValue('file', $file->getFilename());
-//            $this->pregressBarView->getRegistry()->setValue('lineMax', $file->count());
-//            $this->pregressBarView->getRegistry()->setValue('line', $file->key());
             $this->progressBarView->update($this->progressBarView->getRegistry()->getValue('current') + $this->counterWhileInterval);
 
             $this->counterWhileInterval = 0;
