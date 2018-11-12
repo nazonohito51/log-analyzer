@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LogAnalyzer;
 
 use LogAnalyzer\View\CountStrategy;
-use LogAnalyzer\View\DimensionValueStrategy;
+use LogAnalyzer\View\DimensionStrategy;
 use LogAnalyzer\View\UniqueValuesStrategy;
 use LogAnalyzer\Presenter\ConsoleTable;
 
@@ -23,7 +23,7 @@ class View implements \Countable
     public function __construct($dimension, array $collections)
     {
         $this->dimension = $dimension;
-        $this->columns[$dimension] = new DimensionValueStrategy($this->dimension);
+        $this->columns[$dimension] = new DimensionStrategy($this->dimension);
         $this->columns[self::COUNT_COLUMN] = new CountStrategy($this->dimension);
         $this->collections = $collections;
     }

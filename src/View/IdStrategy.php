@@ -5,15 +5,15 @@ namespace LogAnalyzer\View;
 
 use LogAnalyzer\Collection;
 use LogAnalyzer\CollectionBuilder\IdSequence;
-use LogAnalyzer\View\AbstractStrategy;
+use LogAnalyzer\View\AbstractColumnValueStrategy;
 
-class IdStrategy extends AbstractStrategy
+class IdStrategy extends AbstractColumnValueStrategy
 {
     private $sequence;
 
-    public function __construct(IdSequence $sequence, $dimensionColumnName)
+    public function __construct(IdSequence $sequence, string $columnHeader)
     {
-        parent::__construct($dimensionColumnName);
+        parent::__construct($columnHeader);
         $this->sequence = $sequence;
     }
 
