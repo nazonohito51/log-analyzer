@@ -38,29 +38,27 @@ package Collection {
     + array showScheme()
   }
 
-  package Database {
-    class ColumnarDatabase {
-    }
+  class ColumnarDatabase {
+  }
 
-    interface DatabaseInterface {
-      - array scheme
-      + ColumnInterface getColumn(key)
-      + array getScheme()
-    }
+  interface DatabaseInterface {
+    - array scheme
+    + ColumnInterface getColumn(key)
+    + array getScheme()
+  }
 
-    class FileStorageColumn {
-      - array values
-      - array dictionary
-    }
+  class FileStorageColumn {
+    - array values
+    - array dictionary
+  }
 
-    class InMemoryColumn {
-      - array values
-      - array dictionary
-    }
+  class InMemoryColumn {
+    - array values
+    - array dictionary
+  }
 
-    interface ColumnInterface {
-      + void add(value, itemId)
-    }
+  interface ColumnInterface {
+    + void add(value, itemId)
   }
 }
 

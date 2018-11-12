@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LogAnalyzer\Database\Column\FileStorageColumn;
+namespace LogAnalyzer\Collection\Column\FileStorageColumn;
 
 class ValueStore
 {

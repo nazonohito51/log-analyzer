@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LogAnalyzer\Database\Column;
+namespace LogAnalyzer\Collection\Column;
 
-use LogAnalyzer\Database\Column\FileStorageColumn\ValueStore;
+use LogAnalyzer\Collection\Column\FileStorageColumn\ValueStore;
 
 class ColumnFactory
 {

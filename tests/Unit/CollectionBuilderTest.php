@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Tests\Unit\LogAnalyzer;
 
 use LogAnalyzer\CollectionBuilder;
-use LogAnalyzer\Database\DatabaseInterface;
-use LogAnalyzer\View\ProgressBarObserver;
+use LogAnalyzer\Collection\DatabaseInterface;
+use LogAnalyzer\Presenter\ProgressBarObserver;
 use Tests\LogAnalyzer\Helpers\ItemMock;
 use Tests\LogAnalyzer\TestCase;
 

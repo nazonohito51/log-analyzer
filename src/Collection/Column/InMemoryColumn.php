@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LogAnalyzer\Database\Column;
+namespace LogAnalyzer\Collection\Column;
 
 class InMemoryColumn implements ColumnInterface
 {

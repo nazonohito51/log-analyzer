@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace LogAnalyzer\Database;
+namespace LogAnalyzer\Collection;
 
-use LogAnalyzer\Database\Column\ColumnFactory;
-use LogAnalyzer\Database\Column\ColumnInterface;
+use LogAnalyzer\Collection\Column\ColumnFactory;
+use LogAnalyzer\Collection\Column\ColumnInterface;
 
 class ColumnarDatabase implements DatabaseInterface
 {

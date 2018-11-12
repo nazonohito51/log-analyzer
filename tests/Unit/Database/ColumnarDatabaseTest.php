@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\LogAnalyzer\Database;
 
-use LogAnalyzer\Database\Column\ColumnFactory;
-use LogAnalyzer\Database\Column\ColumnInterface;
-use LogAnalyzer\Database\ColumnarDatabase;
+use LogAnalyzer\Collection\Column\ColumnFactory;
+use LogAnalyzer\Collection\Column\ColumnInterface;
+use LogAnalyzer\Collection\ColumnarDatabase;
 use Tests\LogAnalyzer\TestCase;
 
 class ColumnarDatabaseTest extends TestCase

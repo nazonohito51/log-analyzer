@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LogAnalyzer;
 
-use LogAnalyzer\Database\DatabaseInterface;
+use LogAnalyzer\Collection\DatabaseInterface;
 
 class Collection implements \Countable, \IteratorAggregate
 {

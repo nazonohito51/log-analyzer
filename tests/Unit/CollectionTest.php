@@ -8,7 +8,7 @@ use LogAnalyzer\CollectionBuilder\Items\Item;
 use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
 use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
-use LogAnalyzer\Database\DatabaseInterface;
+use LogAnalyzer\Collection\DatabaseInterface;
 use Tests\LogAnalyzer\TestCase;
 
 class CollectionTest extends TestCase

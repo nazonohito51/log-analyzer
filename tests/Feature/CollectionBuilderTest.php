@@ -5,11 +5,11 @@ namespace Tests\Feature;
 
 use LogAnalyzer\CollectionBuilder;
 use LogAnalyzer\Collection;
-use LogAnalyzer\Database\Column\ColumnFactory;
-use LogAnalyzer\Database\Column\ColumnInterface;
-use LogAnalyzer\Database\Column\InMemoryColumn;
-use LogAnalyzer\Database\ColumnarDatabase;
-use LogAnalyzer\View\ProgressBarObserver;
+use LogAnalyzer\Collection\Column\ColumnFactory;
+use LogAnalyzer\Collection\Column\ColumnInterface;
+use LogAnalyzer\Collection\Column\InMemoryColumn;
+use LogAnalyzer\Collection\ColumnarDatabase;
+use LogAnalyzer\Presenter\ProgressBarObserver;
 use Tests\LogAnalyzer\TestCase;
 
 class CollectionBuilderTest extends TestCase

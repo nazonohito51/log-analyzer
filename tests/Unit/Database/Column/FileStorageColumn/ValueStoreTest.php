@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\LogAnalyzer\Database\Column\FileStorageColumn;
 
-use LogAnalyzer\Database\Column\FileStorageColumn\ValueStore;
+use LogAnalyzer\Collection\Column\FileStorageColumn\ValueStore;
 use Tests\LogAnalyzer\TestCase;
 
 class ValueStoreTest extends TestCase

@@ -6,7 +6,7 @@ namespace Tests\Unit\LogAnalyzer;
 use LogAnalyzer\Collection;
 use LogAnalyzer\CollectionBuilder\Items\Item;
 use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
-use LogAnalyzer\Database\DatabaseInterface;
+use LogAnalyzer\Collection\DatabaseInterface;
 use LogAnalyzer\View;
 use Tests\LogAnalyzer\TestCase;
 

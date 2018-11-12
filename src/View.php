@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace LogAnalyzer;
 
 use LogAnalyzer\Collection;
-use LogAnalyzer\View\ColumnValueStrategy\AbstractStrategy;
-use LogAnalyzer\View\ColumnValueStrategy\CountStrategy;
-use LogAnalyzer\View\ColumnValueStrategy\DimensionValueStrategy;
-use LogAnalyzer\View\ColumnValueStrategy\UniqueValuesStrategy;
-use LogAnalyzer\View\TableView;
+use LogAnalyzer\View\AbstractStrategy;
+use LogAnalyzer\View\CountStrategy;
+use LogAnalyzer\View\DimensionValueStrategy;
+use LogAnalyzer\View\UniqueValuesStrategy;
+use LogAnalyzer\Presenter\TableView;
 use LucidFrame\Console\ConsoleTable;
 
 class View implements \Countable

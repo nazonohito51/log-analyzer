@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\LogAnalyzer\Database\Column;
 
-use LogAnalyzer\Database\Column\InMemoryColumn;
+use LogAnalyzer\Collection\Column\InMemoryColumn;
 use Tests\LogAnalyzer\TestCase;
 
 class InMemoryColumnTest extends TestCase

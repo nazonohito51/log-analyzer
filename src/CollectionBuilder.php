@@ -10,10 +10,10 @@ use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
 use LogAnalyzer\CollectionBuilder\Parser\ApacheLogParser;
 use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
-use LogAnalyzer\Database\Column\ColumnFactory;
-use LogAnalyzer\Database\DatabaseInterface;
-use LogAnalyzer\Database\ColumnarDatabase;
-use LogAnalyzer\View\ProgressBarObserver;
+use LogAnalyzer\Collection\Column\ColumnFactory;
+use LogAnalyzer\Collection\DatabaseInterface;
+use LogAnalyzer\Collection\ColumnarDatabase;
+use LogAnalyzer\Presenter\ProgressBarObserver;
 
 class CollectionBuilder
 {
