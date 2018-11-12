@@ -45,7 +45,7 @@ class Collection implements \Countable, \IteratorAggregate
     public function groupBy($columnName, callable $procedure = null): array
     {
         $itemIdsByValue = [];
-        foreach ($this->database->getColumnSubset($columnName, $this->itemIds) as $value => $itemIds) {
+        foreach ($this->database->getSubset($this->itemIds, $columnName) as $value => $itemIds) {
             $calcValue = $this->calcValue($value, $procedure);
             $itemIdsByValue[$calcValue] = array_merge($itemIds, $itemIdsByValue[$calcValue] ?? []);
         }
@@ -66,7 +66,7 @@ class Collection implements \Countable, \IteratorAggregate
 
         $ret = [];
         foreach ($this->itemIds as $itemId) {
-            if (!is_null($value = $this->database->getValue($columnName, $itemId))) {
+            if (!is_null($value = $this->database->getValue($itemId, $columnName))) {
                 $ret[] = $value;
             }
         }
@@ -78,7 +78,7 @@ class Collection implements \Countable, \IteratorAggregate
     {
         $itemIds = [];
         foreach ($this->itemIds as $itemId) {
-            if ($procedure($this->database->getValue($columnName, $itemId)) === true) {
+            if ($procedure($this->database->getValue($itemId, $columnName)) === true) {
                 $itemIds[] = $itemId;
             }
         }

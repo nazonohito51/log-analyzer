@@ -5,10 +5,10 @@ namespace LogAnalyzer\Collection;
 
 interface DatabaseInterface
 {
-    public function addColumnValue($columnName, $value, $itemId): void;
+    public function addValue($itemId, $columnName, $value): void;
     public function getItemIds($columnName, $value): array;
-    public function getValue($columnName, $itemId);
-    public function getColumnValues($columnName): array;
-    public function getColumnSubset($columnName, array $itemIds): array;
+    public function getValue($itemId, $columnName);
+    public function getValues($columnName): array;
+    public function getSubset(array $itemIds, $columnName): array;
     public function save(): bool;
 }

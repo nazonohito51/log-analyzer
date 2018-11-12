@@ -25,7 +25,7 @@ class ColumnarDatabase implements DatabaseInterface
         $this->registerShutdownFunc();
     }
 
-    public function registerShutdownFunc(): void
+    protected function registerShutdownFunc(): void
     {
         $column = $this->columns;
         register_shutdown_function(function () use ($column) {
@@ -35,14 +35,14 @@ class ColumnarDatabase implements DatabaseInterface
         });
     }
 
-    public function addColumnValue($columnName, $value, $itemId): void
+    public function addValue($itemId, $columnName, $value): void
     {
-        $this->isExistColumn($columnName) ?
+        $this->haveColumn($columnName) ?
             $this->getColumn($columnName)->add($value, $itemId) :
             $this->columns[$columnName] = $this->factory->build()->add($value, $itemId);
     }
 
-    protected function isExistColumn($columnName): bool
+    protected function haveColumn($columnName): bool
     {
         return isset($this->columns[$columnName]);
     }
@@ -54,26 +54,33 @@ class ColumnarDatabase implements DatabaseInterface
 
     public function getItemIds($columnName, $value): array
     {
-        if (!$this->isExistColumn($columnName)) {
+        if (!$this->haveColumn($columnName)) {
             return [];
         }
 
         return $this->getColumn($columnName)->getItemIds($value);
     }
 
-    public function getValue($columnName, $itemId)
+    public function getValue($itemId, $columnName)
     {
-        return $this->isExistColumn($columnName) ? $this->getColumn($columnName)->getValue($itemId) : null;
+        return $this->haveColumn($columnName) ? $this->getColumn($columnName)->getValue($itemId) : null;
     }
 
-    public function getColumnValues($columnName): array
+    public function getValues($columnName): array
     {
-        return $this->isExistColumn($columnName) ? $this->getColumn($columnName)->getValues() : null;
+        return $this->haveColumn($columnName) ? $this->getColumn($columnName)->getValues() : null;
     }
 
-    public function getColumnSubset($columnName, array $itemIds): array
+    /**
+     * group itemIds by column value.
+     *
+     * @param array $itemIds
+     * @param $columnName
+     * @return array
+     */
+    public function getSubset(array $itemIds, $columnName): array
     {
-        return $this->isExistColumn($columnName) ? $this->getColumn($columnName)->getSubset($itemIds) : [];
+        return $this->haveColumn($columnName) ? $this->getColumn($columnName)->getSubset($itemIds) : [];
     }
 
     public function save(): bool

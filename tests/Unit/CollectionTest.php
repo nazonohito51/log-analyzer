@@ -17,7 +17,7 @@ class CollectionTest extends TestCase
     public function testDimension()
     {
         $database = $this->createMock(DatabaseInterface::class);
-        $database->method('getColumnSubset')->with('column1', [1, 2, 3])->willReturn([
+        $database->method('getSubset')->with([1, 2, 3], 'column1')->willReturn([
             'value1' => [1, 2],
             'value2' => [3]
         ]);
@@ -34,7 +34,7 @@ class CollectionTest extends TestCase
     public function testDimensionByClosure()
     {
         $database = $this->createMock(DatabaseInterface::class);
-        $database->method('getColumnSubset')->with('column1', [1, 2, 3])->willReturn([
+        $database->method('getSubset')->with([1, 2, 3], 'column1')->willReturn([
             '<methodCall><methodName>getBlogInfo</methodName><params><param>111</param></params></methodCall>' => [1],
             '<methodCall><methodName>getAdView</methodName><params><param>account</param></params></methodCall>' => [2],
             '<methodCall><methodName>getBlogInfo</methodName><params><param>222</param></params></methodCall>' => [3]
@@ -58,7 +58,7 @@ class CollectionTest extends TestCase
     public function testGroupBy()
     {
         $database = $this->createMock(DatabaseInterface::class);
-        $database->method('getColumnSubset')->with('column1', [1, 2, 3])->willReturn([
+        $database->method('getSubset')->with([1, 2, 3], 'column1')->willReturn([
             'value1' => [1, 2],
             'value2' => [3]
         ]);
@@ -76,7 +76,7 @@ class CollectionTest extends TestCase
     public function testGroupByClosure()
     {
         $database = $this->createMock(DatabaseInterface::class);
-        $database->method('getColumnSubset')->with('column1', [1, 2, 3])->willReturn([
+        $database->method('getSubset')->with([1, 2, 3], 'column1')->willReturn([
             '<methodCall><methodName>getBlogInfo</methodName><params><param>111</param></params></methodCall>' => [1],
             '<methodCall><methodName>getAdView</methodName><params><param>account</param></params></methodCall>' => [2],
             '<methodCall><methodName>getBlogInfo</methodName><params><param>222</param></params></methodCall>' => [3]
@@ -102,9 +102,9 @@ class CollectionTest extends TestCase
     {
         $database = $this->createMock(DatabaseInterface::class);
         $database->method('getValue')->willReturnMap([
-            ['column', 1, 'value1'],
-            ['column', 2, 'value1'],
-            ['column', 3, 'value2']
+            [1, 'column', 'value1'],
+            [2, 'column', 'value1'],
+            [3, 'column', 'value2']
         ]);
         $collection = new Collection([1, 2, 3], $database);
 
@@ -144,9 +144,9 @@ class CollectionTest extends TestCase
     {
         $database = $this->createMock(DatabaseInterface::class);
         $database->method('getValue')->willReturnMap([
-            ['column', 1, 100],
-            ['column', 2, 101],
-            ['column', 3, 102]
+            [1, 'column', 100],
+            [2, 'column', 101],
+            [3, 'column', 102]
         ]);
         $collection = new Collection([1, 2, 3], $database);
 

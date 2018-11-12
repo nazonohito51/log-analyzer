@@ -97,7 +97,7 @@ class CollectionBuilder
             foreach ($logFile as $line) {
                 $items[] = $idSequence->update()->now();
                 foreach ($line as $key => $value) {
-                    $this->database->addColumnValue($key, $value, $idSequence->now());
+                    $this->database->addValue($idSequence->now(), $key, $value);
                 }
                 $this->progressBar->update(sprintf('Loading: %s(%d/%d)', $logFile->getFilename(), $logFile->key(), $logFile->count()));
             }

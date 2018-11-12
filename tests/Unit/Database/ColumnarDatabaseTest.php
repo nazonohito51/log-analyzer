@@ -27,7 +27,7 @@ class ColumnarDatabaseTest extends TestCase
             }
         });
 
-        $database->addColumnValue('key1', 'value1', 1);
+        $database->addValue(1, 'key1', 'value1');
 
         $this->assertEquals([1], $database->getItemIds('key1', 'value1'));
     }
@@ -49,7 +49,7 @@ class ColumnarDatabaseTest extends TestCase
         $factory = $this->createMock(ColumnFactory::class);
         $database = new ColumnarDatabase($factory, ['column' => $column]);
 
-        $this->assertEquals('value', $database->getValue('column', 1));
+        $this->assertEquals('value', $database->getValue(1, 'column'));
     }
 
     public function testGetColumnValues()
@@ -59,7 +59,7 @@ class ColumnarDatabaseTest extends TestCase
         $factory = $this->createMock(ColumnFactory::class);
         $database = new ColumnarDatabase($factory, ['key1' => $column]);
 
-        $this->assertEquals(['value1', 'value2'], $database->getColumnValues('key1'));
+        $this->assertEquals(['value1', 'value2'], $database->getValues('key1'));
     }
 
     public function testGetSubset()
@@ -75,6 +75,6 @@ class ColumnarDatabaseTest extends TestCase
         $this->assertEquals([
             'value1' => [1, 2],
             'value2' => [3]
-        ], $database->getColumnSubset('column', [1, 2, 3]));
+        ], $database->getSubset([1, 2, 3], 'column'));
     }
 }
