@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LogAnalyzer;
 
+use LogAnalyzer\Exception\InvalidArgumentException;
 use LogAnalyzer\View\AbstractColumnStrategy;
 use LogAnalyzer\View\ColumnStrategyFactory;
 use LogAnalyzer\View\CountStrategy;
@@ -56,6 +57,10 @@ class View implements \Countable
 
     public function addColumn(string $name, callable $procedure = null): self
     {
+        if ($this->dimension->name() === $name) {
+            throw new InvalidArgumentException('The same name as dimension can not be used.');
+        }
+
         $this->columnStrategies[] = $this->factory->build($name, $procedure);
 
         return $this;
