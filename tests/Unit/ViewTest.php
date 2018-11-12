@@ -1,160 +1,123 @@
 <?php
+declare(strict_types=1);
+
 namespace Tests\Unit\LogAnalyzer;
 
-use LogAnalyzer\CollectionBuilder\Collection;
+use LogAnalyzer\Collection;
 use LogAnalyzer\CollectionBuilder\Items\Item;
 use LogAnalyzer\CollectionBuilder\Items\ItemInterface;
+use LogAnalyzer\Collection\DatabaseInterface;
 use LogAnalyzer\View;
 use Tests\LogAnalyzer\TestCase;
 
 class ViewTest extends TestCase
 {
+    public function testBuildDimensionStrategy()
+    {
+        $strategy = View::buildDimensionStrategy('dimensionName');
+
+        $this->assertInstanceOf(View\DimensionStrategy::class, $strategy);
+        $this->assertEquals('dimensionName', $strategy->name());
+    }
+
     public function testToArray()
     {
-        $file = $this->getLogFileMock([
-            'dimension_name:value2',
-            'dimension_name:value1',
-            'dimension_name:value1',
+        $collectionValue1 = $this->createMock(Collection::class);
+        $collectionValue1->method('values')->willReturn('value1');
+        $collectionValue1->method('count')->willReturn(2);
+        $collectionValue2 = $this->createMock(Collection::class);
+        $collectionValue2->method('values')->willReturn('value2');
+        $collectionValue2->method('count')->willReturn(1);
+        $strategy = $this->createMock(View\DimensionStrategy::class);
+        $strategy->method('name')->willReturn('dimension_value');
+        $strategy->method('__invoke')->willReturnMap([
+            [$collectionValue1, 'value1'],
+            [$collectionValue2, 'value2'],
         ]);
-        $view = new View('dimension_name', [
-            'value1' => new Collection([
-                new Item($file, 1),
-                new Item($file, 2),
-            ]),
-            'value2' => new Collection([
-                new Item($file, 0)
-            ])
-        ]);
+        $view = new View($strategy, [$collectionValue1, $collectionValue2]);
 
         $array = $view->toArray();
 
-        $this->assertEquals([
-            ['dimension_name' => 'value1', 'Count' => 2],
-            ['dimension_name' => 'value2', 'Count' => 1]
-        ], $array);
-    }
-
-    public function testToArrayUsingSort()
-    {
-        $file = $this->getLogFileMock([
-            'dimension_name:have_one',
-            'dimension_name:have_three',
-            'dimension_name:have_two',
-            'dimension_name:have_three',
-            'dimension_name:have_two',
-            'dimension_name:have_three',
-        ]);
-        $view = new View('dimension_name', [
-            'have_one' => new Collection([
-                new Item($file, 0)
-            ]),
-            'have_three' => new Collection([
-                new Item($file, 1),
-                new Item($file, 3),
-                new Item($file, 5),
-            ]),
-            'have_two' => new Collection([
-                new Item($file, 2),
-                new Item($file, 4),
-            ]),
-        ]);
-
-        $array = $view->toArray(function ($a, $b) {
-            if ($a['Count'] == $b['Count']) {
-                return 0;
-            }
-
-            return ($a['Count'] < $b['Count']) ? 1 : -1;
-        });
-
-        $this->assertEquals([
-            ['dimension_name' => 'have_three', 'Count' => 3],
-            ['dimension_name' => 'have_two', 'Count' => 2],
-            ['dimension_name' => 'have_one', 'Count' => 1]
+        $this->assertArraySubset([
+            ['dimension_value' => 'value1', '_count' => 2],
+            ['dimension_value' => 'value2', '_count' => 1]
         ], $array);
     }
 
     public function testToArrayUsingWhere()
     {
-        $file = $this->getLogFileMock([
-            'dimension_name:have_one',
-            'dimension_name:have_three',
-            'dimension_name:have_two',
-            'dimension_name:have_three',
-            'dimension_name:have_two',
-            'dimension_name:have_three',
+        $closure = function ($value) {
+            return $value > 100;
+        };
+        $newCollectionValue1 = $this->createMock(Collection::class);
+        $newCollectionValue1->method('values')->willReturn('value1');
+        $newCollectionValue1->method('count')->willReturn(2);
+        $newCollectionValue2 = $this->createMock(Collection::class);
+        $newCollectionValue2->method('values')->willReturn('value2');
+        $newCollectionValue2->method('count')->willReturn(1);
+        $collectionValue1 = $this->createMock(Collection::class);
+        $collectionValue1->method('filter')->with('column', $closure)->willReturn($newCollectionValue1);
+        $collectionValue2 = $this->createMock(Collection::class);
+        $collectionValue2->method('filter')->with('column', $closure)->willReturn($newCollectionValue2);
+        $strategy = $this->createMock(View\DimensionStrategy::class);
+        $strategy->method('name')->willReturn('column');
+        $strategy->method('__invoke')->willReturnMap([
+            [$newCollectionValue1, 'value1'],
+            [$newCollectionValue2, 'value2'],
         ]);
-        $view = new View('dimension_name', [
-            'have_one' => new Collection([
-                new Item($file, 0)
-            ]),
-            'have_two' => new Collection([
-                new Item($file, 2),
-                new Item($file, 4),
-            ]),
-            'have_three' => new Collection([
-                new Item($file, 1),
-                new Item($file, 3),
-                new Item($file, 5),
-            ]),
-        ]);
+        $view = new View($strategy, [$collectionValue1, $collectionValue2]);
 
-        $array = $view->toArray(null, function ($row) {
-            return ($row['Count'] >= 2);
-        });
+        $newView = $view->where('column', $closure)->toArray();
 
         $this->assertEquals([
-            ['dimension_name' => 'have_two', 'Count' => 2],
-            ['dimension_name' => 'have_three', 'Count' => 3],
-        ], $array);
+            ['column' => 'value1', '_count' => 2],
+            ['column' => 'value2', '_count' => 1],
+        ], $newView);
     }
 
     public function testAddColumn()
     {
-        $file = $this->getLogFileMock([
-            "dimension_name:value1\tother_property:1",
-            "dimension_name:value1\tother_property:2",
-            "dimension_name:value2\tother_property:3",
-        ]);
-        $view = new View('dimension_name', [
-            'value1' => new Collection([
-                new Item($file, 0),
-                new Item($file, 1),
-            ]),
-            'value2' => new Collection([
-                new Item($file, 2)
-            ])
-        ]);
+        $collectionValue1 = $this->createMock(Collection::class);
+        $collectionValue1->method('count')->willReturn(2);
+        $collectionValue1->method('values')->willReturn([100, 200]);
+        $collectionValue2 = $this->createMock(Collection::class);
+        $collectionValue2->method('count')->willReturn(1);
+        $collectionValue2->method('values')->willReturn([300]);
+        $view = new View(View::buildDimensionStrategy('dimensionName'), [$collectionValue1, $collectionValue2]);
 
         $array = $view->addColumn('other_property')->toArray();
 
-        $this->assertEquals(['1', '2'], $array[0]['other_property']);
-        $this->assertEquals(['3'], $array[1]['other_property']);
+        $this->assertEquals([
+            [100, 200],
+            [300]
+        ], array_column($array, 'other_property'));
     }
 
     public function testAddColumnByClosure()
     {
-        $file = $this->getLogFileMock([
-            "dimension_name:value1\tother_property:1",
-            "dimension_name:value1\tother_property:2",
-            "dimension_name:value2\tother_property:6",
+        $collectionValue1 = $this->createMock(Collection::class);
+        $collectionValue1->method('count')->willReturn(2);
+        $collectionValue1->method('values')->willReturnMap([
+            ['column1', [1, 2, 3]],
+            ['column2', [4, 5, 6]],
         ]);
-        $view = new View('dimension_name', [
-            'value1' => new Collection([
-                new Item($file, 0),
-                new Item($file, 1),
-            ]),
-            'value2' => new Collection([
-                new Item($file, 2)
-            ])
+        $collectionValue2 = $this->createMock(Collection::class);
+        $collectionValue2->method('count')->willReturn(1);
+        $collectionValue2->method('values')->willReturnMap([
+            ['column1', [100, 400]],
+            ['column2', [200, 300]],
+        ]);
+        $view = new View(View::buildDimensionStrategy('dimensionName'), [
+            'value1' => $collectionValue1,
+            'value2' => $collectionValue2
         ]);
 
-        $array = $view->addColumn('other_property', function ($carry, ItemInterface $item) {
-            $carry += $item->get('other_property');
-            return $carry;
+        $array = $view->addColumn('my_column', function (Collection $collection) {
+            $column1Values = $collection->values('column1');
+            $column2Values = $collection->values('column2');
+            return max(array_merge($column1Values, $column2Values));
         })->toArray();
 
-        $this->assertEquals(3, $array[0]['other_property']);
-        $this->assertEquals(6, $array[1]['other_property']);
+        $this->assertEquals([6, 400], array_column($array, 'my_column'));
     }
 }

@@ -1,116 +1,119 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer;
 
-use LogAnalyzer\CollectionBuilder\Collection;
-use LucidFrame\Console\ConsoleTable;
+use LogAnalyzer\View\AbstractColumnStrategy;
+use LogAnalyzer\View\ColumnStrategyFactory;
+use LogAnalyzer\View\CountStrategy;
+use LogAnalyzer\View\DimensionStrategy;
+use LogAnalyzer\Presenter\ConsoleTable;
 
 class View implements \Countable
 {
-    const COUNT_COLUMN = '_count';
+    /**
+     * @var DimensionStrategy
+     */
+    protected $dimension;
 
-    private $dimension;
-    private $columns;
+    /**
+     * @var AbstractColumnStrategy[]
+     */
+    protected $columnStrategies;
 
     /**
      * @var Collection[]
      */
-    private $collections;
+    protected $collections;
+    /**
+     * @var ColumnStrategyFactory
+     */
+    protected $factory;
 
-    public function __construct($dimension, array $collections)
+    /**
+     * @param DimensionStrategy $dimension
+     * @param Collection[] $collections
+     * @param ColumnStrategyFactory|null $factory
+     */
+    public function __construct(DimensionStrategy $dimension, array $collections, ColumnStrategyFactory $factory = null)
     {
         $this->dimension = $dimension;
-        $this->columns[$dimension] = $dimension;
-        $this->columns['Count'] = self::COUNT_COLUMN;
         $this->collections = $collections;
+        $this->factory = $factory ?? $this->getDefaultStrategyFactory();
+        $this->columnStrategies[] = $dimension;
+        $this->columnStrategies[] = new CountStrategy();
     }
 
-    public function addColumn($name, callable $procedure = null)
+    public function getDefaultStrategyFactory()
     {
-        $this->columns[$name] = !is_null($procedure) ? $procedure : $name;
+        return new ColumnStrategyFactory();
+    }
+
+    public static function buildDimensionStrategy($dimensionName)
+    {
+        return new DimensionStrategy($dimensionName);
+    }
+
+    public function addColumn(string $name, callable $procedure = null): self
+    {
+        $this->columnStrategies[] = $this->factory->build($name, $procedure);
 
         return $this;
     }
 
-    public function display(array $options = [])
+    public function table(): ConsoleTable
     {
-        $table = new ConsoleTable();
-        $str_length = isset($options['length']) ? $options['length'] : null;
-        $sort = isset($options['sort']) ? $options['sort'] : null;
-        $where = isset($options['where']) ? $options['where'] : null;
-
-        foreach ($this->columns as $name => $procedure) {
-            $table->addHeader($name);
-        }
-        foreach ($this->toArray($sort, $where) as $row) {
-            $table->addRow();
-            foreach ($this->columns as $name => $procedure) {
-                $value = $this->formatColumnValue($row[$name], $str_length);
-                $table->addColumn($value);
-            }
-        }
-
-        $table->display();
+        return new ConsoleTable($this->columnStrategies, $this->toArray());
     }
 
-    public function toArray(callable $sort = null, callable $where = null)
+    public function toArray(): array
     {
         $ret = [];
-        foreach ($this->collections as $dimensionValue => $collection) {
+        foreach ($this->collections as $collection) {
             $row = [];
-            foreach ($this->columns as $columnName => $procedure) {
-                if ($columnName == $this->dimension) {
-                    $row[$columnName] = $dimensionValue;
-                } elseif ($procedure == self::COUNT_COLUMN) {
-                    $row[$columnName] = count($collection);
-                } elseif (is_callable($procedure)) {
-                    $row[$columnName] = $collection->sum($procedure);
-                } else {
-                    $row[$columnName] = array_unique($collection->sum($procedure));
-                }
+            foreach ($this->columnStrategies as $strategy) {
+                $row[$strategy->name()] = $strategy($collection);
             }
             $ret[] = $row;
-        }
-
-        if ($where) {
-            // array_values will number index again.
-            $ret = array_values(array_filter($ret, $where));
-        }
-        if ($sort) {
-            usort($ret, $sort);
         }
 
         return $ret;
     }
 
-    public function count()
+    public function where($columnName, callable $procedure): self
     {
-        return count($this->collections);
-    }
+        $collections = [];
+        foreach ($this->collections as $collection) {
+            $newCollection = $collection->filter($columnName, $procedure);
 
-    public function getCollection($dimensionValue)
-    {
-        return isset($this->collections[$dimensionValue]) ? $this->collections[$dimensionValue] : null;
-    }
-
-    /**
-     * @param string|array $value
-     * @param int $maxLength
-     * @return string
-     */
-    private function formatColumnValue($value, $maxLength = null)
-    {
-        if (is_array($value)) {
-            if (count($value) > 1) {
-                $value = '[' . implode(', ', $value) . ']';
-            } else {
-                $value = $value[0];
+            if ($newCollection->count() > 0) {
+                $collections[] = $newCollection;
+                // For performance, cache dimension value.
+                $newCollection->cache($this->dimension->name(), $this->dimensionValueOf($collection));
             }
         }
 
-        if ($maxLength && strlen($value) > $maxLength) {
-            $value = substr($value, 0, $maxLength) . '...';
+        return new self($this->dimension, $collections);
+    }
+
+    public function getCollection($dimensionValue): Collection
+    {
+        foreach ($this->collections as $collection) {
+            if ($this->dimensionValueOf($collection) == $dimensionValue) {
+                return $collection;
+            }
         }
 
-        return $value;
+        return null;
+    }
+
+    protected function dimensionValueOf(Collection $collection)
+    {
+        return $this->dimension->__invoke($collection);
+    }
+
+    public function count(): int
+    {
+        return count($this->collections);
     }
 }

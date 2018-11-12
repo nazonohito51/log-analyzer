@@ -1,14 +1,19 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer;
 
-use LogAnalyzer\CollectionBuilder\Collection;
+use LogAnalyzer\Collection;
+use LogAnalyzer\CollectionBuilder\IdSequence;
 use LogAnalyzer\CollectionBuilder\Items\Item;
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
 use LogAnalyzer\CollectionBuilder\Parser\ApacheLogParser;
 use LogAnalyzer\CollectionBuilder\Parser\LtsvParser;
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
-use LogAnalyzer\Exception\InvalidArgumentException;
-use LogAnalyzer\View\ProgressBar;
+use LogAnalyzer\Collection\Column\ColumnFactory;
+use LogAnalyzer\Collection\DatabaseInterface;
+use LogAnalyzer\Collection\ColumnarDatabase;
+use LogAnalyzer\Presenter\ProgressBarObserver;
 
 class CollectionBuilder
 {
@@ -16,23 +21,23 @@ class CollectionBuilder
      * @var LogFile[]
      */
     private $logFiles = [];
-    private $itemClass;
+    private $database;
+    private $progressBar;
 
-    /**
-     * @param string|null $itemClass
-     */
-    public function __construct($itemClass = null)
+    public function __construct(DatabaseInterface $database = null, ProgressBarObserver $progressBar = null)
     {
-        if (!is_null($itemClass) && !class_exists($itemClass)) {
-            throw new InvalidArgumentException('item class is not found.');
-        }
-
-        $this->itemClass = !is_null($itemClass) ? $itemClass : $this->getDefaultItemClass();
+        $this->database = $database ?? $this->getDefaultDatabase();
+        $this->progressBar = $progressBar ?? $this->getDefaultProgressBar();
     }
 
-    protected function getDefaultItemClass()
+    protected function getDefaultDatabase(): DatabaseInterface
     {
-        return Item::class;
+        return new ColumnarDatabase(new ColumnFactory());
+    }
+
+    protected function getDefaultProgressBar(): ProgressBarObserver
+    {
+        return new ProgressBarObserver();
     }
 
     /**
@@ -40,7 +45,7 @@ class CollectionBuilder
      * @param ParserInterface $parser
      * @return $this
      */
-    public function add($files, ParserInterface $parser)
+    public function add($files, ParserInterface $parser): self
     {
         if (!is_array($files)) {
             $files = [$files];
@@ -57,7 +62,7 @@ class CollectionBuilder
      * @param string|array $files
      * @return $this
      */
-    public function addLtsv($files)
+    public function addLtsv($files): self
     {
         $this->add($files, new LtsvParser());
 
@@ -69,34 +74,45 @@ class CollectionBuilder
      * @param string $format kassner/log-parser format string. see https://github.com/kassner/log-parser
      * @return $this
      */
-    public function addApacheLog($files, $format = null)
+    public function addApacheLog($files, string $format = null): self
     {
         $this->add($files, new ApacheLogParser($format));
 
         return $this;
     }
 
-    public function build($ignoreParseError = false)
+    /**
+     * @param bool $ignoreParseError
+     * @return \LogAnalyzer\Collection
+     */
+    public function build($ignoreParseError = false): Collection
     {
-        $progressBar = new ProgressBar($this->getAllCount());
+        $idSequence = new IdSequence();
+        $this->progressBar->start($this->getItemCount());
 
         $items = [];
         foreach ($this->logFiles as $logFile) {
             $logFile->ignoreParsedError($ignoreParseError);
 
-            foreach (range(0, $logFile->count()) as $linePos) {
-                $items[] = new $this->itemClass($logFile, $linePos);
-                $progressBar->update($logFile, $linePos);
+            foreach ($logFile as $line) {
+                $items[] = $idSequence->update()->now();
+                foreach ($line as $key => $value) {
+                    $this->database->addValue($idSequence->now(), $key, $value);
+                }
+                $this->progressBar->update(sprintf('Loading: %s(%d/%d)', $logFile->getFilename(), $logFile->key(), $logFile->count()));
             }
         }
 
-        return new Collection($items);
+        $this->progressBar->end();
+        $this->database->save();
+
+        return new Collection($items, $this->database);
     }
 
     /**
      * @return int
      */
-    public function getAllCount()
+    public function getItemCount(): int
     {
         $count = 0;
         foreach ($this->logFiles as $logFile) {

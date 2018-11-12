@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Tests\Unit\LogAnalyzer\CollectionBuilder\LogFiles;
 
 use LogAnalyzer\CollectionBuilder\Items\Item;
@@ -17,7 +19,7 @@ class LogFileTest extends TestCase
         );
         $items = [];
         foreach ($file as $linePos => $line) {
-            $items[] = $file->getCurrentParsedLine();
+            $items[] = $line;
         }
 
         $this->assertEquals('133.130.35.34', $items[0]['host']);
@@ -36,7 +38,7 @@ class LogFileTest extends TestCase
         $file = new LogFile($this->getFixturePath('log.ltsv'), new LtsvParser());
         $items = [];
         foreach ($file as $linePos => $line) {
-            $items[] = $file->getCurrentParsedLine();
+            $items[] = $line;
         }
 
         $this->assertEquals('2016-10-12 15:31:18', $items[0]['date']);

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer\CollectionBuilder\Parser;
 
 use Kassner\LogParser\FormatException;
@@ -7,8 +9,6 @@ use LogAnalyzer\Exception\ReadException;
 
 class ApacheLogParser implements ParserInterface
 {
-    protected static $defaultFormat = '%h %l %u %t "%r" %>s %b';
-
     protected $format;
 
     /**
@@ -16,11 +16,10 @@ class ApacheLogParser implements ParserInterface
      */
     public function __construct($format = null)
     {
-//        $this->format = is_null($format) ? self::$defaultFormat : $format;
         $this->format = $format;
     }
 
-    public function parse($line)
+    public function parse($line): array
     {
         try {
             $parser = new LogParser($this->format);

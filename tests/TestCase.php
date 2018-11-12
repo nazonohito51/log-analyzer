@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Tests\LogAnalyzer;
 
 use LogAnalyzer\CollectionBuilder\LogFiles\LogFile;
@@ -17,6 +19,8 @@ class TestCase extends \PHPUnit\Framework\TestCase
     {
         parent::tearDown();
 
+        $this->cleanupTmpDir();
+
         foreach ($this->tearDownFuncs as $tearDownFunc) {
             $tearDownFunc();
         }
@@ -32,6 +36,11 @@ class TestCase extends \PHPUnit\Framework\TestCase
         return __DIR__ . '/Fixtures' . $fileName;
     }
 
+    protected function getTmpDir()
+    {
+        return __DIR__ . '/tmp/';
+    }
+
     protected function getLogFileMock(array $body)
     {
         return new LogFile($this->getFileMock($body), new LtsvParser());
@@ -45,5 +54,14 @@ class TestCase extends \PHPUnit\Framework\TestCase
         };
 
         return FileStreamWrapper::STREAM_PROTOCOL . '://wrapper.txt';
+    }
+
+    protected function cleanupTmpDir()
+    {
+        foreach (glob($this->getTmpDir() . '*') as $file) {
+            if (!is_dir($file) && !preg_match('/\.gitkeep$/', $file)) {
+                unlink($file);
+            }
+        }
     }
 }

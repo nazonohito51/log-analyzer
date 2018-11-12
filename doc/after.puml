@@ -1,73 +1,113 @@
 @startuml
-class InMemoryDatabase {
-  - array scheme
+package CollectionBuilder {
+  class CollectionBuilder {
+    - array[LogFile] files
 
+    # void addLog(path, parser)
+    + void addApacheLog(path)
+    + void addLtsvLog(path)
+    + Collection build()
+  }
+
+  class LogFile {
+    - string path
+    - ParserInterface parser
+  }
+
+  class SplFileObject {
+  }
+
+  interface ParserInterface {
+  }
+
+  class ApacheLogParser {
+    - string format
+  }
+
+  class LtsvParser {
+  }
 }
 
-class DatabaseInterface {
-  + Column getColumn(key)
-  + array getScheme()
+package Collection {
+  class Collection {
+    - array[int] itemIds
+    - DatabaseInterface db
+
+    + View dimension(key, callable = null)
+    + int count()
+    + array showScheme()
+  }
+
+  class ColumnarDatabase {
+  }
+
+  interface DatabaseInterface {
+    - array scheme
+    + ColumnInterface getColumn(key)
+    + array getScheme()
+  }
+
+  class FileStorageColumn {
+    - array values
+    - array dictionary
+  }
+
+  class InMemoryColumn {
+    - array values
+    - array dictionary
+  }
+
+  interface ColumnInterface {
+    + void add(value, itemId)
+  }
 }
 
-class Column {
-  - array values
-  - array dictionary
+package View {
+  class View {
+    - array[Collection] collections
+
+    + void addColumn(key, callable = null)
+    + Collection getCollection(dimensionValue)
+    + array showScheme()
+  }
+
+  interface ColumnValueStrategyInterface {
+  }
+
+  abstract class AbstractColumnValueStrategy {
+  }
+
+  class DimensionStrategy {
+  }
+
+  class CountStrategy {
+  }
 }
 
-class ColumnInterface {
+package Presenter {
+  class ProgressBarObserver {
+  }
+
+  class ConsoleTable {
+  }
 }
 
-class ItemCollection {
-  - array[int] itemIds
-  - DatabaseInterface db
-
-  + View dimension(key, callable = null)
-  + int count()
-  + array showScheme()
-}
-
-class View {
-  - array[ItemCollection] collections
-
-  + void addColumn(key, callable = null)
-  + ItemCollection getCollection(dimensionValue)
-  + array showScheme()
-}
-
-class LogFile {
-  - string path
-  - ParserInterface parser
-}
-
-class ParserInterface {
-}
-
-class ApacheLogParser {
-  - string format
-}
-
-class LtsvParser {
-}
-
-class CollectionBuilder {
-  - array[LogFile] files
-
-  # void addFile(path, parser)
-  + void addApacheLog(path)
-  + void addLtsvLog(path)
-  + ItemCollection build()
-}
-
-InMemoryDatabase o-- Column
 LogFile "0..n" -- "1" ParserInterface
-View o-- ItemCollection
-CollectionBuilder ..> ItemCollection : create
-CollectionBuilder ..> InMemoryDatabase : create
+LogFile <|-- SplFileObject
+View o- Collection : create
+View o-- ColumnValueStrategyInterface
+CollectionBuilder .> Collection : create
 CollectionBuilder o-- LogFile
-ItemCollection "1..n" *-- "1" DatabaseInterface
-ApacheLogParser <|-- ParserInterface
-LtsvParser <|-- ParserInterface
-InMemoryDatabase <|-- DatabaseInterface
-Column <|-- ColumnInterface
+Collection "1..n" *-- "1" DatabaseInterface
+ApacheLogParser <|- ParserInterface
+LtsvParser <|- ParserInterface
+ColumnarDatabase <|- DatabaseInterface
+FileStorageColumn <|- ColumnInterface
+InMemoryColumn <|- ColumnInterface
 DatabaseInterface o-- ColumnInterface
+AbstractColumnValueStrategy <|- ColumnValueStrategyInterface
+DimensionStrategy <|- AbstractColumnValueStrategy
+CountStrategy <|- AbstractColumnValueStrategy
+ProgressBarObserver "1" -- "0..1" CollectionBuilder
+ConsoleTable <.. View : create
 @enduml

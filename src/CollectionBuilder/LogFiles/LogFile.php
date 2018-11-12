@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace LogAnalyzer\CollectionBuilder\LogFiles;
 
 use LogAnalyzer\CollectionBuilder\Parser\ParserInterface;
@@ -9,44 +11,55 @@ use SplFileObject;
 class LogFile extends \SplFileObject
 {
     private $parser;
+    private $count;
     private $ignoreParseError = false;
 
-    /**
-     * @param $path
-     * @param ParserInterface $parser
-     */
-    public function __construct($path, ParserInterface $parser)
+    public function __construct(string $path, ParserInterface $parser)
     {
         if (!file_exists($path)) {
             throw new InvalidArgumentException('file not found.');
         }
 
         parent::__construct($path);
-        $this->setFlags(SplFileObject::READ_AHEAD | SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE);
+        $this->setFlags($this->getDefaultFlags());
         $this->parser = $parser;
     }
 
-    public function ignoreParsedError($ignore)
+    protected function getDefaultFlags()
+    {
+        return SplFileObject::READ_AHEAD | SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE;
+    }
+
+    public function ignoreParsedError($ignore): void
     {
         $this->ignoreParseError = $ignore;
     }
 
-    public function getCurrentParsedLine()
+    public function getCurrentParsedLine(): array
     {
         try {
-            return $this->parser->parse($this->current());
+            return $this->parser->parse(parent::current());
         } catch (ReadException $e) {
             if (!$this->ignoreParseError) {
                 throw $e;
             }
         }
 
-        return null;
+        return [];
     }
 
-    public function count()
+    public function count(): int
     {
-        $count = exec('wc -l ' . $this->getRealPath());
-        return trim(str_replace($this->getRealPath(), '', $count));
+        if (is_null($this->count)) {
+            $count = exec('wc -l ' . $this->getRealPath());
+            $this->count = intval(trim(str_replace($this->getRealPath(), '', $count)));
+        }
+
+        return $this->count;
+    }
+
+    public function current(): array
+    {
+        return $this->getCurrentParsedLine();
     }
 }
