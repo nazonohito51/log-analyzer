@@ -23,6 +23,11 @@ class ConsoleTable
 
     public function display($strLen = 60): void
     {
+        if (count($this->matrix) == 0) {
+            echo "There is no data to show\n";
+            return;
+        }
+
         $table = new TableView();
 
         foreach ($this->strategies as $strategy) {
