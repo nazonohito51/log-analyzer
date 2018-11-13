@@ -76,12 +76,16 @@ class FileStorageColumn implements ColumnInterface
         return $ret;
     }
 
-    public function save(): bool
+    public function save(string $path = null): bool
     {
-        if ($this->file->fwrite(serialize($this->items)) === 0) {
+        $file = is_null($path) ? $this->file : new \SplFileObject($path, 'w+');
+
+        $data = ['items' => $this->items, 'values' => $this->values];
+        if ($file->fwrite(serialize($data)) === 0) {
             return false;
         }
         $this->items = [];
+        $this->values = null;
         $this->loaded = false;
 
         return true;
@@ -108,7 +112,9 @@ class FileStorageColumn implements ColumnInterface
     protected function load(): void
     {
         $this->file->rewind();
-        $this->items = unserialize($this->file->fread($this->file->getSize()));
+        $data = unserialize($this->file->fread($this->file->getSize()));
+        $this->items = $data['items'];
+        $this->values = $data['values'];
         $this->loaded = true;
     }
 

@@ -70,20 +70,24 @@ class FileStorageColumnTest extends TestCase
 
     public function testSave()
     {
-        $column = new FileStorageColumn($this->getTmpDir(), $this->getValueStoreMock(), ['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]);
+        $store = $this->getValueStoreMock();
+        $store->method('getAll')->willReturn(['value1', 'value2', 'value3']);
+        $column = new FileStorageColumn($this->getTmpDir(), $store, ['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]);
 
         $column->save();
 
         $file = new \SplFileObject($this->getTmpDir() . spl_object_hash($column));
-        $line = unserialize($file->fread($file->getSize()));
-        $this->assertEquals([
+        $savedColumn = unserialize($file->fread($file->getSize()));
+        $this->assertArraySubset(['items' => [
             1 => 0,
             2 => 0,
             3 => 1,
             4 => 1,
             5 => 2,
             6 => 2
-        ], $line);
+        ]], $savedColumn);
+        $this->assertInstanceOf(ValueStore::class, $savedColumn['values']);
+        $this->assertEquals(['value1', 'value2', 'value3'], $savedColumn['values']->getAll());
 
         return $column;
     }

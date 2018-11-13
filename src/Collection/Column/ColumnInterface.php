@@ -10,6 +10,6 @@ interface ColumnInterface
     public function getValue($itemId);
     public function getValues(): array;
     public function getSubset(array $itemIds): array;
-    public function save(): bool;
+    public function save(string $path = null): bool;
     public function delete(): bool;
 }

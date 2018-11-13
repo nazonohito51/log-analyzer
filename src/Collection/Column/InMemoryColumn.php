@@ -55,8 +55,16 @@ class InMemoryColumn implements ColumnInterface
         return $ret;
     }
 
-    public function save(): bool
+    public function save(string $path = null): bool
     {
+        if (!is_null($path)) {
+            $file = new \SplFileObject($path, 'w+');
+
+            if ($file->fwrite(serialize($this->data)) === 0) {
+                return false;
+            }
+        }
+
         return true;
     }
 
