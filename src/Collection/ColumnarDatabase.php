@@ -88,14 +88,26 @@ class ColumnarDatabase implements DatabaseInterface
         return array_keys($this->columns);
     }
 
-    public function save(): bool
+    public function freeze(): bool
     {
         foreach ($this->columns as $column) {
-            if ($column->save() === false) {
+            if ($column->freeze() === false) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    public function load($path): DatabaseInterface
+    {
+        $file = new \SplFileObject($path);
+        $columnNames = unserialize($file->fread($file->getSize()));
+
+        foreach ($columnNames as $columnName) {
+            $this->columns[$columnName] = $this->factory->build()->add($itemId, $value);
+        }
+
+        return $this;
     }
 }

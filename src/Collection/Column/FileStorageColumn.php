@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LogAnalyzer\Collection\Column;
 
 use LogAnalyzer\Collection\Column\FileStorageColumn\ValueStore;
+use LogAnalyzer\Exception\RuntimeException;
 
 class FileStorageColumn implements ColumnInterface
 {
@@ -11,6 +12,7 @@ class FileStorageColumn implements ColumnInterface
     protected $items = [];
     protected $values;
     protected $loaded = true;
+    protected $frozen = false;
 
     public function __construct($saveDir, ValueStore $valueStore, array $initialData = [])
     {
@@ -32,13 +34,6 @@ class FileStorageColumn implements ColumnInterface
     {
         $objectHash = spl_object_hash($this);
         return substr($dir, -1) === '/' ? $dir . $objectHash : $dir . '/' . $objectHash;
-    }
-
-    public function add($itemId, $value): ColumnInterface
-    {
-        $this->addData($value, $itemId);
-
-        return $this;
     }
 
     public function getItemIds($value): array
@@ -76,19 +71,41 @@ class FileStorageColumn implements ColumnInterface
         return $ret;
     }
 
-    public function save(string $path = null): bool
+    public function add($itemId, $value): ColumnInterface
     {
-        $file = is_null($path) ? $this->file : new \SplFileObject($path, 'w+');
-
-        $data = ['items' => $this->items, 'values' => $this->values];
-        if ($file->fwrite(serialize($data)) === 0) {
-            return false;
+        if ($this->frozen) {
+            throw new RuntimeException('column is frozen');
         }
+
+        $this->addData($value, $itemId);
+
+        return $this;
+    }
+
+    public function freeze(): ColumnInterface
+    {
+        $this->frozen = true;
+
+        $this->saveToFile($this->file);
         $this->items = [];
         $this->values = null;
         $this->loaded = false;
 
-        return true;
+        return $this;
+    }
+
+    public function save(string $path): bool
+    {
+        $file = new \SplFileObject($path, 'w+');
+
+        return $this->saveToFile($file);
+    }
+
+    protected function saveToFile(\SplFileObject $file)
+    {
+        $data = ['items' => $this->items, 'values' => $this->values];
+
+        return $file->fwrite(serialize($data)) !== 0;
     }
 
     protected function getItems(): array

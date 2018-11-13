@@ -11,5 +11,6 @@ interface DatabaseInterface
     public function getValues($columnName): array;
     public function getSubset(array $itemIds, $columnName): array;
     public function getScheme(): array;
-    public function save(): bool;
+    public function freeze(): bool;
+    public function load($path): self;
 }

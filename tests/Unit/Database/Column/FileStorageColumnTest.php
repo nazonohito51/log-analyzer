@@ -5,6 +5,7 @@ namespace Tests\Unit\LogAnalyzer\Database\Column;
 
 use LogAnalyzer\Collection\Column\FileStorageColumn;
 use LogAnalyzer\Collection\Column\FileStorageColumn\ValueStore;
+use LogAnalyzer\Exception\RuntimeException;
 use Tests\LogAnalyzer\TestCase;
 
 class FileStorageColumnTest extends TestCase
@@ -68,13 +69,13 @@ class FileStorageColumnTest extends TestCase
         $this->assertEquals(['value1' => [1, 2], 'value3' => [5]], $column->getSubset([1, 2, 5, 7]));
     }
 
-    public function testSave()
+    public function testFreeze()
     {
         $store = $this->getValueStoreMock();
         $store->method('getAll')->willReturn(['value1', 'value2', 'value3']);
         $column = new FileStorageColumn($this->getTmpDir(), $store, ['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]);
 
-        $column->save();
+        $column->freeze();
 
         $file = new \SplFileObject($this->getTmpDir() . spl_object_hash($column));
         $savedColumn = unserialize($file->fread($file->getSize()));
@@ -92,10 +93,44 @@ class FileStorageColumnTest extends TestCase
         return $column;
     }
 
+    /**
+     * @param FileStorageColumn $column
+     * @depends testFreeze
+     */
+    public function testAddAfterFreeze(FileStorageColumn $column)
+    {
+        $this->expectException(RuntimeException::class);
+
+        $column->add(7, 'value4');
+    }
+
+    public function testSave()
+    {
+        $store = $this->getValueStoreMock();
+        $store->method('getAll')->willReturn(['value1', 'value2', 'value3']);
+        $path = $this->getTmpDir() . __FUNCTION__;
+        $column = new FileStorageColumn($this->getTmpDir(), $store, ['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]);
+
+        $column->save($path);
+
+        $file = new \SplFileObject($path);
+        $savedColumn = unserialize($file->fread($file->getSize()));
+        $this->assertArraySubset(['items' => [
+            1 => 0,
+            2 => 0,
+            3 => 1,
+            4 => 1,
+            5 => 2,
+            6 => 2
+        ]], $savedColumn);
+        $this->assertInstanceOf(ValueStore::class, $savedColumn['values']);
+        $this->assertEquals(['value1', 'value2', 'value3'], $savedColumn['values']->getAll());
+    }
+
     public function testDelete()
     {
         $column = new FileStorageColumn($this->getTmpDir(), $this->getValueStoreMock(), ['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]);
-        $column->save();
+        $column->freeze();
 
         $column->delete();
 

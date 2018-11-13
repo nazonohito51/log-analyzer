@@ -3,20 +3,16 @@ declare(strict_types=1);
 
 namespace LogAnalyzer\Collection\Column;
 
+use LogAnalyzer\Exception\RuntimeException;
+
 class InMemoryColumn implements ColumnInterface
 {
     protected $data = [];
+    protected $frozen = false;
 
     public function __construct(array $data = [])
     {
         $this->data = $data;
-    }
-
-    public function add($itemId, $value): ColumnInterface
-    {
-        isset($this->data[$value]) ? $this->data[$value][] = $itemId : $this->data[$value] = [$itemId];
-
-        return $this;
     }
 
     public function getItemIds($value): array
@@ -55,17 +51,29 @@ class InMemoryColumn implements ColumnInterface
         return $ret;
     }
 
-    public function save(string $path = null): bool
+    public function add($itemId, $value): ColumnInterface
     {
-        if (!is_null($path)) {
-            $file = new \SplFileObject($path, 'w+');
-
-            if ($file->fwrite(serialize($this->data)) === 0) {
-                return false;
-            }
+        if ($this->frozen) {
+            throw new RuntimeException('column is frozen.');
         }
 
-        return true;
+        isset($this->data[$value]) ? $this->data[$value][] = $itemId : $this->data[$value] = [$itemId];
+
+        return $this;
+    }
+
+    public function freeze(): ColumnInterface
+    {
+        $this->frozen = true;
+
+        return $this;
+    }
+
+    public function save(string $path): bool
+    {
+        $file = new \SplFileObject($path, 'w+');
+
+        return $file->fwrite(serialize($this->data)) !== 0;
     }
 
     public function delete(): bool

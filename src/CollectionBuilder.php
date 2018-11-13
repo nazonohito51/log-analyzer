@@ -104,7 +104,7 @@ class CollectionBuilder
         }
 
         $this->progressBar->end();
-        $this->database->save();
+        $this->database->freeze();
 
         return new Collection($items, $this->database);
     }

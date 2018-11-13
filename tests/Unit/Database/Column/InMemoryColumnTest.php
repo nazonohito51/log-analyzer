@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Tests\Unit\LogAnalyzer\Database\Column;
 
 use LogAnalyzer\Collection\Column\InMemoryColumn;
+use LogAnalyzer\Exception\RuntimeException;
 use Tests\LogAnalyzer\TestCase;
 
 class InMemoryColumnTest extends TestCase
@@ -65,11 +66,26 @@ class InMemoryColumnTest extends TestCase
         $this->assertEquals(['value1' => [1, 2], 'value3' => [5]], $column->getSubset([1, 2, 5, 7]));
     }
 
+    public function testFrozen()
+    {
+        $this->expectException(RuntimeException::class);
+
+        $column = new InMemoryColumn();
+        $column->freeze();
+
+        $column->add(1, 'value');
+    }
+
     public function testSave()
     {
-        $column = new InMemoryColumn();
+        $column = new InMemoryColumn(['value1' => [1, 2], 'value2' => [3]]);
+        $path = $this->getTmpDir() . __FUNCTION__;
 
-        $this->assertTrue($column->save());
+        $ret = $column->save($path);
+        $file = new \SplFileObject($path);
+
+        $this->assertTrue($ret);
+        $this->assertEquals(['value1' => [1, 2], 'value2' => [3]], unserialize($file->fread($file->getSize())));
     }
 
     public function testDelete()
