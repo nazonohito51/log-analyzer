@@ -99,7 +99,7 @@ class CollectionBuilder
                 foreach ($line as $key => $value) {
                     $this->database->addValue($idSequence->now(), $key, $value);
                 }
-                $this->progressBar->update(sprintf('Loading: %s(%d/%d)', $logFile->getFilename(), $logFile->key(), $logFile->count()));
+                $this->progressBar->update(sprintf('Loading: %s(%d/%d) memory(KB): %d', $logFile->getFilename(), $logFile->key(), $logFile->count(), memory_get_usage() / 1024));
             }
         }
 
