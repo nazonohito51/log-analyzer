@@ -21,18 +21,6 @@ class ColumnarDatabase implements DatabaseInterface
     {
         $this->columns = $columns;
         $this->factory = $factory;
-
-        $this->registerShutdownFunc();
-    }
-
-    protected function registerShutdownFunc(): void
-    {
-        $column = $this->columns;
-        register_shutdown_function(function () use ($column) {
-            foreach ($this->columns as $column) {
-                $column->delete();
-            }
-        });
     }
 
     public function addValue($itemId, $columnName, $value): void

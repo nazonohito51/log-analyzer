@@ -75,9 +75,4 @@ class InMemoryColumn implements ColumnInterface
 
         return $file->fwrite(serialize($this->data)) !== 0;
     }
-
-    public function delete(): bool
-    {
-        return true;
-    }
 }

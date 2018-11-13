@@ -87,11 +87,4 @@ class InMemoryColumnTest extends TestCase
         $this->assertTrue($ret);
         $this->assertEquals(['value1' => [1, 2], 'value2' => [3]], unserialize($file->fread($file->getSize())));
     }
-
-    public function testDelete()
-    {
-        $column = new InMemoryColumn();
-
-        $this->assertTrue($column->delete());
-    }
 }

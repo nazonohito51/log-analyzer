@@ -127,16 +127,6 @@ class FileStorageColumnTest extends TestCase
         $this->assertEquals(['value1', 'value2', 'value3'], $savedColumn['values']->getAll());
     }
 
-    public function testDelete()
-    {
-        $column = new FileStorageColumn($this->getTmpDir(), $this->getValueStoreMock(), ['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]);
-        $column->freeze();
-
-        $column->delete();
-
-        $this->assertFalse(file_exists($this->getTmpDir() . spl_object_hash($column)));
-    }
-
     protected function getValueStoreMock()
     {
         $store = $this->createMock(ValueStore::class);

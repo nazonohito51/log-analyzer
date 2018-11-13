@@ -28,6 +28,13 @@ class FileStorageColumn implements ColumnInterface
                 $this->addData($value, $itemId);
             }
         }
+
+        $this->deleteWhenShutdown();
+    }
+
+    protected function deleteWhenShutdown(): void
+    {
+        register_shutdown_function([$this, 'delete']);
     }
 
     protected function getSavePath($dir): string
@@ -135,7 +142,7 @@ class FileStorageColumn implements ColumnInterface
         $this->loaded = true;
     }
 
-    public function delete(): bool
+    protected function delete(): bool
     {
         return unlink($this->file->getRealPath());
     }
