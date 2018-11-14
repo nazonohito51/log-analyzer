@@ -103,7 +103,8 @@ class ColumnarDatabase implements DatabaseInterface
     {
         $columns = [];
         foreach (glob($saveDir . '_database_*') as $file) {
-            $columns[] = $factory->load($file);
+            preg_match('/_([^_]+)$/', $file, $matches);
+            $columns[$matches[1]] = $factory->load($file);
         }
 
         return new self($factory, $columns);
