@@ -78,17 +78,12 @@ class FileStorageColumnTest extends TestCase
         $column->freeze();
 
         $file = new \SplFileObject($this->getTmpDir() . spl_object_hash($column));
-        $savedColumn = unserialize($file->fread($file->getSize()));
-        $this->assertArraySubset(['items' => [
-            1 => 0,
-            2 => 0,
-            3 => 1,
-            4 => 1,
-            5 => 2,
-            6 => 2
-        ]], $savedColumn);
-        $this->assertInstanceOf(ValueStore::class, $savedColumn['values']);
-        $this->assertEquals(['value1', 'value2', 'value3'], $savedColumn['values']->getAll());
+        $savedContent = unserialize($file->fread($file->getSize()));
+        $this->assertEquals([
+            'value1' => [1, 2],
+            'value2' => [3, 4],
+            'value3' => [5, 6],
+        ], $savedContent);
 
         return $column;
     }
@@ -114,17 +109,33 @@ class FileStorageColumnTest extends TestCase
         $column->save($path);
 
         $file = new \SplFileObject($path);
-        $savedColumn = unserialize($file->fread($file->getSize()));
-        $this->assertArraySubset(['items' => [
-            1 => 0,
-            2 => 0,
-            3 => 1,
-            4 => 1,
-            5 => 2,
-            6 => 2
-        ]], $savedColumn);
-        $this->assertInstanceOf(ValueStore::class, $savedColumn['values']);
-        $this->assertEquals(['value1', 'value2', 'value3'], $savedColumn['values']->getAll());
+        $savedContent = unserialize($file->fread($file->getSize()));
+        $this->assertEquals([
+            'value1' => [1, 2],
+            'value2' => [3, 4],
+            'value3' => [5, 6],
+        ], $savedContent);
+
+        return $savedContent;
+    }
+
+    /**
+     * @param $content
+     * @throws \ReflectionException
+     * @depends testSave
+     */
+    public function testLoad($content)
+    {
+        $path = $this->getTmpDir() . __FUNCTION__;
+        $file = new \SplFileObject($path, 'w');
+        $file->fwrite(serialize($content));
+
+        $column = FileStorageColumn::load($path, $this->getTmpDir(), $this->createMock(ValueStore::class));
+
+        $this->assertEquals(['value1', 'value2', 'value3'], $column->getValues());
+        $this->assertEquals([1, 2], $column->getItemIds('value1'));
+        $this->assertEquals([3, 4], $column->getItemIds('value2'));
+        $this->assertEquals([5, 6], $column->getItemIds('value3'));
     }
 
     protected function getValueStoreMock()

@@ -71,8 +71,16 @@ class InMemoryColumn implements ColumnInterface
 
     public function save(string $path): bool
     {
-        $file = new \SplFileObject($path, 'w+');
+        $file = new \SplFileObject($path, 'w');
 
         return $file->fwrite(serialize($this->data)) !== 0;
+    }
+
+    public static function load(string $path): ColumnInterface
+    {
+        $file = new \SplFileObject($path);
+        $data = unserialize($file->fread($file->getSize()));
+
+        return (new self($data))->freeze();
     }
 }

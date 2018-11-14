@@ -110,15 +110,23 @@ class FileStorageColumn implements ColumnInterface
 
     protected function saveToFile(\SplFileObject $file)
     {
-        $data = ['items' => $this->items, 'values' => $this->values];
+        $data = $this->getSubset(array_keys($this->items));
 
         return $file->fwrite(serialize($data)) !== 0;
+    }
+
+    public static function load(string $path, string $saveDir = null, ValueStore $store = null): ColumnInterface
+    {
+        $file = new \SplFileObject($path);
+        $savedContent = unserialize($file->fread($file->getSize()));
+
+        return new self($saveDir, new ValueStore(), $savedContent);
     }
 
     protected function getItems(): array
     {
         if ($this->loaded === false) {
-            $this->load();
+            $this->reload();
         }
 
         return $this->items;
@@ -127,13 +135,13 @@ class FileStorageColumn implements ColumnInterface
     protected function addData($value, $itemId): void
     {
         if ($this->loaded === false) {
-            $this->load();
+            $this->reload();
         }
 
         $this->items[$itemId] = $this->values->getValueNo($value);
     }
 
-    protected function load(): void
+    protected function reload(): void
     {
         $this->file->rewind();
         $data = unserialize($this->file->fread($this->file->getSize()));
@@ -142,7 +150,7 @@ class FileStorageColumn implements ColumnInterface
         $this->loaded = true;
     }
 
-    protected function delete(): bool
+    public function delete(): bool
     {
         return unlink($this->file->getRealPath());
     }

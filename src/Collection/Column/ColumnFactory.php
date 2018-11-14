@@ -10,9 +10,23 @@ class ColumnFactory
     public function build($saveDir = ''): ColumnInterface
     {
         if (empty($saveDir)) {
-            $saveDir = __DIR__ . '/../../../storage/';
+            $saveDir = $this->getDefaultSaveDir();
         }
 
         return new FileStorageColumn($saveDir, new ValueStore());
+    }
+
+    public function load($path, $saveDir = ''): ColumnInterface
+    {
+        if (empty($saveDir)) {
+            $saveDir = $this->getDefaultSaveDir();
+        }
+
+        return FileStorageColumn::load($path, $saveDir, new ValueStore());
+    }
+
+    protected function getDefaultSaveDir()
+    {
+        return __DIR__ . '/../../../storage/';
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\LogAnalyzer\Database\Column;
 
+use LogAnalyzer\Collection\Column\ColumnInterface;
 use LogAnalyzer\Collection\Column\InMemoryColumn;
 use LogAnalyzer\Exception\RuntimeException;
 use Tests\LogAnalyzer\TestCase;
@@ -66,7 +67,7 @@ class InMemoryColumnTest extends TestCase
         $this->assertEquals(['value1' => [1, 2], 'value3' => [5]], $column->getSubset([1, 2, 5, 7]));
     }
 
-    public function testFrozen()
+    public function testFreeze()
     {
         $this->expectException(RuntimeException::class);
 
@@ -83,8 +84,40 @@ class InMemoryColumnTest extends TestCase
 
         $ret = $column->save($path);
         $file = new \SplFileObject($path);
+        $content = unserialize($file->fread($file->getSize()));
 
         $this->assertTrue($ret);
-        $this->assertEquals(['value1' => [1, 2], 'value2' => [3]], unserialize($file->fread($file->getSize())));
+        $this->assertEquals(['value1' => [1, 2], 'value2' => [3]], $content);
+
+        return $content;
+    }
+
+    /**
+     * @param $content
+     * @return ColumnInterface
+     * @depends testSave
+     */
+    public function testLoad($content)
+    {
+        $path = $this->getTmpDir() . __FUNCTION__;
+        $file = new \SplFileObject($path, 'w');
+        $file->fwrite(serialize($content));
+
+        $column = InMemoryColumn::load($path);
+
+        $this->assertEquals(['value1', 'value2'], $column->getValues());
+
+        return $column;
+    }
+
+    /**
+     * @param InMemoryColumn $column
+     * @depends testLoad
+     */
+    public function testAddAfterLoad(InMemoryColumn $column)
+    {
+        $this->expectException(RuntimeException::class);
+
+        $column->add(4, 'value3');
     }
 }

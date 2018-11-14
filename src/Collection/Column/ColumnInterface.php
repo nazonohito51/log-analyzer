@@ -13,4 +13,5 @@ interface ColumnInterface
     public function add($itemId, $value): self;
     public function freeze(): self;
     public function save(string $path): bool;
+    public static function load(string $path): self;
 }
