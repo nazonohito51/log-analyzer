@@ -14,7 +14,7 @@ class FileStorageColumn implements ColumnInterface
     protected $loaded = true;
     protected $frozen = false;
 
-    public function __construct($saveDir, ValueStore $valueStore, array $initialData = [])
+    public function __construct($saveDir, ValueStore $valueStore, array $subset = [])
     {
         if (!file_exists($saveDir)) {
             throw new \InvalidArgumentException();
@@ -22,12 +22,7 @@ class FileStorageColumn implements ColumnInterface
 
         $this->file = new \SplFileObject($this->getSavePath($saveDir), 'w+');
         $this->values = $valueStore;
-
-        foreach ($initialData as $value => $itemIds) {
-            foreach ($itemIds as $itemId) {
-                $this->addData($value, $itemId);
-            }
-        }
+        $this->loadFromSubset($subset);
     }
 
     protected function getSavePath($dir): string
@@ -88,7 +83,7 @@ class FileStorageColumn implements ColumnInterface
 
         $this->saveToFile($this->file);
         $this->items = [];
-        $this->values = null;
+        $this->values->reset();
         $this->loaded = false;
 
         return $this;
@@ -127,24 +122,29 @@ class FileStorageColumn implements ColumnInterface
 
     protected function addData($value, $itemId): void
     {
-        if ($this->loaded === false) {
-            $this->reload();
-        }
-
         $this->items[$itemId] = $this->values->getValueNo($value);
     }
 
     protected function reload(): void
     {
-        $this->file->rewind();
-        $data = unserialize($this->file->fread($this->file->getSize()));
-        $this->items = $data['items'];
-        $this->values = $data['values'];
-        $this->loaded = true;
+        if ($this->loaded === false) {
+            $this->file->rewind();
+            $this->loadFromSubset(unserialize($this->file->fread($this->file->getSize())));
+            $this->loaded = true;
+        }
     }
 
     public function delete(): bool
     {
         return unlink($this->file->getRealPath());
+    }
+
+    protected function loadFromSubset(array $subset): void
+    {
+        foreach ($subset as $value => $itemIds) {
+            foreach ($itemIds as $itemId) {
+                $this->addData($value, $itemId);
+            }
+        }
     }
 }

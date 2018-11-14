@@ -37,4 +37,9 @@ class ValueStore
 
         return count($this->values) - 1;
     }
+
+    public function reset(): void
+    {
+        $this->values = [];
+    }
 }
