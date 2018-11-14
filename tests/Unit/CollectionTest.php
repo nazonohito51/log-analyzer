@@ -156,4 +156,27 @@ class CollectionTest extends TestCase
 
         $this->assertEquals(2, $newCollection->count());
     }
+
+    public function testSave()
+    {
+        $database = $this->createMock(DatabaseInterface::class);
+        $database->method('save')->willReturn(true);
+        $collection = new Collection([1, 2, 3], $database);
+
+        $ret = $collection->save($this->getTmpDir());
+
+        $file = new \SplFileObject($this->getTmpDir() . '_collection');
+        $this->assertTrue($ret);
+        $this->assertEquals([1, 2, 3], unserialize($file->fread($file->getSize())));
+    }
+
+    public function testLoad()
+    {
+        $file = new \SplFileObject($this->getTmpDir() . '_collection', 'w');
+        $file->fwrite(serialize([1, 2, 3]));
+
+        $collection = Collection::load($this->getTmpDir());
+
+        $this->assertEquals(3, count($collection));
+    }
 }

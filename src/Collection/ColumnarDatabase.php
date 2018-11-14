@@ -87,15 +87,25 @@ class ColumnarDatabase implements DatabaseInterface
         return true;
     }
 
-    public function load($path): DatabaseInterface
+    public function save(string $saveDir): bool
     {
-        $file = new \SplFileObject($path);
-        $columnNames = unserialize($file->fread($file->getSize()));
-
-        foreach ($columnNames as $columnName) {
-            $this->columns[$columnName] = $this->factory->build()->add($itemId, $value);
+        foreach ($this->columns as $columnName => $column) {
+            $columnSavePath = $saveDir . '_database_' . $columnName;
+            if ($column->save($columnSavePath) === false) {
+                return false;
+            }
         }
 
-        return $this;
+        return true;
+    }
+
+    public static function load(string $saveDir, ColumnFactory $factory): DatabaseInterface
+    {
+        $columns = [];
+        foreach (glob($saveDir . '_database_*') as $file) {
+            $columns[] = $factory->load($file);
+        }
+
+        return new self($factory, $columns);
     }
 }

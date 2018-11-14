@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace LogAnalyzer;
 
+use LogAnalyzer\Collection\Column\ColumnFactory;
+use LogAnalyzer\Collection\ColumnarDatabase;
 use LogAnalyzer\Collection\DatabaseInterface;
+use LogAnalyzer\Exception\InvalidArgumentException;
 
 class Collection implements \Countable, \IteratorAggregate
 {
@@ -108,6 +111,33 @@ class Collection implements \Countable, \IteratorAggregate
     public function scheme(): array
     {
         return $this->database->getScheme();
+    }
+
+    public function save($saveDir): bool
+    {
+        if (!is_dir($saveDir)) {
+            throw new InvalidArgumentException("$saveDir is not directory.");
+        }
+
+        $saveDir = substr($saveDir, -1) === '/' ? $saveDir : $saveDir . '/';
+        $file = new \SplFileObject($saveDir . '_collection', 'w');
+
+        return !is_null($file->fwrite(serialize($this->itemIds))) && $this->database->save($saveDir);
+    }
+
+    public static function load($saveDir): self
+    {
+        if (!is_dir($saveDir)) {
+            throw new InvalidArgumentException("$saveDir is not directory.");
+        }
+
+        $saveDir = substr($saveDir, -1) === '/' ? $saveDir : $saveDir . '/';
+        $file = new \SplFileObject($saveDir . '_collection');
+        $itemIds = unserialize($file->fread($file->getSize()));
+
+        $database = ColumnarDatabase::load($saveDir, new ColumnFactory());
+
+        return new self($itemIds, $database);
     }
 
     public function getIterator()
