@@ -8,19 +8,15 @@ use LogAnalyzer\Exception\RuntimeException;
 
 class FileStorageColumn implements ColumnInterface
 {
-    protected $file;
+    protected $path;
     protected $items = [];
     protected $values;
     protected $loaded = true;
     protected $frozen = false;
 
-    public function __construct($saveDir, ValueStore $valueStore, array $subset = [])
+    public function __construct(string $path, ValueStore $valueStore, array $subset = [])
     {
-        if (!file_exists($saveDir)) {
-            throw new \InvalidArgumentException();
-        }
-
-        $this->file = new \SplFileObject($this->getSavePath($saveDir), 'w+');
+        $this->path = $path;
         $this->values = $valueStore;
         $this->loadFromSubset($subset);
     }
@@ -81,7 +77,7 @@ class FileStorageColumn implements ColumnInterface
     {
         $this->frozen = true;
 
-        $this->saveToFile($this->file);
+        $this->saveToFile(new \SplFileObject($this->path, 'w'));
         $this->items = [];
         $this->values->reset();
         $this->loaded = false;
@@ -91,7 +87,7 @@ class FileStorageColumn implements ColumnInterface
 
     public function save(string $path): bool
     {
-        $file = new \SplFileObject($path, 'w+');
+        $file = new \SplFileObject($path, 'w');
 
         return $this->saveToFile($file);
     }
@@ -128,15 +124,15 @@ class FileStorageColumn implements ColumnInterface
     protected function reload(): void
     {
         if ($this->loaded === false) {
-            $this->file->rewind();
-            $this->loadFromSubset(unserialize($this->file->fread($this->file->getSize())));
+            $file = new \SplFileObject($this->path);
+            $this->loadFromSubset(unserialize($file->fread($file->getSize())));
             $this->loaded = true;
         }
     }
 
     public function delete(): bool
     {
-        return unlink($this->file->getRealPath());
+        return unlink($this->path);
     }
 
     protected function loadFromSubset(array $subset): void
