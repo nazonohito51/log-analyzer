@@ -77,7 +77,7 @@ class FileStorageColumn implements ColumnInterface
     {
         $this->frozen = true;
 
-        $this->saveToFile(new \SplFileObject($this->path, 'w'));
+        $this->saveToFile($this->path);
         $this->items = [];
         $this->values->reset();
         $this->loaded = false;
@@ -87,13 +87,12 @@ class FileStorageColumn implements ColumnInterface
 
     public function save(string $path): bool
     {
-        $file = new \SplFileObject($path, 'w');
-
-        return $this->saveToFile($file);
+        return $this->saveToFile($path);
     }
 
-    protected function saveToFile(\SplFileObject $file)
+    protected function saveToFile($path)
     {
+        $file = new \SplFileObject($path, 'w');
         $data = $this->getSubset(array_keys($this->items));
 
         return $file->fwrite(serialize($data)) !== 0;

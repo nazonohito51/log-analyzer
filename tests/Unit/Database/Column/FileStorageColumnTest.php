@@ -78,13 +78,12 @@ class FileStorageColumnTest extends TestCase
 
         $column->freeze();
 
-        $file = new \SplFileObject($tmpFile);
-        $savedContent = unserialize($file->fread($file->getSize()));
+        $this->assertTrue(file_exists($tmpFile));
         $this->assertEquals([
             'value1' => [1, 2],
             'value2' => [3, 4],
             'value3' => [5, 6],
-        ], $savedContent);
+        ], unserialize(file_get_contents($tmpFile)));
 
         return $column;
     }
