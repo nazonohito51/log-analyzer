@@ -26,16 +26,16 @@ class CollectionBuilder
 
     public function __construct(DatabaseInterface $database = null, ProgressBarObserver $progressBar = null)
     {
-        $this->database = $database ?? $this->getDefaultDatabase();
-        $this->progressBar = $progressBar ?? $this->getDefaultProgressBar();
+        $this->database = $database ?? CollectionBuilder::getDefaultDatabase();
+        $this->progressBar = $progressBar ?? CollectionBuilder::getDefaultProgressBar();
     }
 
-    protected function getDefaultDatabase(): DatabaseInterface
+    protected static function getDefaultDatabase(): DatabaseInterface
     {
         return new ColumnarDatabase(new ColumnFactory());
     }
 
-    protected function getDefaultProgressBar(): ProgressBarObserver
+    protected static function getDefaultProgressBar(): ProgressBarObserver
     {
         return new ProgressBarObserver();
     }
@@ -107,6 +107,28 @@ class CollectionBuilder
         $this->database->freeze();
 
         return new Collection($items, $this->database);
+    }
+
+    /**
+     * @param array[] $data
+     * @return \LogAnalyzer\Collection
+     */
+    public static function buildFromArray(array $data): Collection
+    {
+        $database = self::getDefaultDatabase();
+        $idSequence = new IdSequence();
+
+        $items = [];
+        foreach ($data as $line) {
+            foreach ($line as $key => $value) {
+                $items[] = $idSequence->update()->now();
+                $database->addValue($idSequence->now(), $key, $value);
+            }
+        }
+
+        $database->freeze();
+
+        return new Collection($items, $database);
     }
 
     /**

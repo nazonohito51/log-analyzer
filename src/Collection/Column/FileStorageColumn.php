@@ -14,10 +14,12 @@ class FileStorageColumn implements ColumnInterface
     protected $loaded = true;
     protected $frozen = false;
 
-    public function __construct(string $path, ValueStore $valueStore, array $subset = [])
+    public function __construct(string $path, ValueStore $valueStore, array $subset = [], bool $frozen = false)
     {
         $this->path = $path;
         $this->values = $valueStore;
+        $this->frozen = $frozen;
+        $this->loaded = !$frozen;
         $this->loadFromSubset($subset);
     }
 
@@ -40,6 +42,10 @@ class FileStorageColumn implements ColumnInterface
 
     public function getValues(): array
     {
+        if ($this->loaded === false) {
+            $this->reload();
+        }
+
         return $this->values->getAll();
     }
 
@@ -98,12 +104,9 @@ class FileStorageColumn implements ColumnInterface
         return $file->fwrite(serialize($data)) !== 0;
     }
 
-    public static function load(string $path, string $saveDir = null, ValueStore $store = null): ColumnInterface
+    public static function load(string $path, ValueStore $store = null): ColumnInterface
     {
-        $file = new \SplFileObject($path);
-        $savedContent = unserialize($file->fread($file->getSize()));
-
-        return new self($saveDir, new ValueStore(), $savedContent);
+        return new self($path, $store ?? new ValueStore(), [], true);
     }
 
     protected function getItems(): array
@@ -123,8 +126,7 @@ class FileStorageColumn implements ColumnInterface
     protected function reload(): void
     {
         if ($this->loaded === false) {
-            $file = new \SplFileObject($this->path);
-            $this->loadFromSubset(unserialize($file->fread($file->getSize())));
+            $this->loadFromSubset(unserialize(file_get_contents($this->path)));
             $this->loaded = true;
         }
     }

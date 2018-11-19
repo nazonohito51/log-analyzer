@@ -22,7 +22,7 @@ class ColumnFactory
             $saveDir = $this->getDefaultSaveDir();
         }
 
-        return FileStorageColumn::load($path, $this->getUniquePath($saveDir), new ValueStore());
+        return FileStorageColumn::load($path, new ValueStore());
     }
 
 
