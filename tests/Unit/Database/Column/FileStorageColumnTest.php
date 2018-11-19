@@ -119,18 +119,15 @@ class FileStorageColumnTest extends TestCase
         return $savedContent;
     }
 
-    /**
-     * @param $content
-     * @throws \ReflectionException
-     * @depends testSave
-     */
-    public function testLoad($content)
+    public function testLoad()
     {
-        $path = $this->getTmpFile() . __FUNCTION__;
+        $store = $this->getValueStoreMock();
+        $store->method('getAll')->willReturn(['value1', 'value2', 'value3']);
+        $path = $this->getTmpFile();
         $file = new \SplFileObject($path, 'w');
-        $file->fwrite(serialize($content));
+        $file->fwrite(serialize(['value1' => [1, 2], 'value2' => [3, 4], 'value3' => [5, 6]]));
 
-        $column = FileStorageColumn::load($path, $this->getTmpFile(), $this->createMock(ValueStore::class));
+        $column = FileStorageColumn::load($path, $store);
 
         $this->assertEquals(['value1', 'value2', 'value3'], $column->getValues());
         $this->assertEquals([1, 2], $column->getItemIds('value1'));
