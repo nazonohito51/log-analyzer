@@ -15,7 +15,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
      */
     protected $tearDownFuncs = [];
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

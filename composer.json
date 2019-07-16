@@ -29,7 +29,7 @@
     "guiguiboy/php-cli-progress-bar": "^0.0.4"
   },
   "require-dev": {
-    "phpunit/phpunit": "*"
+    "phpunit/phpunit": "~8"
   },
   "scripts": {
     "test": [
