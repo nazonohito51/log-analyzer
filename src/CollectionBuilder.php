@@ -120,8 +120,8 @@ class CollectionBuilder
 
         $items = [];
         foreach ($data as $line) {
+            $items[] = $idSequence->update()->now();
             foreach ($line as $key => $value) {
-                $items[] = $idSequence->update()->now();
                 $database->addValue($idSequence->now(), $key, $value);
             }
         }
