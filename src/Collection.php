@@ -113,6 +113,18 @@ class Collection implements \Countable, \IteratorAggregate
         return $this->database->getScheme();
     }
 
+    public function table(array $dimensionAndColumns)
+    {
+        $dimension = $dimensionAndColumns[0];
+        $columns = array_slice($dimensionAndColumns, 1);
+
+        $view = $this->dimension($dimension);
+        foreach ($columns as $column) {
+            $view->addColumn($column);
+        }
+        return $view->table();
+    }
+
     public function save($saveDir): bool
     {
         if (!is_dir($saveDir)) {
