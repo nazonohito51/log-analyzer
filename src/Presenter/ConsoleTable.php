@@ -79,16 +79,18 @@ class ConsoleTable
         return $this;
     }
 
-    public function limit(int $limit)
+    public function limit(int $limit): self
     {
         if ($limit <= 0) {
             throw new InvalidArgumentException('limit must be greater than 0.');
         }
 
         $this->rowLimit = $limit;
+
+        return $this;
     }
 
-    public function haveCount(int $count): void
+    public function haveCount(int $count): self
     {
         $newMatrix = [];
         foreach ($this->matrix as $cnt => $row) {
@@ -98,5 +100,7 @@ class ConsoleTable
         }
 
         $this->matrix = $newMatrix;
+
+        return $this;
     }
 }
