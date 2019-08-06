@@ -75,6 +75,29 @@ class ViewTest extends TestCase
         ], $newView);
     }
 
+    public function testToArrayUsingHaveCount()
+    {
+        $collectionValue1 = $this->createMock(Collection::class);
+        $collectionValue1->method('values')->willReturn('value1');
+        $collectionValue1->method('count')->willReturn(2);
+        $collectionValue2 = $this->createMock(Collection::class);
+        $collectionValue2->method('values')->willReturn('value1');
+        $collectionValue2->method('count')->willReturn(1);
+        $strategy = $this->createMock(View\DimensionStrategy::class);
+        $strategy->method('name')->willReturn('column');
+        $strategy->method('__invoke')->willReturnMap([
+            [$collectionValue1, 'value1'],
+            [$collectionValue2, 'value2'],
+        ]);
+        $view = new View($strategy, [$collectionValue1, $collectionValue2]);
+
+        $newView = $view->haveCount(2)->toArray();
+
+        $this->assertEquals([
+            ['column' => 'value1', '_count' => 2],
+        ], $newView);
+    }
+
     public function testAddColumn()
     {
         $collectionValue1 = $this->createMock(Collection::class);

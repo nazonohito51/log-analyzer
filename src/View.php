@@ -101,6 +101,18 @@ class View implements \Countable
         return new self($this->dimension, $collections);
     }
 
+    public function haveCount(int $count): self
+    {
+        $collections = [];
+        foreach ($this->collections as $collection) {
+            if ($collection->count() >= $count) {
+                $collections[] = $collection;
+            }
+        }
+
+        return new self($this->dimension, $collections);
+    }
+
     public function getCollection($dimensionValue): Collection
     {
         foreach ($this->collections as $collection) {

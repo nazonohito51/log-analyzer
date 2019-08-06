@@ -5,6 +5,7 @@ namespace LogAnalyzer\Presenter;
 
 use LogAnalyzer\Exception\InvalidArgumentException;
 use LogAnalyzer\View\ColumnStrategyInterface;
+use LogAnalyzer\View\CountStrategy;
 use LucidFrame\Console\ConsoleTable as TableView;
 
 class ConsoleTable
@@ -85,5 +86,17 @@ class ConsoleTable
         }
 
         $this->rowLimit = $limit;
+    }
+
+    public function haveCount(int $count): void
+    {
+        $newMatrix = [];
+        foreach ($this->matrix as $cnt => $row) {
+            if ($row[CountStrategy::HEADER] >= $count) {
+                $newMatrix[] = $row;
+            }
+        }
+
+        $this->matrix = $newMatrix;
     }
 }
