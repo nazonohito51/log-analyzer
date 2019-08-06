@@ -103,4 +103,51 @@ class ConsoleTable
 
         return $this;
     }
+
+    public function haveMemberCount(string $columnName, int $count): self
+    {
+        $newMatrix = [];
+        foreach ($this->matrix as $cnt => $row) {
+            if (isset($row[$columnName])) {
+                $target = $row[$columnName];
+                if (!is_array($target)) {
+                    $target = [$target];
+                }
+
+                if (count($target) >= $count) {
+                    $newMatrix[] = $row;
+                }
+            }
+        }
+
+        $this->matrix = $newMatrix;
+
+        return $this;
+    }
+
+    /**
+     * @param string $columnName
+     * @param callable(array $columnValue):bool $procedure
+     * @return ConsoleTable
+     */
+    public function haveMember(string $columnName, callable $procedure): self
+    {
+        $newMatrix = [];
+        foreach ($this->matrix as $cnt => $row) {
+            if (isset($row[$columnName])) {
+                $target = $row[$columnName];
+                if (!is_array($target)) {
+                    $target = [$target];
+                }
+
+                if ($procedure($columnName)) {
+                    $newMatrix[] = $row;
+                }
+            }
+        }
+
+        $this->matrix = $newMatrix;
+
+        return $this;
+    }
 }
